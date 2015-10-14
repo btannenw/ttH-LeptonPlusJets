@@ -19,7 +19,13 @@ ttH-LeptonPlusJets
     ln -s $CMSSW_RELEASE_BASE/src/RecoJets/JetProducers/plugins/VirtualJetProducer.cc BoostedTTH/BoostedProducer/plugins/VirtualJetProducer.cc
 
     git clone https://github.com/cms-ttH/MiniAOD.git
-    git clone https://github.com/cms-ttH/ttH-LeptonPlusJets.git
+
+#   git clone https://github.com/cms-ttH/ttH-LeptonPlusJets.git
+    git clone https://github.com/hsatoshi/ttH-LeptonPlusJets.git
+    cd ttH-LeptonPlusJets
+    git fetch 
+    git checkout -b satoshi origin/satoshi
+    cd ../
 
     git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
     cd HiggsAnalysis/CombinedLimit

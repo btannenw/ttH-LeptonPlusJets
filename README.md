@@ -20,7 +20,7 @@ ttH-LeptonPlusJets
 
     git clone https://github.com/cms-ttH/MiniAOD.git
 
-\#   git clone https://github.com/cms-ttH/ttH-LeptonPlusJets.git
+    # git clone https://github.com/cms-ttH/ttH-LeptonPlusJets.git
     git clone https://github.com/hsatoshi/ttH-LeptonPlusJets.git
     cd ttH-LeptonPlusJets
     git fetch 

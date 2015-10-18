@@ -54,7 +54,7 @@ print SHFILE "NumEvents=\$3\n";
 print SHFILE "NumJobs=\$4\n";
 print SHFILE "jobN=\$5+1\n";
 print SHFILE "\n";
-print SHFILE "root -b -q $workingDir/macros/head13TeV.C '$workingDir/macros/$script.C+('\$SampleType','\$SplitType','\$NumEvents','\$NumJobs','\$jobN')'\n";
+print SHFILE "root -b -q $workingDir/macros/head13TeV.C '$workingDir/macros/$script.C('\$SampleType','\$SplitType','\$NumEvents','\$NumJobs','\$jobN')'\n";
 print SHFILE "\n";
 close SHFILE;
 

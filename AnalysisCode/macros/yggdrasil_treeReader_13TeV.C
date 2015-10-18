@@ -134,8 +134,7 @@ if(SampleType == 5) sampleName = "ttW";
   
   cout<<sampleName<<" *** "<<endl;
 
-
- std::string histofilename = "/uscms/home/satoshi/nobackup/ohio/testoutput/" + sampleName + s_end;
+  std::string histofilename = "/uscms/home/satoshi/work/tth/osu/data/" + sampleName + s_end; ### Change This For your environment.
 
   std::cout << "  treefilename  = " << treefilename.c_str() << std::endl;
   std::cout << "  histofilename = " << histofilename.c_str() << std::endl;

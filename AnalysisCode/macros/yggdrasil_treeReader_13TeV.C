@@ -119,9 +119,12 @@ if(SampleType == 5) sampleName = "ttW";
 
   std::string treefilename ="/eos/uscms/store/user/sflowers/treeMaker/Spring15_Sep3/TT_TuneCUETP8M1_13TeV-powheg-pythia8/Spring15DR-PU20bx25_MCRUN2_74_V9-v1_yggdrasilTree_v1/150911_144050/0000/*.root";
 
-  std::string __my_eos__("/eos/uscms/store/user/satoshi/");
 
-  std::string treefilename = __my_eos__ + "TT_TuneCUETP8M1_13TeV-powheg-pythia8/Validation_v1/150915_132026/0000" + "/*.root";
+  //  std::string __my_eos__("/eos/uscms/store/user/satoshi/");
+  std::string __my_eos__("/eos/uscms/store/user/sflowers/treeMaker/Spring15_Sep3/");
+
+
+  treefilename.assign( __my_eos__ + "TT_TuneCUETP8M1_13TeV-powheg-pythia8/Validation_v1/150915_132026/0000" + "/*.root" );
   if(SampleType == 1)treefilename =  __my_eos__ + "ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8/Validation_v1/150911_174759/0000" + "/*.root";
   if(SampleType == 3)treefilename =  __my_eos__ + "" + "/*.root";
   if(SampleType == 4)treefilename =  __my_eos__ + "" + "/*.root";

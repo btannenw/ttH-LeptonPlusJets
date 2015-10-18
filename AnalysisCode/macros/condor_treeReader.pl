@@ -15,7 +15,8 @@ for $dir (@dir){
 $script = "yggdrasil_treeReader_13TeV";       # Name of job
 
 #$workingDir = "/uscms_data/d2/lwming/CMSSW_7_2_3/src/ttH-LeptonPlusJets/AnalysisCode"; #### change this
-$workingDir = "/uscms_data/d3/flowers1/May2015/CMSSW_7_2_3/src/ttH-LeptonPlusJets/AnalysisCode"; #### change this
+#$workingDir = "/uscms_data/d3/flowers1/May2015/CMSSW_7_2_3/src/ttH-LeptonPlusJets/AnalysisCode"; #### change this
+$workingDir = "/uscms_data/d1/satoshi/ohio/CMSSW_7_4_4_patch4/src/ttH-LeptonPlusJets/AnalysisCode"; #### change this
 
 $SampleType = 2;
 $SplitType   = -1;

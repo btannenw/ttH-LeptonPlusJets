@@ -249,9 +249,9 @@ if(SampleType == 5) sampleName = "ttW";
   
   //Weights Locations
   
-  TString BDTWgtDIR_Spring15 = "/uscms_data/d3/flowers1/May2015/CMSSW_7_4_4_patch4/src/ttH-LeptonPlusJets/AnalysisCode/data/V3_KIT_weights/";
-  TString BDTWgtDIR_Splitting_1_1 = "/uscms_data/d3/flowers1/May2015/CMSSW_7_4_4_patch4/src/ttH-LeptonPlusJets/AnalysisCode/macros/data/Train_1_1/";
-  TString BDTWgtDIR_Splitting_1_2 = "/uscms_data/d3/flowers1/May2015/CMSSW_7_4_4_patch4/src/ttH-LeptonPlusJets/AnalysisCode/macros/data/Train_1_2/";
+  TString BDTWgtDIR_Spring15      = string(getenv("CMSSW_BASE")) + "/src/ttH-LeptonPlusJets/AnalysisCode/data/V3_KIT_weights/";
+  TString BDTWgtDIR_Splitting_1_1 = string(getenv("CMSSW_BASE")) + "/src/ttH-LeptonPlusJets/AnalysisCode/data/Train_1_1/";
+  TString BDTWgtDIR_Splitting_1_2 = string(getenv("CMSSW_BASE")) + "/src/ttH-LeptonPlusJets/AnalysisCode/data/Train_1_2/";
   
   
   /////////////

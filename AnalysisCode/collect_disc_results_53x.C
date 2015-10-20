@@ -43,7 +43,8 @@ void collect_disc_results_53x( int lepSelection=-1, int ANNtype_=0 ) {
   else if( lepSelection==1 ) lepType = "ele_sel";
   else                       lepType = "lep_sel";
 
-  TString baseDir = "/afs/cern.ch/work/l/lwming/";
+  TString baseDir = "/eos/uscms/store/user/satoshi/testout/" ;
+  //  TString baseDir = "/afs/cern.ch/work/l/lwming/";
   TString basePrefix = "yggdrasil_treeReader";
   //  TString baseSuffix = "_" + lepType + "_histo.root";
   TString baseSuffix =  ".root";

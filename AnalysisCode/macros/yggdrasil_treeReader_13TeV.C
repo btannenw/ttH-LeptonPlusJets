@@ -123,9 +123,15 @@ if(SampleType == 5) sampleName = "ttW";
   //  std::string __my_eos__("/eos/uscms/store/user/satoshi/");
   std::string __my_eos__("/eos/uscms/store/user/sflowers/treeMaker/Spring15_Sep3/");
 
+//TT_TuneCUETP8M1_13TeV-powheg-pythia8/Spring15DR-PU20bx25_MCRUN2_74_V9-v1_yggdrasilTree_v1/150924_143854/0000/
+//TT_TuneCUETP8M1_13TeV-powheg-pythia8/Spring15DR-PU20bx25_MCRUN2_74_V9-v1_yggdrasilTree_v1/150924_143854/0001/
+//TT_TuneCUETP8M1_13TeV-powheg-pythia8/Spring15DR-PU20bx25_MCRUN2_74_V9-v1_yggdrasilTree_v1/150924_143854/0002/
+//ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/Spring15DR-PU20bx25_tsg_MCRUN2_74_V9-v2_v1_yggdrasilTree_v1/150924_144307/0000/
+//ttHTobb_M125_13TeV_powheg_pythia8/Spring15DR-PU20bx25_tsg_MCRUN2_74_V9-v2_v1_yggdrasilTree_v1/150924_144223/0000/
+//ttjet2/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/Spring15DR-PU20bx25_MCRUN2_74_V9-v1_yggdrasilTree_v1/150927_171531/
 
-  treefilename.assign( __my_eos__ + "TT_TuneCUETP8M1_13TeV-powheg-pythia8/Validation_v1/150915_132026/0000" + "/*.root" );
-  if(SampleType == 1)treefilename =  __my_eos__ + "ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8/Validation_v1/150911_174759/0000" + "/*.root";
+  treefilename.assign( __my_eos__ + "TT_TuneCUETP8M1_13TeV-powheg-pythia8/Spring15DR-PU20bx25_MCRUN2_74_V9-v1_yggdrasilTree_v1/150924_143854/0000/" + "/*.root" );
+  if(SampleType == 1)treefilename =  __my_eos__ + "ttHTobb_M125_13TeV_powheg_pythia8/Spring15DR-PU20bx25_tsg_MCRUN2_74_V9-v2_v1_yggdrasilTree_v1/150924_144223/0000" + "/*.root";
   if(SampleType == 3)treefilename =  __my_eos__ + "" + "/*.root";
   if(SampleType == 4)treefilename =  __my_eos__ + "" + "/*.root";
 

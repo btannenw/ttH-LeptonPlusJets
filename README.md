@@ -21,6 +21,8 @@ ttH-LeptonPlusJets
     git clone https://github.com/cms-ttH/MiniAOD.git
     git clone https://github.com/cms-ttH/ttH-LeptonPlusJets.git
 
+    git clone https://github.com/hsatoshi/PuppiLeptonIsolationhelper.git
+
     //you can skip this part and add it later   
     git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
     cd HiggsAnalysis/CombinedLimit

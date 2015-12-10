@@ -142,8 +142,16 @@ process.ttHTreeMaker = cms.EDAnalyzer('YggdrasilTreeMaker',
     genCHadBHadronId = cms.InputTag("matchGenCHadron", "genCHadBHadronId"),
     )
 
+
+process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
+                                         , srcLepton = cms.InputTag( 'slimmedMuons' )
+                                         , dR = cms.double( 0.4 ) 
+                                         , mixFraction = cms.double( 0.5 ) 
+                                         , configuration = cms.string( "##" )
+                                         )
+
 process.TFileService = cms.Service("TFileService",
 	fileName = cms.string('yggdrasil_treeMaker.root')
 )
 
-process.p = cms.Path(process.electronMVAValueMapProducer * process.ttHTreeMaker)
+process.p = cms.Path(  process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)

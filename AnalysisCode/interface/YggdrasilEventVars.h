@@ -147,6 +147,7 @@ struct yggdrasilEventVars{
   vdouble lepton_iso_sumNeutralHadronEt_;
   vdouble lepton_iso_sumPhotonEt_;
   vdouble lepton_iso_sumPUPt_;
+  vdouble lepton_PuppiRelIso_;
   vdouble lepton_mvaTrigValue_;
   vdouble lepton_scSigmaIEtaIEta_;
   vdouble lepton_full5x5_scSigmaIEtaIEta_;
@@ -456,6 +457,7 @@ void yggdrasilEventVars::initialize(){
   lepton_iso_sumNeutralHadronEt_.clear();
   lepton_iso_sumPhotonEt_.clear();
   lepton_iso_sumPUPt_.clear();
+  lepton_PuppiRelIso_.clear();
   lepton_mvaTrigValue_.clear();
   lepton_scSigmaIEtaIEta_.clear();
   lepton_full5x5_scSigmaIEtaIEta_.clear();

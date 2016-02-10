@@ -1692,10 +1692,10 @@ if(outputwords)cout<<selectedElectrons_tight.at(0).genLepton()->pdgId();
   double jet4_pt = ( numJet>=4 ) ? selectedJets.at(3).pt() : -99;
 
 
-  double jet1_CSVv2 = ( numJet>=1 ) ? miniAODhelper.GetJetCSV(selectedJets.at(0), "pfCombinedInclusiveSecondaryVertexV2BJetTags") : -99;
-  double jet2_CSVv2 = ( numJet>=2 ) ? miniAODhelper.GetJetCSV(selectedJets.at(1), "pfCombinedInclusiveSecondaryVertexV2BJetTags") : -99;
-  double jet3_CSVv2 = ( numJet>=3 ) ? miniAODhelper.GetJetCSV(selectedJets.at(2), "pfCombinedInclusiveSecondaryVertexV2BJetTags") : -99;
-  double jet4_CSVv2 = ( numJet>=4 ) ? miniAODhelper.GetJetCSV(selectedJets.at(3), "pfCombinedInclusiveSecondaryVertexV2BJetTags") : -99;
+  double jet1_CSVv2 = ( numJet>=1 ) ? miniAODhelper.GetJetCSV(selectedJets.at(0), "pfCombinedMVAV2BJetTags") : -99;
+  double jet2_CSVv2 = ( numJet>=2 ) ? miniAODhelper.GetJetCSV(selectedJets.at(1), "pfCombinedMVAV2BJetTags") : -99;
+  double jet3_CSVv2 = ( numJet>=3 ) ? miniAODhelper.GetJetCSV(selectedJets.at(2), "pfCombinedMVAV2BJetTags") : -99;
+  double jet4_CSVv2 = ( numJet>=4 ) ? miniAODhelper.GetJetCSV(selectedJets.at(3), "pfCombinedMVAV2BJetTags") : -99;
 
     
    
@@ -1825,7 +1825,7 @@ if(n_fatjets==2)pt_fatjet_2=topJet->fatjet.pt();
       // 	// }
 
       // 	if( !(filterjets[ijet].pt()>20. && abs(filterjets[ijet].eta()) < 2.4) ) continue;
-      // 	if( !(filterjets[ijet].bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > 0.800) ) continue;
+      // 	if( !(filterjets[ijet].bDiscriminator("pfCombinedMVAV2BJetTags") > 0.185) ) continue;
       // 	numBtagFiltJets++;
       // }
 
@@ -1968,11 +1968,11 @@ jcntn++;
      // jet_vtx3DSig.push_back(iJet->userFloat("vtx3DSig"));
 
       // Get CSV discriminant, check if passes Med WP 
-      double myCSV = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+      double myCSV = iJet->bDiscriminator("pfCombinedMVAV2BJetTags");
       csvV.push_back(myCSV);
     
-      int csvM0 = ( myCSV > 0.8000 ) ? 1 : 0;
-      if( myCSV>0.8000 ){
+      int csvM0 = ( myCSV > 0.1850 ) ? 1 : 0;
+      if( myCSV>0.1850 ){
 	numtag += 1;
 	sum_btag_disc_btags += myCSV;
       }
@@ -1984,7 +1984,7 @@ jcntn++;
       
 
       jet_combinedMVABJetTags.push_back( iJet->bDiscriminator("combinedMVABJetTags") );
-      jet_combinedInclusiveSecondaryVertexV2BJetTags.push_back( iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") );
+      jet_combinedInclusiveSecondaryVertexV2BJetTags.push_back( iJet->bDiscriminator("pfCombinedMVAV2BJetTags") );
 
       // Second Loop over selected jets
       for( std::vector<pat::Jet>::const_iterator jJet = iJet; jJet != selectedJets.end(); jJet++ ){ 
@@ -1995,7 +1995,7 @@ jcntn++;
 	// Get second jet 4Vector and check bTag discriminant
 	TLorentzVector jet1p4;
 	jet1p4.SetPxPyPzE(jJet->px(),jJet->py(),jJet->pz(),jJet->energy());
-	int csvM1 = ( jJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > 0.8000 ) ? 1 : 0;
+	int csvM1 = ( jJet->bDiscriminator("pfCombinedMVAV2BJetTags") > 0.1850 ) ? 1 : 0;
 
 	// Third loop over selected jets
 	for( std::vector<pat::Jet>::const_iterator kJet = jJet; kJet != selectedJets.end(); kJet++ ){ 
@@ -2006,7 +2006,7 @@ jcntn++;
 	  // Get third jet 4Vector and chekc bTag discriminant
 	  TLorentzVector jet2p4;
 	  jet2p4.SetPxPyPzE(kJet->px(),kJet->py(),kJet->pz(),kJet->energy());
-	  int csvM2 = ( kJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") > 0.8000 ) ? 1 : 0;
+	  int csvM2 = ( kJet->bDiscriminator("pfCombinedMVAV2BJetTags") > 0.1850 ) ? 1 : 0;
 
 	  // Get sum of three jet 4Vectors
 	  TLorentzVector sum_jet = jet0p4 + jet1p4 + jet2p4;
@@ -2071,13 +2071,13 @@ jcntn++;
       vjets_loose.push_back(iJet->energy());
       jet_all_vect_TLV.push_back(vjets_loose);
 
-      double myCSV = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+      double myCSV = iJet->bDiscriminator("pfCombinedMVAV2BJetTags");
       jet_all_CSV.push_back(myCSV);
 
       jet_all_flavour.push_back(iJet->partonFlavour());
 
       jet_loose_combinedMVABJetTags.push_back( iJet->bDiscriminator("combinedMVABJetTags") );
-      jet_loose_combinedInclusiveSecondaryVertexV2BJetTags.push_back( iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") );
+      jet_loose_combinedInclusiveSecondaryVertexV2BJetTags.push_back( iJet->bDiscriminator("pfCombinedMVAV2BJetTags") );
 
       // MHT
       mht_px += - iJet->px();
@@ -2108,7 +2108,7 @@ jcntn++;
 
       // Get CSV discriminant, check if passes Med WP 
       csvV_loose.push_back(myCSV);
-      if( myCSV>0.8000 ) numTag_loose++;
+      if( myCSV>0.1850 ) numTag_loose++;
     }
 
 
@@ -2169,7 +2169,7 @@ jcntn++;
     for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_tag.begin(); iJet != selectedJets_tag.end(); iJet++ ){ 
 
       // Get bTag Value
-      double myCSV = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+      double myCSV = iJet->bDiscriminator("pfCombinedMVAV2BJetTags");
 
       // Compute Deviation from Avg bTag
       double dev = myCSV - ave_btag_disc_btags;
@@ -2248,7 +2248,7 @@ jcntn++;
     for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_untag.begin(); iJet != selectedJets_untag.end(); iJet++ ){ 
 
       // Get CSV discriminant
-      double myCSV = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+      double myCSV = iJet->bDiscriminator("pfCombinedMVAV2BJetTags");
 
       // Compute deviation form Avg bTag Disc
       double dev = myCSV - ave_btag_disc_non_btags;

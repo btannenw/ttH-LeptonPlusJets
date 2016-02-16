@@ -1840,6 +1840,10 @@ if(n_fatjets==2)pt_fatjet_2=topJet->fatjet.pt();
     vdouble leadCandDistFromPV_vect;
     vdouble minPVDist_vect;
 
+    vdouble jet_pt;
+    vdouble jet_eta;
+    vdouble jet_phi;
+    vdouble jet_m;
 
     vint jet_genId_vect;
     vint jet_partonflavour_vect;
@@ -1850,7 +1854,13 @@ if(n_fatjets==2)pt_fatjet_2=topJet->fatjet.pt();
 int jcntn=0;
     // Loop over selected jets
     for( std::vector<pat::Jet>::const_iterator iJet = selectedJets.begin(); iJet != selectedJets.end(); iJet++ ){ 
-jcntn++;
+      jcntn++;
+
+      jet_pt  .push_back( iJet -> pt()  );
+      jet_phi .push_back( iJet -> phi() );
+      jet_eta .push_back( iJet -> eta() );
+      jet_m   .push_back( iJet -> mass()   );
+   
       jet_partonflavour_vect.push_back(iJet->partonFlavour());
       jet_flavour_vect.push_back(iJet->hadronFlavour());
 
@@ -2373,6 +2383,11 @@ jcntn++;
     eve->jet_genId_[iSys]            = jet_genId_vect;
     eve->jet_genParentId_[iSys]      = jet_genParentId_vect;
     eve->jet_genGrandParentId_[iSys] = jet_genGrandParentId_vect;
+
+    eve->jet_pt_  [iSys]= jet_pt  ;
+    eve->jet_phi_ [iSys]= jet_phi ;
+    eve->jet_eta_ [iSys]= jet_eta ;
+    eve->jet_m_   [iSys]= jet_m   ;
 
     // loose jets
 

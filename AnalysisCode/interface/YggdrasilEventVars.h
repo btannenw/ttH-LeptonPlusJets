@@ -175,7 +175,6 @@ struct yggdrasilEventVars{
   vint lepton_trackerLayersWithMeasurement_;
   vint lepton_numberOfMatchedStations_;
 
-
   Float_t wgt_lumi_;
   Float_t wgt_xs_;
   Float_t wgt_nGen_;
@@ -274,6 +273,12 @@ struct yggdrasilEventVars{
   vdouble jet_vtxNtracks_[rNumSys];
   vdouble jet_vtx3DVal_[rNumSys];
   vdouble jet_vtx3DSig_[rNumSys];
+
+
+  vdouble jet_pt_[rNumSys];
+  vdouble jet_eta_[rNumSys];
+  vdouble jet_phi_[rNumSys];
+  vdouble jet_m_[rNumSys];
   vint jet_genId_[rNumSys];
   vint jet_partonflavour_[rNumSys];
   vint jet_flavour_[rNumSys];
@@ -489,8 +494,6 @@ void yggdrasilEventVars::initialize(){
   lepton_trackerLayersWithMeasurement_.clear();
   lepton_numberOfMatchedStations_.clear();
 
-
-
   wgt_generator_        = -99.9;
   wgt_lumi_             = -99.9;
   wgt_xs_               = -99.9;
@@ -595,6 +598,12 @@ void yggdrasilEventVars::initialize(){
     jet_vtx3DVal_[iSys].clear();
     jet_vtx3DSig_[iSys].clear();
     jet_partonflavour_[iSys].clear();
+
+    jet_pt_ [iSys].clear();
+    jet_phi_[iSys].clear();
+    jet_eta_[iSys].clear();
+    jet_m_  [iSys].clear();
+
     jet_flavour_[iSys].clear();
     jet_genId_[iSys].clear();
     jet_genParentId_[iSys].clear();

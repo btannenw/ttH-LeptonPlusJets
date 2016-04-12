@@ -786,7 +786,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 								    jetID::jetLoose ),
 								  '-');
 
-  std::vector<pat::Jet> pfJets_ID_clean = miniAODhelper.GetDeltaRCleanedJets( pfJets_ID, selectedMuons_loose, selectedElectrons_loose, 0.4);
+  std::vector<pat::Jet> pfJets_ID_clean = pfJets_ID ;
+
   std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets(pfJets_ID_clean);
  // std::vector<pat::Jet> jetsNoMu = miniAODhelper.RemoveOverlaps(selectedMuons_loose, rawJets_ID);
  // std::vector<pat::Jet> jetsNoEle = miniAODhelper.RemoveOverlaps(selectedElectrons_loose, jetsNoMu);
@@ -1657,9 +1658,9 @@ if(outputwords)cout<<selectedElectrons_tight.at(0).genLepton()->pdgId();
     std::vector<pat::Jet> selectedJets_tag_uncleaned   = miniAODhelper.GetSortedByPt( selectedJets_tag_unsorted );
     std::vector<pat::Jet> selectedJets_untag_uncleaned = miniAODhelper.GetSortedByPt( selectedJets_untag_unsorted );
     
-    std::vector<pat::Jet> selectedJets        = miniAODhelper.GetDeltaRCleanedJets( selectedJets_uncleaned,selectedMuons_loose,selectedElectrons_loose,0.4);
-    std::vector<pat::Jet> selectedJets_tag    = miniAODhelper.GetDeltaRCleanedJets( selectedJets_tag_uncleaned,selectedMuons_loose,selectedElectrons_loose,0.4);
-    std::vector<pat::Jet> selectedJets_untag = miniAODhelper.GetDeltaRCleanedJets( selectedJets_untag_uncleaned,selectedMuons_loose,selectedElectrons_loose,0.4);
+    std::vector<pat::Jet> selectedJets        = selectedJets_uncleaned ;
+    std::vector<pat::Jet> selectedJets_tag    = selectedJets_tag_uncleaned ;
+    std::vector<pat::Jet> selectedJets_untag =  selectedJets_untag_uncleaned ;
 
     //if( mySample.isTTJets ) splitEvent = miniAODhelper.ttPlusHFKeepEvent( mcparticles, selectedJets );
     //if( !splitEvent ) continue;

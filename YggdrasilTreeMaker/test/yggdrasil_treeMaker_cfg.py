@@ -33,7 +33,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10)
+    input = cms.untracked.int32(100)
     )
 
 
@@ -145,6 +145,14 @@ process.source = cms.Source("PoolSource",
 )
 
 
+########## PUPPI Muon Isolation 
+process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
+                                         , srcLepton = cms.string( "slimmedMuons" )
+                                         , dR = cms.double( 0.4 )
+                                         , mixFraction = cms.double( 0.5 )
+                                         , configuration = cms.string( "##" )
+)
+
 
 
 ###############
@@ -215,16 +223,21 @@ process.categorizeGenTtbar = categorizeGenTtbar.clone(
     genJets = genJetCollection,
 )
 
+
+# , MuonIso = cms.string( "PUPPIMUONISO" )
+
 if isMC :
     if isPUPPI :
         process.ttHTreeMaker = cms.EDAnalyzer('YggdrasilTreeMaker',
                                           isMC    =  cms.string("MC"),
                                           jetPU = cms.string( "PUPPI" )
+                                         , MuonIso = cms.string( "PUPPIMUONISO" )
                                           )
     else:
         process.ttHTreeMaker = cms.EDAnalyzer('YggdrasilTreeMaker',
                                           isMC    =  cms.string("MC"),
                                           jetPU = cms.string( "CHS" )
+                                         , MuonIso = cms.string( "PUPPIMUONISO" )
                                           )
 
 else :
@@ -232,11 +245,13 @@ else :
         process.ttHTreeMaker = cms.EDAnalyzer('YggdrasilTreeMaker',
                                           isMC    =  cms.string("data"),
                                           jetPU = cms.string( "PUPPI" )
+                                         , MuonIso = cms.string( "PUPPIMUONISO" )
                                           )
     else:
         process.ttHTreeMaker = cms.EDAnalyzer('YggdrasilTreeMaker',
                                           isMC    =  cms.string("data"),
                                           jetPU = cms.string( "CHS" )
+                                         , MuonIso = cms.string( "PUPPIMUONISO" )
                                           )
         
     
@@ -244,4 +259,4 @@ process.TFileService = cms.Service("TFileService",
 	fileName = cms.string('yggdrasil_treeMaker.root')
 )
 
-process.p = cms.Path(process.electronMVAValueMapProducer * process.ttHTreeMaker)
+process.p = cms.Path(process.electronMVAValueMapProducer * process.PUPPIMuonRelIso * process.ttHTreeMaker)

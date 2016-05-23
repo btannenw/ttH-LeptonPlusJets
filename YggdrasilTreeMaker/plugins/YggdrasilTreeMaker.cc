@@ -128,6 +128,8 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT <edm::TriggerResults> triggerResultsToken;
   edm::EDGetTokenT <edm::TriggerResults> filterResultsToken;
 
+  edm::EDGetTokenT< edm::ValueMap<double> > token_PuppuMuIso_Combined ;
+
   // new MVAelectron
   edm::EDGetTokenT< edm::View<pat::Electron> > EDMElectronsToken;
   // MVA values and categories
@@ -136,7 +138,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
 
   edm::EDGetTokenT <reco::VertexCollection> vertexToken;
   edm::EDGetTokenT <pat::ElectronCollection> electronToken;
-  edm::EDGetTokenT <pat::MuonCollection> muonToken;
+  edm::EDGetTokenT <edm::View<pat::Muon> > muonToken;
   edm::EDGetTokenT <pat::JetCollection> jetToken;
   edm::EDGetTokenT <pat::METCollection> metToken;
 
@@ -214,6 +216,8 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   const bool isMC ;
   const bool usePUPPI ;
 
+  coneSize::coneSize MuonIsolationType ;
+
 };
 
 //
@@ -237,6 +241,7 @@ typedef std::vector< TLorentzVector >          vecTLorentzVector;
 YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   isMC(iConfig.getParameter<std::string>("isMC") == "MC" )
   , usePUPPI(iConfig.getParameter<std::string>("jetPU") == "PUPPI" )
+  , MuonIsolationType( iConfig.getParameter<std::string>("MuonIso") == "PUPPIMUONISO" ? coneSize::PUPPICombined : coneSize::R04 )
 {
    //now do what ever initialization is needed
   verbose_ = false;
@@ -251,6 +256,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   triggerResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), hltTag));
   filterResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), filterTag));
 
+  token_PuppuMuIso_Combined = consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiCombined"  ,"") ) ; 
+
   // new MVAelectron
   EDMElectronsToken = consumes< edm::View<pat::Electron> >(edm::InputTag("slimmedElectrons","",""));
   EDMeleMVAvaluesToken           = consumes<edm::ValueMap<float> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring15Trig25nsV1Values",""));
@@ -258,7 +265,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
   electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
-  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
+  muonToken = consumes < edm::View<pat::Muon>  > (edm::InputTag(std::string("slimmedMuons")));
   if( usePUPPI ){
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
   }else{
@@ -407,6 +414,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   iEvent.getByToken(vertexToken,vtxHandle);
   reco::VertexCollection vtxs = *vtxHandle;
 
+  edm::Handle< edm::ValueMap<double> > iso_PuppiCombined ; 
+  iEvent.getByToken( token_PuppuMuIso_Combined , iso_PuppiCombined );
+  miniAODhelper . setPUPPIMuonIsolationValueMap( & iso_PuppiCombined );
+
   /// old way of getting electrons
   // edm::Handle<pat::ElectronCollection> electrons;
   // iEvent.getByToken(electronToken,electrons);
@@ -422,7 +433,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 
   ////
-  edm::Handle<pat::MuonCollection> muons;
+  edm::Handle<edm::View<pat::Muon>> muons;
   iEvent.getByToken(muonToken,muons);
 
   edm::Handle<pat::JetCollection> pfjets;
@@ -729,9 +740,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   /// Muons
   ///
   ////////
-  //std::vector<pat::Muon> selectedMuons_tight = miniAODhelper.GetSelectedMuons( *muons, 25, muonID::muonTight, coneSize::R04, corrType::deltaBeta, 2.1 );
-  std::vector<pat::Muon> selectedMuons_tight = miniAODhelper.GetSelectedMuons( *muons, 15, muonID::muonTight, coneSize::R04, corrType::deltaBeta, 2.4);
-  std::vector<pat::Muon> selectedMuons_loose = miniAODhelper.GetSelectedMuons( *muons, 15, muonID::muonTightDL, coneSize::R04, corrType::deltaBeta,2.4 );
+  std::vector<pat::Muon> selectedMuons_tight = miniAODhelper.GetSelectedMuons( muons, 15, muonID::muonTight,   MuonIsolationType,corrType::deltaBeta , 2.4);
+  std::vector<pat::Muon> selectedMuons_loose = miniAODhelper.GetSelectedMuons( muons, 15, muonID::muonTightDL, MuonIsolationType,corrType::deltaBeta ,2.4 );
 
   int numTightMuons = int(selectedMuons_tight.size());
   int numLooseMuons = int(selectedMuons_loose.size());// - numTightMuons;
@@ -942,7 +952,8 @@ if(outputwords)cout<<OneMuon<<" "<<OneElectron<<endl;
       }
     }
 
-    tight_lepton_relIso = miniAODhelper.GetMuonRelIso(selectedMuons_tight.at(0), coneSize::R04, corrType::deltaBeta);
+    //    tight_lepton_relIso = miniAODhelper.GetMuonRelIso(selectedMuons_tight.at(0), coneSize::R04, corrType::deltaBeta);
+    tight_lepton_relIso = miniAODhelper.GetMuonRelIso( selectedMuons_tight.at(0) );
   }
   else if( OneElectron){
   if(outputwords)cout<<"OneELECTRON!!"<<endl;
@@ -1022,8 +1033,10 @@ if(outputwords)cout<<selectedElectrons_tight.at(0).genLepton()->pdgId();
   sum_lepton_vect.SetPxPyPzE(0., 0., 0., 0.);
 
   // Loop over muons
-  for( std::vector<pat::Muon>::const_iterator iMu = muons->begin(); iMu != muons->end(); iMu++ ){ 
+  for( unsigned int idx = 0 ; idx < muons->size(); idx++ ){ 
  
+    const edm::Ptr<pat::Muon> iMu = muons ->ptrAt( idx ) ;
+
     int genId=-99, genParentId=-99, genGrandParentId=-99;
     if( (iMu->genLepton()) ){
       genId = iMu->genLepton()->pdgId();
@@ -1036,8 +1049,8 @@ if(outputwords)cout<<selectedElectrons_tight.at(0).genLepton()->pdgId();
     int trkCharge = -99;
     if( iMu->muonBestTrack().isAvailable() ) trkCharge = iMu->muonBestTrack()->charge();
 
-    int isTight = ( miniAODhelper.isGoodMuon(*iMu, minTightLeptonPt, 2.1, muonID::muonTight, coneSize::R04, corrType::deltaBeta) ) ? 1 : 0;
-    int isLoose = ( miniAODhelper.isGoodMuon(*iMu, looseLeptonPt, 2.4, muonID::muonTightDL, coneSize::R04, corrType::deltaBeta) ) ? 1 : 0;
+    int isTight = ( miniAODhelper.isGoodMuon(iMu, minTightLeptonPt, 2.1, muonID::muonTightPUPPIIso,  MuonIsolationType, corrType::deltaBeta) ) ? 1 : 0;
+    int isLoose = ( miniAODhelper.isGoodMuon(iMu, looseLeptonPt, 2.4, muonID::muonTightDLPUPPIIso,   MuonIsolationType, corrType::deltaBeta) ) ? 1 : 0;
 
     int isPhys14L = false;
     int isPhys14M = false;
@@ -1084,7 +1097,7 @@ if(outputwords)cout<<selectedElectrons_tight.at(0).genLepton()->pdgId();
     lepton_eta.push_back(iMu->eta());
     lepton_phi.push_back(iMu->phi());
     lepton_relIso.push_back(miniAODhelper.GetMuonRelIso(*iMu));
-    lepton_relIsoR04.push_back(miniAODhelper.GetMuonRelIso(*iMu, coneSize::R04, corrType::deltaBeta));
+    lepton_relIsoR04.push_back(miniAODhelper.GetMuonRelIso(iMu,  MuonIsolationType, corrType::deltaBeta ));
     lepton_iso_sumChargedHadronPt.push_back(iMu->pfIsolationR03().sumChargedHadronPt);
     lepton_iso_sumNeutralHadronEt.push_back(iMu->pfIsolationR03().sumNeutralHadronEt);
     lepton_iso_sumPhotonEt.push_back(iMu->pfIsolationR03().sumPhotonEt);

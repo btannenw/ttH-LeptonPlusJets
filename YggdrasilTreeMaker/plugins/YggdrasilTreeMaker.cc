@@ -740,8 +740,16 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   /// Muons
   ///
   ////////
-  std::vector<pat::Muon> selectedMuons_tight = miniAODhelper.GetSelectedMuons( muons, 15, muonID::muonTight,   MuonIsolationType,corrType::deltaBeta , 2.4);
-  std::vector<pat::Muon> selectedMuons_loose = miniAODhelper.GetSelectedMuons( muons, 15, muonID::muonTightDL, MuonIsolationType,corrType::deltaBeta ,2.4 );
+  std::vector<pat::Muon> selectedMuons_tight = miniAODhelper.GetSelectedMuons( muons, 15, 
+									       MuonIsolationType == coneSize::PUPPICombined ?
+									       muonID::muonTightPUPPIIso :
+									       muonID::muonTight,
+									       MuonIsolationType,corrType::deltaBeta , 2.4);
+  std::vector<pat::Muon> selectedMuons_loose = miniAODhelper.GetSelectedMuons( muons, 15,
+									       MuonIsolationType == coneSize::PUPPICombined ?
+									       muonID::muonTightDLPUPPIIso :
+									       muonID::muonTightDL,
+									       MuonIsolationType,corrType::deltaBeta ,2.4 );
 
   int numTightMuons = int(selectedMuons_tight.size());
   int numLooseMuons = int(selectedMuons_loose.size());// - numTightMuons;
@@ -1049,8 +1057,16 @@ if(outputwords)cout<<selectedElectrons_tight.at(0).genLepton()->pdgId();
     int trkCharge = -99;
     if( iMu->muonBestTrack().isAvailable() ) trkCharge = iMu->muonBestTrack()->charge();
 
-    int isTight = ( miniAODhelper.isGoodMuon(iMu, minTightLeptonPt, 2.1, muonID::muonTightPUPPIIso,  MuonIsolationType, corrType::deltaBeta) ) ? 1 : 0;
-    int isLoose = ( miniAODhelper.isGoodMuon(iMu, looseLeptonPt, 2.4, muonID::muonTightDLPUPPIIso,   MuonIsolationType, corrType::deltaBeta) ) ? 1 : 0;
+    int isTight = ( miniAODhelper.isGoodMuon(iMu, minTightLeptonPt, 2.1, 
+					     MuonIsolationType == coneSize::PUPPICombined ?  
+					     muonID::muonTightPUPPIIso :
+					     muonID::muonTight
+					     ,  MuonIsolationType, corrType::deltaBeta) ) ? 1 : 0;
+    int isLoose = ( miniAODhelper.isGoodMuon(iMu, looseLeptonPt, 2.4, 
+					     MuonIsolationType == coneSize::PUPPICombined ?  
+					     muonID::muonTightDLPUPPIIso :
+					     muonID::muonTightDL,  
+					     MuonIsolationType, corrType::deltaBeta) ) ? 1 : 0;
 
     int isPhys14L = false;
     int isPhys14M = false;

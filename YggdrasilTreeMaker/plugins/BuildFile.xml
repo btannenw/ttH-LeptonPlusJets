@@ -12,5 +12,6 @@
 <use name="HLTrigger/HLTcore"/>
 <use name="EgammaAnalysis/ElectronTools"/>
 <use name="MiniAOD/MiniAODHelper"/>
+<use name="MiniAOD/BoostedObjects"/>
 <use name="BoostedTTH/BoostedAnalyzer"/>
 <flags EDM_PLUGIN="1"/>

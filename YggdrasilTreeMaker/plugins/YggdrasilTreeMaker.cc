@@ -64,7 +64,7 @@
 
 #include "MiniAOD/MiniAODHelper/interface/MiniAODHelper.h"
 #include "MiniAOD/MiniAODHelper/interface/TopTagger.h"
-#include "BoostedTTH/BoostedAnalyzer/interface/BoostedUtils.hpp"
+#include "MiniAOD/BoostedObjects/interface/BoostedUtils.hpp"
 #include "MiniAOD/MiniAODHelper/interface/HiggsTagger.h"
 #include "ttH-LeptonPlusJets/AnalysisCode/interface/YggdrasilEventVars.h"
 
@@ -974,7 +974,7 @@ if(outputwords)cout<<selectedElectrons_tight.at(0).genLepton()->pdgId();
     int trkCharge = -99;
     if( iMu->muonBestTrack().isAvailable() ) trkCharge = iMu->muonBestTrack()->charge();
 
-    int isTight = ( miniAODhelper.isGoodMuon(*iMu, minTightLeptonPt, 2.1, muonID::muonTight, coneSize::R04, corrType::deltaBeta) ) ? 1 : 0;
+    int isTight = ( miniAODhelper.isGoodMuon(*iMu, 25.0 , 2.1, muonID::muonTight, coneSize::R04, corrType::deltaBeta) ) ? 1 : 0;
     int isLoose = ( miniAODhelper.isGoodMuon(*iMu, looseLeptonPt, 2.4, muonID::muonTightDL, coneSize::R04, corrType::deltaBeta) ) ? 1 : 0;
 
     int isPhys14L = false;
@@ -1087,8 +1087,10 @@ if(outputwords)cout<<selectedElectrons_tight.at(0).genLepton()->pdgId();
     int trkCharge = -99;
     if( iEle->gsfTrack().isAvailable() ) trkCharge = iEle->gsfTrack()->charge();
 
-    int isTight = ( miniAODhelper.isGoodElectron(*iEle, minTightLeptonPt, 2.1, electronID::electronTight) ) ? 1 : 0;
-    int isLoose = ( miniAODhelper.isGoodElectron(*iEle, looseLeptonPt, 2.4, electronID::electronLoose) ) ? 1 : 0;
+    const double ElTightPTCut = 30 ;
+    const double ElLoosePTCut = 15 ;
+    int isTight = ( miniAODhelper.isGoodElectron(*iEle, ElTightPTCut, 2.1, electronID::electronEndOf15MVA80iso0p15 ) ) ? 1 : 0;
+    int isLoose = ( miniAODhelper.isGoodElectron(*iEle, ElLoosePTCut, 2.4, electronID::electronEndOf15MVA80iso0p15) ) ? 1 : 0;
 
     int isPhys14L = ( miniAODhelper.isGoodElectron(*iEle, looseLeptonPt, 2.4, electronID::electronPhys14L) ) ? 1 : 0;
     int isPhys14M = ( miniAODhelper.isGoodElectron(*iEle, looseLeptonPt, 2.4, electronID::electronPhys14M) ) ? 1 : 0;
@@ -1909,7 +1911,7 @@ jcntn++;
       
       
 
-      jet_combinedMVABJetTags.push_back( iJet->bDiscriminator("combinedMVABJetTags") );
+      jet_combinedMVABJetTags.push_back( iJet->bDiscriminator("pfCombinedMVAV2BJetTags") );
       jet_combinedInclusiveSecondaryVertexV2BJetTags.push_back( iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") );
 
       // Second Loop over selected jets
@@ -2002,7 +2004,7 @@ jcntn++;
 
       jet_all_flavour.push_back(iJet->partonFlavour());
 
-      jet_loose_combinedMVABJetTags.push_back( iJet->bDiscriminator("combinedMVABJetTags") );
+      jet_loose_combinedMVABJetTags.push_back( iJet->bDiscriminator("pfCombinedMVAV2BJetTags") );
       jet_loose_combinedInclusiveSecondaryVertexV2BJetTags.push_back( iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") );
 
       // MHT

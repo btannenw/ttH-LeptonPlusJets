@@ -169,6 +169,12 @@ struct yggdrasilEventVars{
   vvdouble higgsfatJet_vect_TLV_;
   std::vector<vvdouble> higgsfilterjet_all_vect_TLV_;
   vvdouble csv_filterjet_all_;
+  
+  //Only used in slimTree Code
+  
+  vint lepnums_;
+  
+  
 
   void initialize();
 
@@ -311,6 +317,8 @@ void yggdrasilEventVars::initialize(){
   higgsfatJet_vect_TLV_.clear();
   higgsfilterjet_all_vect_TLV_.clear();
   csv_filterjet_all_.clear();
+  
+  lepnums_.clear();
 
   return;
 }

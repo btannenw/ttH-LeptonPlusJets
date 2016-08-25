@@ -1,7 +1,7 @@
 {
 
   TString makeshared(gSystem->GetMakeSharedLib());
-  TString dummy = makeshared.ReplaceAll("-W ", "");
+  TString dummy1 = makeshared.ReplaceAll("-W ", "");
   gSystem->SetMakeSharedLib(makeshared);
   //TString dummy = makeshared.ReplaceAll("-Wshadow ", "");
   TString dummy = makeshared.ReplaceAll("-Wshadow ", "-std=c++0x ");

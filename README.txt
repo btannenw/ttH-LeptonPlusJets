@@ -116,6 +116,9 @@ lepton_scEta_   : Electron Super Cluster. For muon, -99 is filled.
  Muon POG loose ID is not used at the moment. Always 1.
  Electron POG tight=MVA80. Loose=MVA90.
 
+lepnums_  : number of tight/loose leptons [*2]
+
+[2*] not used in YggdrasilTupleMaker(and not filled) but needed by "AnalysisCode/macros/Yggdrasil_Slim.C"
 
 Reconstructed ak4 jet.
  

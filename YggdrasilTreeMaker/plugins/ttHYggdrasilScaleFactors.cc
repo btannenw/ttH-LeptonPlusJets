@@ -74,7 +74,7 @@ void ttHYggdrasilScaleFactors::init_TrigMuSF(){
 void ttHYggdrasilScaleFactors::init_ElectronSF(){
   
   {
-    std::string input = SFfileDir +"/" + "eleRECO.txt.egamma_SF2D.root";
+    std::string input = SFfileDir +"/" + "egammaEffi.txt_SF2D____ICHEP12p9invfb.root";
     h_EleSF_ID = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
   }
   { 

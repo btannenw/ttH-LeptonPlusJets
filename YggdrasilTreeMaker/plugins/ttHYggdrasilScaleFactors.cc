@@ -49,17 +49,18 @@ void ttHYggdrasilScaleFactors::init_all(){
 void ttHYggdrasilScaleFactors::init_TrigElSF(){
 
   {
-    std::string input = SFfileDir +"/" + "eleTrig_SF.root";
-    h_EleSF_Trig = (TH2F*) getTH2HistogramFromFile( input , std::string ("h_eleTrig_SF") );
+    std::string input = SFfileDir +"/" + "ElTriggerPerformance_Aug25.root";
+    // When I switch to official one, I need to use electron cluster eta. See the code where the histogram 'h_EleSF_Trig' is used.
+    h_EleSF_Trig = (TH2F*) getTH2HistogramFromFile( input , std::string ("electrontrig_sf_eta_pt") );
   }
 
 }
 void ttHYggdrasilScaleFactors::init_TrigMuSF(){
 
   {
-    std::string input = SFfileDir +"/" + "SingleMuonTrigger_Z_RunCD_Reco76X_Feb15.root";
-    h_MuSF_Trig_HLTv4p2 = (TH2D*) getTH2HistogramFromFile( input , std::string ("runD_IsoMu20_OR_IsoTkMu20_HLTv4p2_PtEtaBins/abseta_pt_ratio") );
-    h_MuSF_Trig_HLTv4p3 = (TH2D*) getTH2HistogramFromFile( input , std::string ("runD_IsoMu20_OR_IsoTkMu20_HLTv4p3_PtEtaBins/abseta_pt_ratio") );
+    std::string input = SFfileDir +"/" + "MuonTriggerPerformance_Aug25.root";
+    h_MuSF_Trig_HLTv4p2 = (TH2F*) getTH2HistogramFromFile( input , std::string ("muontrig_sf_abseta_pt") );
+    h_MuSF_Trig_HLTv4p3 = (TH2F*) getTH2HistogramFromFile( input , std::string ("muontrig_sf_abseta_pt") );
   }
 
   // Root file taken from https://twiki.cern.ch/twiki/bin/view/CMS/MuonWorkInProgressAndPagResults?rev=15
@@ -590,10 +591,14 @@ double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * even
   for( unsigned int i = 0 ; i < event->leptonsIsMuon().size() ; i++ ){
     if( event->leptonsIsMuon().at( i ) != 0 ) continue ; 
     
-    const double sc_eta =  event->leptonsSCEta().at(i); 
+    //tmp    const double sc_eta =  event->leptonsSCEta().at(i); 
     const double pt     =  event->leptons().at( i )->Pt() ; 
     
-    weight *= GetBinValueFromXYValues( h_EleSF_Trig , pt ,  sc_eta ); // <- Unlike Reco/Iso SF, x=PT and y=SC_Eta.
+    //tmp    weight *= GetBinValueFromXYValues( h_EleSF_Trig , pt ,  sc_eta ); // <- Unlike Reco/Iso SF, x=PT and y=SC_Eta.
+
+    // temporal code to use satoshi's SF : 
+    const double eta =  event->leptons().at(i)->Eta();; 
+    weight *= GetBinValueFromXYValues( h_EleSF_Trig , eta, pt ); // <- Satoshi's histogram has different order
     
   }
   return weight ;

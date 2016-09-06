@@ -87,8 +87,8 @@ class ttHYggdrasilScaleFactors{
   TH2D * h_MuSF_Iso ;
 
   // Trif SF
-  TH2F * h_MuSF_Trig_HLTv4p2;
-  TH2F * h_MuSF_Trig_HLTv4p3;
+  TH2D * h_MuSF_Trig_HLTv4p2;
+  TH2D * h_MuSF_Trig_HLTv4p3;
   TH2F * h_EleSF_Trig;
 
   // Trig Efficiency

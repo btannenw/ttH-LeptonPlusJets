@@ -20,7 +20,7 @@ ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors(){
   SFfileDir =
     (std::string(getenv("CMSSW_BASE")) + "/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/" );
 #endif
-  PileupHistogram . assign( "PileupHistogram_EventSync_Spring16.root" );
+  PileupHistogram . assign( "Data_E_and_F.root" );
 
   init_all();
 
@@ -29,7 +29,7 @@ ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors(){
 ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors( char * sf_file_directory ){
 
   SFfileDir .assign( sf_file_directory );
-  PileupHistogram . assign( "PileupHistogram_EventSync_Spring16.root" );
+  PileupHistogram . assign( "Data_E_and_F.root" );
 
   init_all();
 

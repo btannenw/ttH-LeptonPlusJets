@@ -270,8 +270,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
   // new MVAelectron
   EDMElectronsToken = consumes< edm::View<pat::Electron> >(edm::InputTag("slimmedElectrons","",""));
-  EDMeleMVAvaluesToken           = consumes<edm::ValueMap<float> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring15Trig25nsV1Values",""));
-  EDMeleMVAcategoriesToken       = consumes<edm::ValueMap<int> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring15Trig25nsV1Categories",""));
+  EDMeleMVAvaluesToken           = consumes<edm::ValueMap<float> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values",""));
+  EDMeleMVAcategoriesToken       = consumes<edm::ValueMap<int> >(edm::InputTag("electronMVAValueMapProducer",  "ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories",""));
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
   electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
@@ -1153,8 +1153,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     if( iEle->gsfTrack().isAvailable() ) trkCharge = iEle->gsfTrack()->charge();
 
 
-    int isPOGTight = miniAODhelper.PassesNonTrigMVAid80(*iEle ) ? 1 : 0  ;
-    int isPOGLoose = miniAODhelper.PassesMVAid80(*iEle ) ? 1 : 0  ;
+    int isPOGTight = miniAODhelper.PassesGeneralPurposeMVA2016WP80(*iEle ) ? 1 : 0  ;
+    int isPOGLoose = miniAODhelper.PassesGeneralPurposeMVA2016WP90(*iEle ) ? 1 : 0  ;
 
     // our pre-selections 
     if( iEle->pt() < 15 ){ continue;}

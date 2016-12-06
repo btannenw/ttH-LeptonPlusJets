@@ -338,11 +338,6 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, isData);
 
-  if( usePUPPI ){
-    miniAODhelper.SetJetCorrectorUncertainty();
-  }else{
-    miniAODhelper.SetJetCorrectorUncertainty();
-  }
    // miniAODhelper.SetUpElectronMVA("MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB1_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB2_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EE_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml");
   
 
@@ -1341,6 +1336,64 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     case 18: iSysType = sysType::CSVLFStats1down; break;
     case 19: iSysType = sysType::CSVLFStats2up;   break;
     case 20: iSysType = sysType::CSVLFStats2down; break;
+      
+      // JES up 
+    case 25 : iSysType =  sysType::JESPileUpDataMCup; break ;
+    case 26 : iSysType =  sysType::JESPileUpPtRefup; break ;
+    case 27 : iSysType =  sysType::JESPileUpPtBBup; break ;
+    case 28 : iSysType =  sysType::JESPileUpPtEC1up; break ;
+    case 29 : iSysType =  sysType::JESPileUpPtEC2up; break ;
+    case 30 : iSysType =  sysType::JESPileUpPtHFup; break ;
+    case 31 : iSysType =  sysType::JESRelativeJEREC1up; break ;
+    case 32 : iSysType =  sysType::JESRelativeJEREC2up; break ;
+    case 33 : iSysType =  sysType::JESRelativeJERHFup; break ;
+    case 34 : iSysType =  sysType::JESRelativeFSRup; break ;
+    case 35 : iSysType =  sysType::JESRelativeStatFSRup; break ;
+    case 36 : iSysType =  sysType::JESRelativeStatEC2up; break ;
+    case 37 : iSysType =  sysType::JESRelativeStatECup; break ;
+    case 38 : iSysType =  sysType::JESRelativeStatHFup; break ;
+    case 39 : iSysType =  sysType::JESRelativePtBBup; break ;
+    case 40 : iSysType =  sysType::JESRelativePtEC1up; break ;
+    case 41 : iSysType =  sysType::JESRelativePtEC2up; break ;
+    case 42 : iSysType =  sysType::JESRelativePtHFup; break ;
+    case 43 : iSysType =  sysType::JESTimeEtaup; break ;
+    case 44 : iSysType =  sysType::JESAbsoluteScaleup; break ;
+    case 45 : iSysType =  sysType::JESAbsoluteMPFBiasup; break ;
+    case 46 : iSysType =  sysType::JESAbsoluteStatup; break ;
+    case 47 : iSysType =  sysType::JESSinglePionECALup; break ;
+    case 48 : iSysType =  sysType::JESSinglePionHCALup; break ;
+    case 49 : iSysType =  sysType::JESFragmentationup; break ;
+    case 50 : iSysType =  sysType::JESTimePtup; break ;
+    case 51 : iSysType =  sysType::JESFlavorQCDup; break ;
+
+    case 52 : iSysType =  sysType::JESPileUpDataMCdown; break ;
+    case 53 : iSysType =  sysType::JESPileUpPtRefdown; break ;
+    case 54 : iSysType =  sysType::JESPileUpPtBBdown; break ;
+    case 55 : iSysType =  sysType::JESPileUpPtEC1down; break ;
+    case 56 : iSysType =  sysType::JESPileUpPtEC2down; break ;
+    case 57 : iSysType =  sysType::JESPileUpPtHFdown; break ;
+    case 58 : iSysType =  sysType::JESRelativeJEREC1down; break ;
+    case 59 : iSysType =  sysType::JESRelativeJEREC2down; break ;
+    case 60 : iSysType =  sysType::JESRelativeJERHFdown; break ;
+    case 61 : iSysType =  sysType::JESRelativeFSRdown; break ;
+    case 62 : iSysType =  sysType::JESRelativeStatFSRdown; break ;
+    case 63 : iSysType =  sysType::JESRelativeStatEC2down; break ;
+    case 64 : iSysType =  sysType::JESRelativeStatECdown; break ;
+    case 65 : iSysType =  sysType::JESRelativeStatHFdown; break ;
+    case 66 : iSysType =  sysType::JESRelativePtBBdown; break ;
+    case 67 : iSysType =  sysType::JESRelativePtEC1down; break ;
+    case 68 : iSysType =  sysType::JESRelativePtEC2down; break ;
+    case 69 : iSysType =  sysType::JESRelativePtHFdown; break ;
+    case 70 : iSysType =  sysType::JESTimeEtadown; break ;
+    case 71 : iSysType =  sysType::JESAbsoluteScaledown; break ;
+    case 72 : iSysType =  sysType::JESAbsoluteMPFBiasdown; break ;
+    case 73 : iSysType =  sysType::JESAbsoluteStatdown; break ;
+    case 74 : iSysType =  sysType::JESSinglePionECALdown; break ;
+    case 75 : iSysType =  sysType::JESSinglePionHCALdown; break ;
+    case 76 : iSysType =  sysType::JESFragmentationdown; break ;
+    case 77 : iSysType =  sysType::JESTimePtdown; break ;
+    case 78 : iSysType =  sysType::JESFlavorQCDdown; break ;
+
     default: iSysType = sysType::NA;       break;
     }
 
@@ -1350,12 +1403,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     ///
     ////////
 
-    std::vector<pat::Jet> correctedJets = ( !(iSys>=5 && iSys<=8) ) ? correctedJets_noSys : miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType);
-    std::vector<pat::Jet> selectedJets_unsorted = ( !(iSys>=5 && iSys<=8) ) ? selectedJets_noSys_unsorted : miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 , jetID::none, '-' );
+    std::vector<pat::Jet> correctedJets = ( ! sysType::isJECUncertainty( iSysType ) ) ? correctedJets_noSys : miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType);
+    std::vector<pat::Jet> selectedJets_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_noSys_unsorted : miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 , jetID::none, '-' );
 
 
     // Get CSVM tagged jet collection
-    std::vector<pat::Jet> selectedJets_tag_unsorted = ( !(iSys>=5 && iSys<=8) ) ? selectedJets_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 2.4, jetID::none, 'M' );
+    std::vector<pat::Jet> selectedJets_tag_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 2.4, jetID::none, 'M' );
 
     // Get nontagged jet collection
     std::vector<pat::Jet> selectedJets_untag_unsorted = selectedJets_tag_unsorted;//miniAODhelper.GetSelectedJets( correctedJets, 20., 2.4, jetID::none, 'M' ); 
@@ -1549,10 +1602,10 @@ n_fatjets++;
 
 
     // Add loose jet container
-    std::vector<pat::Jet> selectedJets_loose_unsorted = ( !(iSys>=5 && iSys<=8) ) ? selectedJets_loose_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, '-' );
+    std::vector<pat::Jet> selectedJets_loose_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_loose_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, '-' );
     std::vector<pat::Jet> selectedJets_loose = miniAODhelper.GetSortedByPt( selectedJets_loose_unsorted );
 
-    std::vector<pat::Jet> selectedJets_loose_tag_unsorted = ( !(iSys>=5 && iSys<=8) ) ? selectedJets_loose_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, 'M' );
+    std::vector<pat::Jet> selectedJets_loose_tag_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_loose_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, 'M' );
 
     
     // MET
@@ -1842,6 +1895,13 @@ YggdrasilTreeMaker::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup
     return;
   }
 
+  std::cout <<"[debug message ]YggdrasilTreeMaker::beginRun() is called." << std::endl ; 
+  if( usePUPPI ){
+    miniAODhelper.UpdateJetCorrectorUncertainties( iSetup );
+  }else{
+    miniAODhelper.UpdateJetCorrectorUncertainties( iSetup );
+  }
+  std::cout <<"[debug message ]YggdrasilTreeMaker::beginRun() was called." << std::endl ; 
 }
 
 

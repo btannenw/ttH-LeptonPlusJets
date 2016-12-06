@@ -44,18 +44,20 @@ scram b -j 10 ;
 
 # - - - Our yggdrasil code - - - 
 
-git clone https://github.com/cms-ttH/ttH-LeptonPlusJets.git
-# or, use your branch, such as 
-#   git clone git@github.com:hsatoshi/ttH-LeptonPlusJets.git
-
-git clone https://github.com/hsatoshi/MiniAOD.git -b satoshi__CMSSW_8_0_8__ImplementNonTrigMvaElTrig
+git clone https://github.com/hsatoshi/MiniAOD.git -b satoshi_8020
 git clone https://github.com/hsatoshi/GenParticleTopOriginChargedleptonFilter.git ttHAnalysisSubprogram/GenParticleTopOriginChargedleptonFilter
 git clone https://github.com/hsatoshi/PuppiLeptonIsolationhelper.git
 
 scram b -j 10 ;
 # You may need to repeat scram several times (not only twice)...
 
+git clone https://github.com/cms-ttH/ttH-LeptonPlusJets.git
+# or, use your branch, such as 
+#   git clone git@github.com:hsatoshi/ttH-LeptonPlusJets.git
 
+cd ttH-LeptonPlusJets/YggdrasilTreeMaker
+scram b -j 10 ;
+# You may need to repeat scram several times (not only twice)...
 
 +++++++++++++++++
 +++ Selection +++

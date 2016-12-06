@@ -406,9 +406,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
    eve->initialize();
 
 
-  double minTightLeptonPt = ( isLJ_ ) ? 30. : 20.;
-  double looseLeptonPt = 10.;
-
   edm::Handle<reco::VertexCollection> vtxHandle;
   iEvent.getByToken(vertexToken,vtxHandle);
   reco::VertexCollection vtxs = *vtxHandle;
@@ -826,14 +823,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   
   // miniAODhelper.SetElectronMVAinfo(h_conversioncollection, bsHandle);
   
-  minTightLeptonPt = 30.0;
-  looseLeptonPt = 15.0;
-  
-  //std::vector<pat::Electron> selectedElectrons_tight = miniAODhelper.GetSelectedElectrons( *electrons, minTightLeptonPt, electronID::electronEndOf15MVAmedium, 2.1 );
-  std::vector<pat::Electron> selectedElectrons_tight = miniAODhelper.GetSelectedElectrons( electrons, minTightLeptonPt, electronID::electronEndOf15MVA80iso0p15, 2.1 );
-  std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( electrons, looseLeptonPt, electronID::electronEndOf15MVA80iso0p15, 2.4 );
-
-
   /////////
   ///
   /// Muons

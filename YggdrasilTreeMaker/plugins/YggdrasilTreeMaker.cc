@@ -741,7 +741,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   if( !firstGoodPV ){
     std::cout << "[NOTE] First PV does not pass requirements. Skipping event" << std::endl;
-    return;
+    //    return;
   }
 
   if( numpv>0 ) miniAODhelper.SetVertex(vertex);

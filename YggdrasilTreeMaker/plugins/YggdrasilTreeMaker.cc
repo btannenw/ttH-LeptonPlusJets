@@ -1653,7 +1653,7 @@ n_fatjets++;
   //
   worldTree->Fill();
 
-  {
+  if( false ){
 
     selection . EnableInfoDumpForDebug();
 

@@ -5,7 +5,7 @@ echo ""
 echo ""
 echo "# - - - - - - - "
 echo remove large files from directory to submit jobs.
-rm -rf ../../AnalysisCode/data/Train*/*root
+rm -rf ../../AnalysisCode/data/*
 echo " Removing large file is done..."
 echo "# - - - - - - "
 
@@ -18,7 +18,7 @@ diff yggdrasil_treeMaker_cfg.py __yggdrasil_treeMaker_MCTTBAR_cfg.py
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" > __yggdrasil_treeMaker_DATA_cfg.py 
 diff yggdrasil_treeMaker_cfg.py __yggdrasil_treeMaker_DATA_cfg.py
 
-nickname="Satoshi_Moriond17_YggDec8_v1"
+nickname="Satoshi_Moriond17_YggDec8_v5"
 
 
 JobIndexList=""
@@ -30,7 +30,7 @@ ds[4]=/SingleElectron/Run2016E-23Sep2016-v1/MINIAOD
 ds[5]=/SingleElectron/Run2016F-23Sep2016-v1/MINIAOD
 ds[6]=/SingleElectron/Run2016G-23Sep2016-v1/MINIAOD
 ds[7]=/SingleElectron/Run2016H-PromptReco-v2/MINIAOD
-ds[7]=/SingleElectron/Run2016H-PromptReco-v3/MINIAOD
+ds[8]=/SingleElectron/Run2016H-PromptReco-v3/MINIAOD
 
 
 name[1]=DataElB

@@ -115,36 +115,36 @@ ismc[26]=MC
 
 JobIndexList=${JobIndexList}" 21 22   24 26 25"
 
-# HLT = HLT, not HLT2
-ds[5]=/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM
-name[5]=ttbar
-ismc[5]=MC
-
-# HLT = HLT, not HLT2
-ds[5]=/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM
-name[5]=ttbar
-ismc[5]=MC
-
-
-# HLT = HLT, not HLT2
-ds[5]=/TTToSemiLeptonic_TuneCUETP8M1T4_alphaS01108_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM
-name[5]=ttbar
-ismc[5]=MC
-
-# HLT = HLT, not HLT2
-ds[5]=/TTTo2L2Nu_TuneCUETP8M1T4_alphaS01108_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM
-name[5]=ttbar
-ismc[5]=MC
-
-# HLT = HLT, not HLT2
-ds[5]=/TTTo2L2Nu_13TeV-powheg/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/MINIAODSIM
-name[5]=ttbar
-ismc[5]=MC
-
-# HLT = HLT, not HLT2
-ds[5]=/TTToSemiLeptonic_13TeV-powheg/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v2/MINIAODSIM
-name[5]=ttbar
-ismc[5]=MC
+#   # HLT = HLT, not HLT2
+#   ds[5]=/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM
+#   name[5]=ttbar
+#   ismc[5]=MC
+#   
+#   # HLT = HLT, not HLT2
+#   ds[5]=/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM
+#   name[5]=ttbar
+#   ismc[5]=MC
+#   
+#   
+#   # HLT = HLT, not HLT2
+#   ds[5]=/TTToSemiLeptonic_TuneCUETP8M1T4_alphaS01108_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM
+#   name[5]=ttbar
+#   ismc[5]=MC
+#   
+#   # HLT = HLT, not HLT2
+#   ds[5]=/TTTo2L2Nu_TuneCUETP8M1T4_alphaS01108_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM
+#   name[5]=ttbar
+#   ismc[5]=MC
+#   
+#   # HLT = HLT, not HLT2
+#   ds[5]=/TTTo2L2Nu_13TeV-powheg/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/MINIAODSIM
+#   name[5]=ttbar
+#   ismc[5]=MC
+#   
+#   # HLT = HLT, not HLT2
+#   ds[5]=/TTToSemiLeptonic_13TeV-powheg/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v2/MINIAODSIM
+#   name[5]=ttbar
+#   ismc[5]=MC
 
 
 # 
@@ -230,6 +230,8 @@ ismc[5]=MC
 
 for idx in ` echo $JobIndexList `
 do
+
+echo ${name[${idx}]}
 
 
 if [ ${ismc[$idx]} == "MC" ]

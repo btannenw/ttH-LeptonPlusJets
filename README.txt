@@ -59,6 +59,14 @@ cd ttH-LeptonPlusJets/YggdrasilTreeMaker
 scram b -j 10 ;
 # You may need to repeat scram several times (not only twice)...
 
+# If you submit crab job,
+# 
+cd $CMSSW_SRC
+cp -rv ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/data/Spring16_HZZ_V1 RecoEgamma/ElectronIdentification/data/Spring16_HZZ_V1
+
+
+
+
 +++++++++++++++++
 +++ Selection +++
 +++++++++++++++++

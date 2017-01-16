@@ -256,7 +256,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
   if( isMC ){
     filterTag = "PAT";
-    hltTag = "HLT2";
+    hltTag = "HLT";
   }else{
     filterTag = "HLT";
     hltTag = "HLT";

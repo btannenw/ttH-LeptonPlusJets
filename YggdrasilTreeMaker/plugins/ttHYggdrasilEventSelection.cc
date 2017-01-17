@@ -10,7 +10,7 @@
 
 ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
 
- Thre_TightMu_PT  = 25.0 ;
+ Thre_TightMu_PT  = 26.0 ;
  Thre_LooseMu_PT  = 15.0;
 
  Thre_TightMu_Eta = 2.1 ;
@@ -31,7 +31,7 @@ ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
  Thre_Jet_PT      = 30.0;
  Thre_Jet_Eta     =  2.4;
 
- Thre_Jet_Btag    =  0.800;
+ Thre_Jet_Btag    =  0.8484;
 
  b_InfoDumpForDebug = false ;
 

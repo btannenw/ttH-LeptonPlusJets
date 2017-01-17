@@ -40,7 +40,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 if isMC:
     process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v7' ##'80X_mcRun2_asymptotic_2016_miniAODv2_v1'
 else :
-    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v6' ##'80X_dataRun2_Prompt_ICHEP16JEC_v0'
+    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v6' ## Period B-G
+#    process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v15' ## Period H
 
 
 

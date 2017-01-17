@@ -1153,8 +1153,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     if( iEle->gsfTrack().isAvailable() ) trkCharge = iEle->gsfTrack()->charge();
 
 
-    int isPOGTight = miniAODhelper.PassesGeneralPurposeMVA2016WP80(*iEle ) ? 1 : 0  ;
-    int isPOGLoose = miniAODhelper.PassesGeneralPurposeMVA2016WP90(*iEle ) ? 1 : 0  ;
+    int isPOGTight = miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedM ) ? 1 : 0  ;
+    int isPOGLoose = miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedL ) ? 1 : 0  ;
+
 
     // our pre-selections 
     if( iEle->pt() < 15 ){ continue;}
@@ -1233,8 +1234,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_eta.push_back(iEle->eta());
     lepton_phi.push_back(iEle->phi());
     lepton_e.push_back(iEle->energy());
-    lepton_relIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::spring15) );
-    lepton_puppirelIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::spring15) );
+    lepton_relIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::spring16) );
+    lepton_puppirelIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::spring16) );
     lepton_iso_sumChargedHadronPt.push_back(iEle->pfIsolationVariables().sumChargedHadronPt);
     lepton_iso_sumNeutralHadronEt.push_back(iEle->pfIsolationVariables().sumNeutralHadronEt);
     lepton_iso_sumPhotonEt.push_back(iEle->pfIsolationVariables().sumPhotonEt);

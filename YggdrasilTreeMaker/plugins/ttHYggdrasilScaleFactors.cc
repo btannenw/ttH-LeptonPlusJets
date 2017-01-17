@@ -20,7 +20,7 @@ ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors(){
   SFfileDir =
     (std::string(getenv("CMSSW_BASE")) + "/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/" );
 #endif
-  PileupHistogram . assign( "PileupHistogram_EventSync_Spring16.root" );
+  PileupHistogram . assign( "PileupHistogram_Moriond17.root" );
 
   init_all();
 
@@ -29,7 +29,7 @@ ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors(){
 ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors( char * sf_file_directory ){
 
   SFfileDir .assign( sf_file_directory );
-  PileupHistogram . assign( "PileupHistogram_EventSync_Spring16.root" );
+  PileupHistogram . assign( "PileupHistogram_Moriond17.root" );
 
   init_all();
 
@@ -422,69 +422,23 @@ double ttHYggdrasilScaleFactors::get_csv_wgt( ttHYggdrasilEventSelection * event
 void ttHYggdrasilScaleFactors::init_Pileup(){
 
   // Setting numbers here is just a temporal workaround.
-  double PU_MC[50] = {  0.000829312873542,
-		      0.00124276120498,
-		      0.00339329181587,
-		      0.00408224735376,
-		      0.00383036590008,
-		      0.00659159288946,
-		      0.00816022734493,
-		      0.00943640833116,
-		      0.0137777376066,
-		      0.017059392038,
-		      0.0213193035468,
-		      0.0247343174676,
-		      0.0280848773878,
-		      0.0323308476564,
-		      0.0370394341409,
-		      0.0456917721191,
-		      0.0558762890594,
-		      0.0576956187107,
-		      0.0625325287017,
-		      0.0591603758776,
-		      0.0656650815128,
-		      0.0678329011676,
-		      0.0625142146389,
-		      0.0548068448797,
-		      0.0503893295063,
-		      0.040209818868,
-		      0.0374446988111,
-		      0.0299661572042,
-		      0.0272024759921,
-		      0.0219328403791,
-		      0.0179586571619,
-		      0.0142926728247,
-		      0.00839941654725,
-		      0.00522366397213,
-		      0.00224457976761,
-		      0.000779274977993,
-		      0.000197066585944,
-		      7.16031761328e-05,
-		      0.0,
-		      0.0,
-		      0.0,
-		      0.0,
-		      0.0,
-		      0.0,
-		      0.0,
-		      0.0,
-		      0.0,
-		      0.0,
-		      0.0,
-		      0.0 };
+  double PU_MC[75] = {
+    // values from https://github.com/cms-sw/cmssw/blob/7c04e20a023bb47d86f417f6e13bc41dee6890ee/SimGeneral/MixingModule/python/mix_2016_25ns_Moriond17MC_PoissonOOTPU_cfi.py#L25
+    1.78653e-05 ,2.56602e-05 ,5.27857e-05 ,8.88954e-05 ,0.000109362 ,0.000140973 ,0.000240998 ,0.00071209 ,0.00130121 ,0.00245255 ,0.00502589 ,0.00919534 ,0.0146697 ,0.0204126 ,0.0267586 ,0.0337697 ,0.0401478 ,0.0450159 ,0.0490577 ,0.0524855 ,0.0548159 ,0.0559937 ,0.0554468 ,0.0537687 ,0.0512055 ,0.0476713 ,0.0435312 ,0.0393107 ,0.0349812 ,0.0307413 ,0.0272425 ,0.0237115 ,0.0208329 ,0.0182459 ,0.0160712 ,0.0142498 ,0.012804 ,0.011571 ,0.010547 ,0.00959489 ,0.00891718 ,0.00829292 ,0.0076195 ,0.0069806 ,0.0062025 ,0.00546581 ,0.00484127 ,0.00407168 ,0.00337681 ,0.00269893 ,0.00212473 ,0.00160208 ,0.00117884 ,0.000859662 ,0.000569085 ,0.000365431 ,0.000243565 ,0.00015688 ,9.88128e-05 ,6.53783e-05 ,3.73924e-05 ,2.61382e-05 ,2.0307e-05 ,1.73032e-05 ,1.435e-05 ,1.36486e-05 ,1.35555e-05 ,1.37491e-05 ,1.34255e-05 ,1.33987e-05 ,1.34061e-05 ,1.34211e-05 ,1.34177e-05 ,1.32959e-05 ,1.33287e-05
+  };
 
 
     { 
       double total = 0 ;
-      for( int i = 0 ; i < 50 ; i ++ ){
+      for( int i = 0 ; i < 75 ; i ++ ){
 	total += PU_MC[ i ];
       }
-      for( int i = 0 ; i < 50 ; i ++ ){
+      for( int i = 0 ; i < 75 ; i ++ ){
 	PU_MC[ i ] /= total;
       }
     }
 
-    double PU_DATA[50] ;
+    double PU_DATA[75] ;
     {
       TH1D * h;
       TFile * f = TFile::Open( (SFfileDir + "/" + PileupHistogram ).c_str() );
@@ -493,7 +447,7 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
       //  pileupCalc.py -i ./../data/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt  --inputLumiJSON /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/PileUp/pileup_latest.txt --calcMode true --minBiasXsec 71300 --maxPileupBin 1000 --numPileupBins 1000    MyDataPileupHistogram.root
       
       f -> GetObject( "pileup" , h ) ;
-      for( int i = 0 ; i < 50 ; i++ ){
+      for( int i = 0 ; i < 75 ; i++ ){
 	PU_DATA[i] = h->GetBinContent( i + 1 );
       } 
     }
@@ -502,17 +456,17 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
 
     { 
       double total = 0 ;
-      for( int i = 0 ; i < 50 ; i ++ ){
+      for( int i = 0 ; i < 75 ; i ++ ){
 	total += PU_DATA[ i ];
       }
       // normalization.
-      for( int i = 0 ; i < 50 ; i ++ ){
+      for( int i = 0 ; i < 75 ; i ++ ){
 	PU_DATA[ i ] /= total;
       }
     }
 
     
-    for(int i = 0 ; i < 50 ; i ++){
+    for(int i = 0 ; i < 75 ; i ++){
       if( PU_MC[i] == 0 ){
 	PU_weight[ i ] = 0 ; 
       }else{

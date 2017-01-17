@@ -46,8 +46,8 @@ struct yggdrasilEventVars{
 
   int passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1_;
   
-  int passHLT_IsoMu20_v_;
-  int passHLT_IsoTkMu20_v_;
+  int passHLT_IsoMu24_v_;
+  int passHLT_IsoTkMu24_v_;
   int passHLT_IsoMu20_eta2p1_v_;
   int passHLT_IsoMu24_eta2p1_v_;
 
@@ -69,14 +69,16 @@ struct yggdrasilEventVars{
   int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v_;
   int passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v_;
   int passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_;
-
   int passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_;
+  int passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_;
+  int passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_;
+
 
   int passHLT_Ele25WP60_SC4_Mass55_v_;
 
-  int passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_;
-  int passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_;
-  int passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_;
+  /* int passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_; */
+  /* int passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_; */
+  /* int passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_; */
   int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_;
   int passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_;
 
@@ -196,8 +198,8 @@ void yggdrasilEventVars::initialize(){
 
   passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1_ = -99;
   
-  passHLT_IsoMu20_v_ = -99;
-  passHLT_IsoTkMu20_v_ = -99;
+  passHLT_IsoMu24_v_ = -99;
+  passHLT_IsoTkMu24_v_ = -99;
   passHLT_IsoMu20_eta2p1_v_ = -99;
   passHLT_IsoMu24_eta2p1_v_ = -99;
 
@@ -219,14 +221,15 @@ void yggdrasilEventVars::initialize(){
   passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v_ = - 99;
   passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v_ = -99;
   passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = -99;
-
   passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_ = -99;
+  passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99;
+  passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99;
 
   passHLT_Ele25WP60_SC4_Mass55_v_ = -99;
 
-  passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99 ;
-  passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = -99 ;
-  passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_ = -99 ;
+  /* passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = -99 ; */
+  /* passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = -99 ; */
+  /* passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_ = -99 ; */
   passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ = -99 ;
   passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_ = -99 ;
 

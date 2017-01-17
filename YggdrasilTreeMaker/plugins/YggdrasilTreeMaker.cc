@@ -139,11 +139,11 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT <edm::TriggerResults> filterResultsToken;
   edm::EDGetTokenT <pat::TriggerObjectStandAloneCollection> TriggerObjectStandAloneToken ;
 
-  // new MVAelectron
-  edm::EDGetTokenT< edm::View<pat::Electron> > EDMElectronsToken;
-  // MVA values and categories
-  edm::EDGetTokenT<edm::ValueMap<float> > EDMeleMVAvaluesToken;
-  edm::EDGetTokenT<edm::ValueMap<int> > EDMeleMVAcategoriesToken;
+  // // new MVAelectron
+  // edm::EDGetTokenT< edm::View<pat::Electron> > EDMElectronsToken;
+  // // MVA values and categories
+  // edm::EDGetTokenT<edm::ValueMap<float> > EDMeleMVAvaluesToken;
+  // edm::EDGetTokenT<edm::ValueMap<int> > EDMeleMVAcategoriesToken;
 
   edm::EDGetTokenT <reco::VertexCollection> vertexToken;
   edm::EDGetTokenT <pat::ElectronCollection> electronToken;
@@ -268,10 +268,10 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
     ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
 
 
-  // new MVAelectron
-  EDMElectronsToken = consumes< edm::View<pat::Electron> >(edm::InputTag("slimmedElectrons","",""));
-  EDMeleMVAvaluesToken           = consumes<edm::ValueMap<float> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values",""));
-  EDMeleMVAcategoriesToken       = consumes<edm::ValueMap<int> >(edm::InputTag("electronMVAValueMapProducer",  "ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories",""));
+  // // new MVAelectron
+  // EDMElectronsToken = consumes< edm::View<pat::Electron> >(edm::InputTag("slimmedElectrons","",""));
+  // EDMeleMVAvaluesToken           = consumes<edm::ValueMap<float> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values",""));
+  // EDMeleMVAcategoriesToken       = consumes<edm::ValueMap<int> >(edm::InputTag("electronMVAValueMapProducer",  "ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories",""));
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
   electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
@@ -282,8 +282,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   if( usePUPPI ){
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
   }else{
-    ///  jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
-    jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets"))); // for hip mitigation
+    jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+    // jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets"))); // for hip mitigation
   }
   metToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
 
@@ -306,8 +306,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   if( usePUPPI ) {
   tempjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
   }else{
-    //tempjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
-  tempjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets"))); // For hip mitigation
+    tempjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+  // tempjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets"))); // For hip mitigation
   }
   // EDMConversionCollectionToken = consumes <reco::ConversionCollection > (edm::InputTag("reducedEgamma","reducedConversions",""));
   EDMBoostedJetsToken     = consumes< boosted::BoostedJetCollection >(edm::InputTag("BoostedJetMatcher","boostedjets","p"));
@@ -406,17 +406,17 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   reco::VertexCollection vtxs = *vtxHandle;
 
   /// old way of getting electrons
-  // edm::Handle<pat::ElectronCollection> electrons;
-  // iEvent.getByToken(electronToken,electrons);
-  //// MVAelectrons
-  edm::Handle< edm::View<pat::Electron> > h_electrons;
-  iEvent.getByToken( EDMElectronsToken,h_electrons );
-  // add electron mva info to electrons
-  edm::Handle<edm::ValueMap<float> > h_mvaValues; 
-  edm::Handle<edm::ValueMap<int> > h_mvaCategories;
-  iEvent.getByToken(EDMeleMVAvaluesToken,h_mvaValues);
-  iEvent.getByToken(EDMeleMVAcategoriesToken,h_mvaCategories);  
-  std::vector<pat::Electron> electrons = miniAODhelper.GetElectronsWithMVAid(h_electrons,h_mvaValues,h_mvaCategories);
+  edm::Handle<pat::ElectronCollection> electrons;
+  iEvent.getByToken(electronToken,electrons);
+  // //// MVAelectrons
+  // edm::Handle< edm::View<pat::Electron> > h_electrons;
+  // iEvent.getByToken( EDMElectronsToken,h_electrons );
+  // // add electron mva info to electrons
+  // edm::Handle<edm::ValueMap<float> > h_mvaValues; 
+  // edm::Handle<edm::ValueMap<int> > h_mvaCategories;
+  // iEvent.getByToken(EDMeleMVAvaluesToken,h_mvaValues);
+  // iEvent.getByToken(EDMeleMVAcategoriesToken,h_mvaCategories);  
+  // std::vector<pat::Electron> electrons = miniAODhelper.GetElectronsWithMVAid(h_electrons,h_mvaValues,h_mvaCategories);
 
 
   ////
@@ -487,10 +487,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   bool passHLT_Ele27_eta2p1_WPTight_Gsf_v = false;
   
 
-  bool passHLT_IsoMu20_v = false;
+  bool passHLT_IsoMu24_v = false;
   bool passHLT_IsoMu22_v = false;
   bool passHLT_IsoTkMu22_v = false;
-  bool passHLT_IsoTkMu20_v = false;
+  bool passHLT_IsoTkMu24_v = false;
   bool passHLT_IsoMu20_eta2p1_v = false;
   bool passHLT_IsoMu24_eta2p1_v = false;
 
@@ -508,14 +508,15 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   bool passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v = false;
   bool passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v = false;
   bool passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v = false;
-
   bool passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v = false;
+  bool passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = false;
+  bool passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v = false;
 
   bool passHLT_Ele25WP60_SC4_Mass55_v = false;
 
-  bool passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = false ;
-  bool passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v = false ;
-  bool passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v = false ;
+  // bool passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = false ;
+  // bool passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v = false ;
+  // bool passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v = false ;
   bool passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v = false ;
   bool passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v = false ;
 
@@ -535,8 +536,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       
 	const unsigned long MatchedAtTheBegining = 0 ; 
 
-	if( pathName.find( "HLT_IsoMu20_v"        ,0) == MatchedAtTheBegining ){ passHLT_IsoMu20_v = true;}
-	if( pathName.find( "HLT_IsoTkMu20_v"      ,0) == MatchedAtTheBegining ){ passHLT_IsoTkMu20_v = true;}
+	if( pathName.find( "HLT_IsoMu24_v"        ,0) == MatchedAtTheBegining ){ passHLT_IsoMu24_v = true;}
+	if( pathName.find( "HLT_IsoTkMu24_v"      ,0) == MatchedAtTheBegining ){ passHLT_IsoTkMu24_v = true;}
 	if( pathName.find( "HLT_IsoMu20_eta2p1_v" ,0) == MatchedAtTheBegining ){ passHLT_IsoMu20_eta2p1_v = true;}
 	if( pathName.find( "HLT_IsoMu24_eta2p1_v" ,0) == MatchedAtTheBegining ){ passHLT_IsoMu24_eta2p1_v = true;}
 
@@ -553,14 +554,15 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	if( pathName.find( "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v"               ,0) == MatchedAtTheBegining ){ passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v = true;}
 	if( pathName.find( "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v"             ,0) == MatchedAtTheBegining ){ passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v = true;}
 	if( pathName.find( "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v",0) == MatchedAtTheBegining ){ passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v = true;}
-
 	if( pathName.find( "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v" ,0) == MatchedAtTheBegining ){ passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v = true;}
+	if( pathName.find( "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v",0) == MatchedAtTheBegining ){ passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = true;}
+	if( pathName.find( "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v" ,0) == MatchedAtTheBegining ){ passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v = true;}
 
 	if( pathName.find( "HLT_Ele25WP60_SC4_Mass55_v"                       ,0) == MatchedAtTheBegining ){ passHLT_Ele25WP60_SC4_Mass55_v = true;}
 
-	if( pathName.find( "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v"      ,0) == MatchedAtTheBegining ){ passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v        = true ; }
-	if( pathName.find( "HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v",0) == MatchedAtTheBegining ){ passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v  = true ; }
-	if( pathName.find( "HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v" ,0) == MatchedAtTheBegining ){ passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v   = true ; }
+	// if( pathName.find( "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v"      ,0) == MatchedAtTheBegining ){ passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v        = true ; }
+	// if( pathName.find( "HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v",0) == MatchedAtTheBegining ){ passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v  = true ; }
+	// if( pathName.find( "HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v" ,0) == MatchedAtTheBegining ){ passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v   = true ; }
 	if( pathName.find( "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v"            ,0) == MatchedAtTheBegining ){ passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v	        = true ; }
 	if( pathName.find( "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v"          ,0) == MatchedAtTheBegining ){ passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v            = true ; }
 	
@@ -850,8 +852,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   eve->passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1_ = ( passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1 ) ? 1 : 0;
   
-  eve->passHLT_IsoMu20_v_ =  ( passHLT_IsoMu20_v) ? 1 : 0;
-  eve->passHLT_IsoTkMu20_v_ =  ( passHLT_IsoTkMu20_v) ? 1 : 0;
+  eve->passHLT_IsoMu24_v_ =  ( passHLT_IsoMu24_v) ? 1 : 0;
+  eve->passHLT_IsoTkMu24_v_ =  ( passHLT_IsoTkMu24_v) ? 1 : 0;
   eve->passHLT_IsoMu20_eta2p1_v_ = ( passHLT_IsoMu20_eta2p1_v ) ? 1 : 0;
   eve->passHLT_IsoMu24_eta2p1_v_ = ( passHLT_IsoMu24_eta2p1_v ) ? 1 : 0;
   
@@ -867,15 +869,17 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->passHLT_Mu30_TkMu11_v_ = ( passHLT_Mu30_TkMu11_v ) ? 1 : 0;
   eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v_ = ( passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v ) ? 1 : 0;
   eve->passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v_ = ( passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v ) ? 1 : 0;
+
   eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = ( passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v ) ? 1 : 0;
-  
   eve->passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_ = ( passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v ) ? 1 : 0;
+  eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ = ( passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v ) ? 1 : 0;
+  eve->passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ = ( passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v ) ? 1 : 0;
   
   eve->passHLT_Ele25WP60_SC4_Mass55_v_ = ( passHLT_Ele25WP60_SC4_Mass55_v ) ? 1 : 0;
 
-  eve->passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_       = ( passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v       ) ? 1 : 0 ;
-  eve->passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = ( passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v ) ? 1 : 0 ;
-  eve->passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_  = ( passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v  ) ? 1 : 0 ;
+  // eve->passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_       = ( passHLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v       ) ? 1 : 0 ;
+  // eve->passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ = ( passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v ) ? 1 : 0 ;
+  // eve->passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_  = ( passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v  ) ? 1 : 0 ;
   eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_		    = ( passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v	      ) ? 1 : 0 ;
   eve->passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_           = ( passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v           ) ? 1 : 0 ;
 
@@ -1133,7 +1137,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   }
 
   // Loop over electrons
-  for( std::vector<pat::Electron>::const_iterator iEle = electrons.begin(); iEle != electrons.end(); iEle++ ){ 
+  // for( std::vector<pat::Electron>::const_iterator iEle = electrons.begin(); iEle != electrons.end(); iEle++ ){ 
+  for( std::vector<pat::Electron>::const_iterator iEle = electrons->begin(); iEle != electrons->end(); iEle++ ){ 
 
     int genId=-99, genParentId=-99, genGrandParentId=-99;
     if( (iEle->genLepton()) ){
@@ -1660,15 +1665,23 @@ n_fatjets++;
     // -----------------------
     // start setting variables --> 
 
-    int MuTrig = ( eve->passHLT_IsoMu22_v_ == 1 || eve->passHLT_IsoTkMu22_v_ == 1 ) ? 1 : 0 ; 
+    int MuTrig = ( eve->passHLT_IsoMu24_v_ == 1 || eve->passHLT_IsoTkMu24_v_ == 1 ) ? 1 : 0 ; 
     // Dilep Trig
-    int ElMuTrig = ( eve->passHLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ ==1 
+    int ElMuTrig = ( eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ ==1 
 		     ||
-		     eve->passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_ == 1 
+		     eve->passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_ == 1 
+		     ||
+		     eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ ==1 
+		     ||
+		     eve->passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ == 1 
 		     ) ? 1 : 0 ; 
     int MuMuTrig = ( eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_
 		     ||
 		     eve->passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_ 
+		     ||
+		     eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v_
+		     ||
+		     eve->passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v_ 
 		     ) ? 1 : 0 ;
 
     selection . SetElTrigger( & eve->passHLT_Ele27_eta2p1_WPTight_Gsf_v_ );

@@ -38,15 +38,15 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 
 # Update global tag based on : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions?rev=568
 if isMC:
-    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
+    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v7' ##'80X_mcRun2_asymptotic_2016_miniAODv2_v1'
 else :
-    process.GlobalTag.globaltag = '80X_dataRun2_Prompt_ICHEP16JEC_v0'
+    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v6' ##'80X_dataRun2_Prompt_ICHEP16JEC_v0'
 
 
 
 
 # Load the producer for MVA IDs. Make sure it is also added to the sequence!
-process.load("RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi")
+##process.load("RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi")
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
@@ -332,29 +332,31 @@ if isMC :
 
 
 
-############### hip mitigation
-process.load("Configuration.StandardSequences.MagneticField_cff")
-process.load("Configuration.Geometry.GeometryRecoDB_cff")
-from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
-if isMC :
-    updateJetCollection(
-        process,
-        jetSource = cms.InputTag('slimmedJets'),
-        jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute' ]),'None' ),
-        btagDiscriminators = ['pfCombinedMVAV2BJetTags' , 'pfCombinedInclusiveSecondaryVertexV2BJetTags'],
-        runIVF=True,
-        btagPrefix = 'new' # optional, in case interested in accessing both the old and new discriminator values
-        )
-else :
-    updateJetCollection(
-        process,
-        jetSource = cms.InputTag('slimmedJets'),
-        jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual']),'None' ),
-        btagDiscriminators = ['pfCombinedMVAV2BJetTags' , 'pfCombinedInclusiveSecondaryVertexV2BJetTags'],
-        runIVF=True,
-        btagPrefix = 'new' # optional, in case interested in accessing both the old and new discriminator values
-        )
-
+#######
+## it's included in CMSSW(>80X) by default now
+################# hip mitigation
+##process.load("Configuration.StandardSequences.MagneticField_cff")
+##process.load("Configuration.Geometry.GeometryRecoDB_cff")
+##from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
+##if isMC :
+##    updateJetCollection(
+##        process,
+##        jetSource = cms.InputTag('slimmedJets'),
+##        jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute' ]),'None' ),
+##        btagDiscriminators = ['pfCombinedMVAV2BJetTags' , 'pfCombinedInclusiveSecondaryVertexV2BJetTags'],
+##        runIVF=True,
+##        btagPrefix = 'new' # optional, in case interested in accessing both the old and new discriminator values
+##        )
+##else :
+##    updateJetCollection(
+##        process,
+##        jetSource = cms.InputTag('slimmedJets'),
+##        jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual']),'None' ),
+##        btagDiscriminators = ['pfCombinedMVAV2BJetTags' , 'pfCombinedInclusiveSecondaryVertexV2BJetTags'],
+##        runIVF=True,
+##        btagPrefix = 'new' # optional, in case interested in accessing both the old and new discriminator values
+##        )
+##
 
 
 if isMC :
@@ -400,7 +402,9 @@ process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
 if isMC : 
     process.p = cms.Path(
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
-        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)
+        process.PUPPIMuonRelIso * process.ttHTreeMaker)
+#        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)
 else :
     process.p = cms.Path(
-        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)
+        process.PUPPIMuonRelIso * process.ttHTreeMaker)
+#        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)

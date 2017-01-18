@@ -77,7 +77,7 @@ class ttHYggdrasilScaleFactors{
   TH1D* h_csv_wgt_lf[9][4][3];
 
   // PU weighting
-  double PU_weight[50];
+  double PU_weight[75];
 
 
   // Lepton SF

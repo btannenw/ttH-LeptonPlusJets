@@ -81,6 +81,8 @@ class ttHYggdrasilEventSelection{
   bool PassMuMu();
   bool PassElMu();
 
+  float metAbs();
+  float metPhi();
 
   // ** For DiLepton channel study **
   // ttH Tight lepton for DL

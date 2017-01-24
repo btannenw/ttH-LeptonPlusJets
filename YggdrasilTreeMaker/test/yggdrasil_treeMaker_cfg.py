@@ -11,14 +11,25 @@ isMC=True
 # 
 isTTBARMC=False
 
+isGridJob=False
+# isGridJob=True
+
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
 #genjetInputTag = cms.InputTag("ak4GenJetsReproduced","","")
 #genjetInputTag = cms.InputTag("ak4GenJetsWithChargedLepFromTop","","")
 
 
+enableJECFromLocalDB=True
 
-enableJECFromLocalDB=False
-
+# - - - - - - - - - - - - - - - - - - - - 
+# Special option for Morind17 analysis
+#  This is a flag used to apply dedicated JEC for each data set.
+#  The placeholder will be replaced by crab job make script.
+isPeriodBCD=False
+isPeriodEF1=False
+isPeriodF2G=False
+isPeriodH=False
+# - - - - - - - - - - - - - - - - - - - -
 
 # Switch to perform lumi-mask inside this python script.
 # It is preferable to set this option False as default,
@@ -40,9 +51,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 if isMC:
     process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v7' ##'80X_mcRun2_asymptotic_2016_miniAODv2_v1'
 else :
-    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v6' ## Period B-G
-#    process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v15' ## Period H
-
+    process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v15' if isPeriodH   else '80X_dataRun2_2016SeptRepro_v6'
 
 
 
@@ -59,92 +68,79 @@ process.maxEvents = cms.untracked.PSet(
 
 
 if enableJECFromLocalDB :
-    print "JEC is applied with LOCAL DB."
 
     import sys
     import os.path
-   
 
-    if not isMC :
-        process.GlobalTag.toGet.append(
-            cms.PSet(
-                connect = cms.string('sqlite:///'+os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Spring16_25nsV6_DATA.db'),
-                record = cms.string('JetCorrectionsRecord'),
-                tag    = cms.string('JetCorrectorParametersCollection_Spring16_25nsV6_DATA_AK4PFchs'),
-                label  = cms.untracked.string('AK4PFchs')
-                )
+    JecLocalDataBaseName = 'Spring16_23Sep2016BCDV2_DATA' if isPeriodBCD else \
+                           'Spring16_23Sep2016EFV2_DATA'  if isPeriodEF1 else \
+                           'Spring16_23Sep2016GV2_DATA'   if isPeriodF2G else \
+                           'Spring16_23Sep2016HV2_DATA'   if isPeriodH   else 'Spring16_23Sep2016V2_MC'
+
+    JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
+    # This switch is needed because the variable CMSSW_BASE remains the same as local job (directory where you do "cmsenv") when the job runs on the grid.
+
+    print "JEC is applied with LOCAL DB. -- " + JecLocalDataBaseName
+                           
+    process.GlobalTag.toGet.append(
+        cms.PSet(
+            connect = cms.string( JecDBPathPrefix +'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/' + JecLocalDataBaseName +'.db' ),
+            record = cms.string('JetCorrectionsRecord'),
+            tag    = cms.string('JetCorrectorParametersCollection_'+JecLocalDataBaseName+'_AK4PFchs'),
+            label  = cms.untracked.string('AK4PFchs')
             )
-        process.GlobalTag.toGet.append(
-            cms.PSet(
-                connect = cms.string('sqlite:///'+os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Spring16_25nsV6_DATA.db'),
-                record = cms.string('JetCorrectionsRecord'),
-                tag    = cms.string('JetCorrectorParametersCollection_Spring16_25nsV6_DATA_AK8PFchs'),
-                label  = cms.untracked.string('AK8PFchs')
-                )
+        )
+    process.GlobalTag.toGet.append(
+        cms.PSet(
+            connect = cms.string( JecDBPathPrefix + '/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/' + JecLocalDataBaseName +'.db' ),
+            record = cms.string('JetCorrectionsRecord'),
+            tag    = cms.string('JetCorrectorParametersCollection_'+JecLocalDataBaseName+'_AK8PFchs'),
+            label  = cms.untracked.string('AK8PFchs')
             )
-    else:
-        process.GlobalTag.toGet.append(
-            cms.PSet(
-                connect = cms.string('sqlite:///'+os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Spring16_25nsV6_MC.db'),
-                record = cms.string('JetCorrectionsRecord'),
-                tag    = cms.string('JetCorrectorParametersCollection_Spring16_25nsV6_MC_AK4PFchs'),
-                label  = cms.untracked.string('AK4PFchs')
-                )
-            )
-        process.GlobalTag.toGet.append(
-            cms.PSet(
-                connect = cms.string('sqlite:///'+os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Spring16_25nsV6_MC.db'),
-                record = cms.string('JetCorrectionsRecord'),
-                tag    = cms.string('JetCorrectorParametersCollection_Spring16_25nsV6_MC_AK8PFchs'),
-                label  = cms.untracked.string('AK8PFchs')
-                )
-            )
-        
+        )
 
 
 
 # Set up JetCorrections chain to be used in MiniAODHelper
-# Note: name is hard-coded to ak4PFchsL1L2L3 and does not
-# necessarily reflect actual corrections level
-from JetMETCorrections.Configuration.JetCorrectionServices_cff import *
-process.ak4PFCHSL1Fastjet = cms.ESProducer(
- 'L1FastjetCorrectionESProducer',
- level = cms.string('L1FastJet'),
- algorithm = cms.string('AK4PFchs'),
- srcRho = cms.InputTag( 'fixedGridRhoFastjetAll' )
- )
-process.ak4PFchsL2Relative = ak4CaloL2Relative.clone( algorithm = 'AK4PFchs' )
-process.ak4PFchsL3Absolute = ak4CaloL3Absolute.clone( algorithm = 'AK4PFchs' )
-process.ak4PFchsResidual = ak4CaloResidual.clone( algorithm = 'AK4PFchs' )
-process.ak4PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
- correctors = cms.vstring(
-   'ak4PFCHSL1Fastjet',
-   'ak4PFchsL2Relative',
-   'ak4PFchsL3Absolute')
-)
-if not isMC :
-    process.ak4PFchsL1L2L3.correctors.append('ak4PFchsResidual') # add residual JEC for data
-
-
-process.ak8PFCHSL1Fastjet = cms.ESProducer(
- 'L1FastjetCorrectionESProducer',
- level = cms.string('L1FastJet'),
- algorithm = cms.string('AK8PFchs'),
- srcRho = cms.InputTag( 'fixedGridRhoFastjetAll' )
- )
-process.ak8PFchsL2Relative = ak4CaloL2Relative.clone( algorithm = 'AK8PFchs' )
-process.ak8PFchsL3Absolute = ak4CaloL3Absolute.clone( algorithm = 'AK8PFchs' )
-process.ak8PFchsResidual = ak4CaloResidual.clone( algorithm = 'AK8PFchs' )
-process.ak8PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
- correctors = cms.vstring(
-   'ak8PFCHSL1Fastjet',
-   'ak8PFchsL2Relative',
-   'ak8PFchsL3Absolute')
-)
-
-if not isMC :
- process.ak8PFchsL1L2L3.correctors.append('ak8PFchsResidual') # add residual JEC for data
-
+process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
+# process.ak4PFCHSL1Fastjet = cms.ESProducer(
+#  'L1FastjetCorrectionESProducer',
+#  level = cms.string('L1FastJet'),
+#  algorithm = cms.string('AK4PFchs'),
+#  srcRho = cms.InputTag( 'fixedGridRhoFastjetAll' )
+#  )
+# process.ak4PFchsL2RelativeCorrector = ak4CaloL2RelativeCorrector.clone( algorithm = 'AK4PFchs' )
+# process.ak4PFchsL3AbsoluteCorrector = ak4CaloL3AbsoluteCorrector.clone( algorithm = 'AK4PFchs' )
+# process.ak4PFchsResidualCorrector   = ak4CaloResidualCorrector.clone( algorithm = 'AK4PFchs' )
+# process.ak4PFchsL1L2L3 = cms.ESProducer("ChainedJetCorrectorProducer",
+#  correctors = cms.VInputTag(
+#    'ak4PFCHSL1FastjetCorrector',
+#    'ak4PFchsL2RelativeCorrector',
+#    'ak4PFchsL3AbsoluteCorrector')
+# )
+# if not isMC :
+#     process.ak4PFchsL1L2L3.correctors.append('ak4PFchsResidual') # add residual JEC for data
+# 
+# 
+# process.ak8PFCHSL1Fastjet = cms.ESProducer(
+#  'L1FastjetCorrectionESProducer',
+#  level = cms.string('L1FastJet'),
+#  algorithm = cms.string('AK8PFchs'),
+#  srcRho = cms.InputTag( 'fixedGridRhoFastjetAll' )
+#  )
+# process.ak8PFchsL2Relative = ak4CaloL2Relative.clone( algorithm = 'AK8PFchs' )
+# process.ak8PFchsL3Absolute = ak4CaloL3Absolute.clone( algorithm = 'AK8PFchs' )
+# process.ak8PFchsResidual = ak4CaloResidual.clone( algorithm = 'AK8PFchs' )
+# process.ak8PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
+#  correctors = cms.vstring(
+#    'ak8PFCHSL1Fastjet',
+#    'ak8PFchsL2Relative',
+#    'ak8PFchsL3Absolute')
+# )
+# 
+# if not isMC :
+#  process.ak8PFchsL1L2L3.correctors.append('ak8PFchsResidual') # add residual JEC for data
+# 
 
 
 process.source = cms.Source("PoolSource",

@@ -890,3 +890,10 @@ bool ttHYggdrasilEventSelection::passMuMuTrig(){
 bool ttHYggdrasilEventSelection::passElMuTrig(){
   return _passTrig( ElMuTrig );
 }
+
+float ttHYggdrasilEventSelection::metAbs(){
+  return * met_pt ;
+}
+float ttHYggdrasilEventSelection::metPhi(){
+  return * met_phi ;
+}

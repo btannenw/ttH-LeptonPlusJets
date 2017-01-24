@@ -28,7 +28,7 @@ typedef std::vector< TLorentzVector > vecTLorentzVector;
 // Utility Class for Handling Event Variables
 //
 
-const Int_t rNumSys = 25 + 27 * 2 ;
+const Int_t rNumSys = 25 ; // + 27 * 2 ;
 // 25     : As of 2016 HC analysis.
 // 27 * 2 : JES decomposed. (up/down)
 

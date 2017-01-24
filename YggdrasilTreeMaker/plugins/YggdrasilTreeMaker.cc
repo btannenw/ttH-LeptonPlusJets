@@ -62,7 +62,7 @@
 
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 
-#include "JetMETCorrections/Objects/interface/JetCorrector.h"
+#include "JetMETCorrections/JetCorrector/interface/JetCorrector.h"
 
 #include "MiniAOD/MiniAODHelper/interface/MiniAODHelper.h"
 #include "MiniAOD/MiniAODHelper/interface/TopTagger.h"
@@ -175,6 +175,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
 
   edm::EDGetTokenT< TtGenEvent >   TtGenEventToken ;
   
+  edm::EDGetTokenT<reco::JetCorrector> jetCorrectorToken_;
 
   HLTConfigProvider hlt_config_;
 
@@ -267,7 +268,11 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   TriggerObjectStandAloneToken = consumes <pat::TriggerObjectStandAloneCollection>
     ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
 
-
+  if( isMC ){
+    jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFCHSL1FastL2L3Corrector","","")) ;
+  }else{
+    jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFCHSL1FastL2L3ResidualCorrector","","")) ;
+  }
   // // new MVAelectron
   // EDMElectronsToken = consumes< edm::View<pat::Electron> >(edm::InputTag("slimmedElectrons","",""));
   // EDMeleMVAvaluesToken           = consumes<edm::ValueMap<float> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values",""));
@@ -779,9 +784,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   long evt = iEvent.id().event();
 
 
-  const JetCorrector* corrector = JetCorrector::getJetCorrector( "ak4PFchsL1L2L3", iSetup );   //Get the jet corrector from the event setup
-
-  miniAODhelper.SetJetCorrector(corrector);
+  //todotodo  const JetCorrector* corrector = JetCorrector::getJetCorrector( "ak4PFchsL1L2L3", iSetup );   //Get the jet corrector from the event setup
+  //  edm::Handle<reco::JetCorrector> corrector ;
+  edm::Handle<reco::JetCorrector> corrector ; 
+  iEvent.getByToken(jetCorrectorToken_, corrector );
+  miniAODhelper.SetJetCorrector( &(*corrector) );
   
   int mHdecay = -1;
   mHdecay = isMC ? miniAODhelper.GetHiggsDecay(mcparticles) : -1 ;

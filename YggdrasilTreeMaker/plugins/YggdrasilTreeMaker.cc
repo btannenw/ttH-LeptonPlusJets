@@ -895,8 +895,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   const edm::TriggerNames &names = iEvent.triggerNames(*triggerResults);
   for (unsigned int i = 0; i < triggerResults->size(); ++i) {
        
-    unsigned long location1  = names.triggerName(i).find( "HLT_IsoMu22_v" ,0);
-    unsigned long location2  = names.triggerName(i).find( "HLT_IsoTkMu22_v" ,0);
+    unsigned long location1  = names.triggerName(i).find( "HLT_IsoMu24_v" ,0);
+    unsigned long location2  = names.triggerName(i).find( "HLT_IsoTkMu24_v" ,0);
     unsigned long location3  = names.triggerName(i).find( "HLT_Ele27_eta2p1_WPTight_Gsf_v" ,0);
     
     if( ( location1 == 0 || location2 == 0 || location3 == 0 ) && triggerResults->accept(i) ){
@@ -908,9 +908,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	std::vector<std::string> pathNamesLast = obj.pathNames(true);
 	for (unsigned int iPathName = 0; iPathName < pathNamesAll.size(); iPathName ++ ) {
 
-	  if( ( location1 == 0 && pathNamesAll[iPathName] . find( "HLT_IsoMu22_v" , 0 ) == 0 )
+	  if( ( location1 == 0 && pathNamesAll[iPathName] . find( "HLT_IsoMu24_v" , 0 ) == 0 )
 	      ||
-	      ( location2 == 0 && pathNamesAll[iPathName] . find( "HLT_IsoTkMu22_v" , 0 ) == 0 )
+	      ( location2 == 0 && pathNamesAll[iPathName] . find( "HLT_IsoTkMu24_v" , 0 ) == 0 )
 	      ||
 	      ( location3 == 0 && pathNamesAll[iPathName] . find( "HLT_Ele27_eta2p1_WPTight_Gsf_v" , 0 ) == 0 )
 	      ){

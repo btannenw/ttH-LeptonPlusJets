@@ -86,10 +86,23 @@ void ttHYggdrasilScaleFactors::init_ElectronSF(){
 
 void ttHYggdrasilScaleFactors::init_MuonSF(){
 
+
+  // Muon ID : setup histogram for 2 files (Moriond17)
+  h_MuSF_ID      .clear();
+  h_MuSF_ID_Lumi .clear();
   {
-    std::string input = SFfileDir +"/" + "MuonID_Z_2016runB_2p6fb.root";
-    h_MuSF_ID = (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightIDandIPCut_DEN_genTracks_PAR_pt_spliteta_bin1/abseta_pt_ratio"));
+    std::string input = SFfileDir +"/" + "EfficienciesAndSF_BCDEF.root"; 
+    h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) );
+    h_MuSF_ID_Lumi . push_back( 10.0 ); // amount of data in the period
+    h_MuSF_ID_LumiTotal += 10.0;
   }
+  {
+    std::string input = SFfileDir +"/" + "EfficienciesAndSF_GH.root";
+    h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) );
+    h_MuSF_ID_Lumi . push_back( 10.0 ); // amount of data in the period
+    h_MuSF_ID_LumiTotal += 10.0;
+  }
+
   { 
     std::string input = SFfileDir +"/" + "MuonISO_Z_2016runB_2p6fb.root";
     h_MuSF_Iso = (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightRelIso_DEN_TightID_PAR_pt_spliteta_bin1/abseta_pt_ratio") );
@@ -148,7 +161,14 @@ double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection *
     const double abs_eta = std::fabs( event->leptons().at( i )->Eta() ) ; 
     const double pt      =            event->leptons().at( i )->Pt()  ; 
 
-    weight *= GetBinValueFromXYValues( h_MuSF_ID , abs_eta , pt );
+    double wgt_fot_this_mu = 0 ;
+    for( int iSF = 0 ; iSF < h_MuSF_ID.size() ; iSF ++ ){
+      wgt_fot_this_mu +=
+	GetBinValueFromXYValues( h_MuSF_ID[iSF] , abs_eta , pt )
+	*
+	( h_MuSF_ID_Lumi[iSF] / h_MuSF_ID_LumiTotal ) ; //<- Weight based on the int_lumi in the period.
+    }
+    weight *= wgt_fot_this_mu ;
     
   }
   return weight ;

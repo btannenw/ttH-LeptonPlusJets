@@ -83,7 +83,10 @@ class ttHYggdrasilScaleFactors{
   // Lepton SF
   TH2F * h_EleSF_ID ;
   TH2F * h_EleSF_Reco;
-  TH2D * h_MuSF_ID;
+  std::vector< TH2D *> h_MuSF_ID;
+  std::vector< double> h_MuSF_ID_Lumi;
+  double h_MuSF_ID_LumiTotal;
+  
   TH2D * h_MuSF_Iso ;
 
   // Trif SF

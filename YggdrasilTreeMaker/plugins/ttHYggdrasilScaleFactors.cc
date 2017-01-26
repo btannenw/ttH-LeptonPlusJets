@@ -74,11 +74,11 @@ void ttHYggdrasilScaleFactors::init_TrigMuSF(){
 void ttHYggdrasilScaleFactors::init_ElectronSF(){
   
   {
-    std::string input = SFfileDir +"/" + "EGamma_scaleFactors_ichep2016_80X_resultsEleID_runBCD_passingMVA80_egammaEffi.txt_SF2D.root";
+    std::string input = SFfileDir +"/" + "el/gsf_trackingEff/egammaEffi.txt_SF2D.root" ;
     h_EleSF_ID = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
   }
   { 
-    std::string input = SFfileDir +"/" + "EGamma_scaleFactors_ichep2016_80X_resultsGsfID_egammaEffi.txt_SF2D.root";
+    std::string input = SFfileDir +"/" + "el/CutBase76xMedium__SFfor80x/egammaEffi.txt_SF2D.root";
     h_EleSF_Reco = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
   }
 

@@ -101,7 +101,7 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
     h_MuSF_ID_Lumi . push_back( 16578401309.707 ); // amount of data in the period
   }
   h_MuSF_ID_LumiTotal = 0 ;
-  for( int i = 0 ; i < h_MuSF_ID_Lumi.size() ; i++ ){
+  for( unsigned int i = 0 ; i < h_MuSF_ID_Lumi.size() ; i++ ){
     h_MuSF_ID_LumiTotal += h_MuSF_ID_Lumi[i];
   }
 
@@ -118,7 +118,7 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
     h_MuSF_Iso_Lumi . push_back( 16578401309.707 );
   }
   h_MuSF_Iso_LumiTotal = 0 ;
-  for( int i = 0 ; i < h_MuSF_Iso_Lumi.size() ; i++ ){
+  for( unsigned int i = 0 ; i < h_MuSF_Iso_Lumi.size() ; i++ ){
     h_MuSF_Iso_LumiTotal += h_MuSF_Iso_Lumi[i];
   }
 
@@ -177,7 +177,7 @@ double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection *
     const double pt      =            event->leptons().at( i )->Pt()  ; 
 
     double wgt_fot_this_mu = 0 ;
-    for( int iSF = 0 ; iSF < h_MuSF_ID.size() ; iSF ++ ){
+    for( unsigned int iSF = 0 ; iSF < h_MuSF_ID.size() ; iSF ++ ){
       wgt_fot_this_mu +=
 	GetBinValueFromXYValues( h_MuSF_ID[iSF] , abs_eta , pt )
 	*
@@ -201,7 +201,7 @@ double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection 
     const double pt      =            event->leptons().at( i )->Pt()  ; 
 
     double wgt_fot_this_mu = 0 ;
-    for( int iSF = 0 ; iSF < h_MuSF_Iso.size() ; iSF ++ ){
+    for( unsigned int iSF = 0 ; iSF < h_MuSF_Iso.size() ; iSF ++ ){
       wgt_fot_this_mu +=
 	GetBinValueFromXYValues( h_MuSF_Iso[iSF] , abs_eta , pt )
 	*

@@ -93,12 +93,12 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
   {
     std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_BCDEF.root"; 
     h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) );
-    h_MuSF_ID_Lumi . push_back( 10.0 ); // amount of data in the period
+    h_MuSF_ID_Lumi . push_back( 20236179680.471 ); // amount of data in the period
   }
   {
     std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_GH.root";
     h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) );
-    h_MuSF_ID_Lumi . push_back( 10.0 ); // amount of data in the period
+    h_MuSF_ID_Lumi . push_back( 16578401309.707 ); // amount of data in the period
   }
   h_MuSF_ID_LumiTotal = 0 ;
   for( int i = 0 ; i < h_MuSF_ID_Lumi.size() ; i++ ){
@@ -110,12 +110,12 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
   { 
     std::string input = SFfileDir +"/" + "muon/ISO/EfficienciesAndSF_BCDEF.root";
     h_MuSF_Iso .push_back(  (TH2D*) getTH2HistogramFromFile( input , std::string ("TightISO_TightID_pt_etateta_bin1/abseta_pt_ratio") ) );
-    h_MuSF_Iso_Lumi . push_back( 10.0 );
+    h_MuSF_Iso_Lumi . push_back( 20236179680.471 );
   }
   {
     std::string input = SFfileDir +"/" + "muon/ISO/KEfficienciesAndSF_GH.root";
     h_MuSF_Iso .push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("TightISO_TightID_pt_etateta_bin1/abseta_pt_ratio") ) ) ;
-    h_MuSF_Iso_Lumi . push_back( 10.0 );
+    h_MuSF_Iso_Lumi . push_back( 16578401309.707 );
   }
   h_MuSF_Iso_LumiTotal = 0 ;
   for( int i = 0 ; i < h_MuSF_Iso_Lumi.size() ; i++ ){

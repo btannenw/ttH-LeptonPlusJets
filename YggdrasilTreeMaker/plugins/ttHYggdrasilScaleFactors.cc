@@ -91,13 +91,13 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
   h_MuSF_ID      .clear();
   h_MuSF_ID_Lumi .clear();
   {
-    std::string input = SFfileDir +"/" + "EfficienciesAndSF_BCDEF.root"; 
+    std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_BCDEF.root"; 
     h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) );
     h_MuSF_ID_Lumi . push_back( 10.0 ); // amount of data in the period
     h_MuSF_ID_LumiTotal += 10.0;
   }
   {
-    std::string input = SFfileDir +"/" + "EfficienciesAndSF_GH.root";
+    std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_GH.root";
     h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) );
     h_MuSF_ID_Lumi . push_back( 10.0 ); // amount of data in the period
     h_MuSF_ID_LumiTotal += 10.0;

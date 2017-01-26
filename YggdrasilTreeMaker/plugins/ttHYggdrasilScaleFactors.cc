@@ -109,12 +109,12 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
   // Muon Iso : setup histogram with 2 giles (Moridon17)
   { 
     std::string input = SFfileDir +"/" + "muon/ISO/EfficienciesAndSF_BCDEF.root";
-    h_MuSF_Iso .push_back(  (TH2D*) getTH2HistogramFromFile( input , std::string ("TightISO_TightID_pt_etateta_bin1/abseta_pt_ratio") ) );
+    h_MuSF_Iso .push_back(  (TH2D*) getTH2HistogramFromFile( input , std::string ("TightISO_TightID_pt_eta/abseta_pt_ratio") ) );
     h_MuSF_Iso_Lumi . push_back( 20236179680.471 );
   }
   {
-    std::string input = SFfileDir +"/" + "muon/ISO/KEfficienciesAndSF_GH.root";
-    h_MuSF_Iso .push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("TightISO_TightID_pt_etateta_bin1/abseta_pt_ratio") ) ) ;
+    std::string input = SFfileDir +"/" + "muon/ISO/EfficienciesAndSF_GH.root";
+    h_MuSF_Iso .push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("TightISO_TightID_pt_eta/abseta_pt_ratio") ) ) ;
     h_MuSF_Iso_Lumi . push_back( 16578401309.707 );
   }
   h_MuSF_Iso_LumiTotal = 0 ;

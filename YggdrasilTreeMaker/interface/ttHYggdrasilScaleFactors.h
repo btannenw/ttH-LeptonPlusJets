@@ -87,7 +87,9 @@ class ttHYggdrasilScaleFactors{
   std::vector< double> h_MuSF_ID_Lumi;
   double h_MuSF_ID_LumiTotal;
   
-  TH2D * h_MuSF_Iso ;
+  std::vector< TH2D *> h_MuSF_Iso ;
+  std::vector< double > h_MuSF_Iso_Lumi ;
+  double h_MuSF_Iso_LumiTotal ;
 
   // Trif SF
   TH2D * h_MuSF_Trig_HLTv4p2;

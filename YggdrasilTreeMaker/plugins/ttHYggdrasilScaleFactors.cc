@@ -105,10 +105,23 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
     h_MuSF_ID_LumiTotal += h_MuSF_ID_Lumi[i];
   }
 
+  
+  // Muon Iso : setup histogram with 2 giles (Moridon17)
   { 
-    std::string input = SFfileDir +"/" + "MuonISO_Z_2016runB_2p6fb.root";
-    h_MuSF_Iso = (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightRelIso_DEN_TightID_PAR_pt_spliteta_bin1/abseta_pt_ratio") );
+    std::string input = SFfileDir +"/" + "muon/ISO/EfficienciesAndSF_BCDEF.root";
+    h_MuSF_Iso .push_back(  (TH2D*) getTH2HistogramFromFile( input , std::string ("TightISO_TightID_pt_etateta_bin1/abseta_pt_ratio") ) );
+    h_MuSF_Iso_Lumi . push_back( 10.0 );
   }
+  {
+    std::string input = SFfileDir +"/" + "muon/ISO/KEfficienciesAndSF_GH.root";
+    h_MuSF_Iso .push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("TightISO_TightID_pt_etateta_bin1/abseta_pt_ratio") ) ) ;
+    h_MuSF_Iso_Lumi . push_back( 10.0 );
+  }
+  h_MuSF_Iso_LumiTotal = 0 ;
+  for( int i = 0 ; i < h_MuSF_Iso_Lumi.size() ; i++ ){
+    h_MuSF_Iso_LumiTotal += h_MuSF_Iso_Lumi[i];
+  }
+
 
 }
 
@@ -187,7 +200,14 @@ double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection 
     const double abs_eta = std::fabs( event->leptons().at( i )->Eta() ) ; 
     const double pt      =            event->leptons().at( i )->Pt()  ; 
 
-    weight *= GetBinValueFromXYValues( h_MuSF_Iso  , abs_eta , pt );
+    double wgt_fot_this_mu = 0 ;
+    for( int iSF = 0 ; iSF < h_MuSF_Iso.size() ; iSF ++ ){
+      wgt_fot_this_mu +=
+	GetBinValueFromXYValues( h_MuSF_Iso[iSF] , abs_eta , pt )
+	*
+	( h_MuSF_Iso_Lumi[iSF] / h_MuSF_Iso_LumiTotal ) ; //<- Weight based on the int_lumi in the period.
+    }
+    weight *= wgt_fot_this_mu ;
     
   }
   return weight ;

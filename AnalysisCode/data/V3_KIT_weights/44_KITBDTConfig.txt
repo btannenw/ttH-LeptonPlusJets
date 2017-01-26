@@ -1,2 +1,0 @@
-variables=['BDTOhio_v2_input_h1', 'BDTOhio_v2_input_avg_dr_tagged_jets', 'BDTOhio_v2_input_sphericity', 'BDTOhio_v2_input_avg_btag_disc_btags', 'BDTOhio_v2_input_h2', 'BDTOhio_v2_input_closest_tagged_dijet_mass', 'BDTOhio_v2_input_second_highest_btag', 'BDTOhio_v2_input_fourth_highest_btag', 'BDTOhio_v2_input_maxeta_jet_jet', 'BDTOhio_v2_input_pt_all_jets_over_E_all_jets']
-BDTOptions=!H:!V:NTrees=150.0:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.05:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2:NegWeightTreatment=IgnoreNegWeightsInTraining

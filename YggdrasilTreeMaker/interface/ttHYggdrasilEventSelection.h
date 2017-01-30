@@ -38,6 +38,8 @@ class ttHYggdrasilEventSelection{
 		   const std::vector<int> * POGLoose,
 		   const std::vector<int> * POGTight );
 
+  void SetLepTrigDR( const std::vector<double> * trig_dr );
+
   void SetJets( const std::vector<double> * pt, 
 		const std::vector<double> * eta, 
 		const std::vector<double> * phi, 
@@ -108,6 +110,8 @@ class ttHYggdrasilEventSelection{
   bool passMuMuTrig() ; 
   bool passElMuTrig() ; 
 
+  double getLeptonDR( unsigned int idx );
+
  private :
 
   bool b_InfoDumpForDebug;
@@ -167,6 +171,8 @@ class ttHYggdrasilEventSelection{
   const std::vector<int>    * lep_POGLoose;
   const std::vector<int>    * lep_POGTight;
 
+  const std::vector<double> * lep_trigDR ; // extra info.
+
   const std::vector<double> * jet_pt; 
   const std::vector<double> * jet_eta; 
   const std::vector<double> * jet_phi; 
@@ -222,6 +228,7 @@ class ttHYggdrasilEventSelection{
   std::vector<long> nEvent_passMuMuCh;
   std::vector<long> nEvent_passElMuCh;
 
+  int    _GetOriginalIdxOfTightLepton( unsigned int idx );
 
 };
 

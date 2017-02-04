@@ -290,7 +290,9 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
     jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
     // jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets"))); // for hip mitigation
   }
-  metToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
+  //(In moriond17 analysis, met needs to be recalculated.) 
+  //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
+  metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","MAOD") );
 
   // topJetsToken    = consumes< boosted::HEPTopJetCollection >(edm::InputTag("HEPTopJetsPFMatcher","heptopjets","p"));
   // subFilterJetsToken = consumes< boosted::SubFilterJetCollection >(edm::InputTag("CA12JetsCA3FilterjetsPFMatcher","subfilterjets","p"));
@@ -1500,17 +1502,8 @@ n_fatjets++;
 
     }
          
-    // Get Corrected MET (propagating JEC and JER)
-    // pat::MET correctedMET = pfmet->front();//miniAODhelper.GetCorrectedMET( pfmets.at(0), pfJets_forMET, iSysType );
-    std::vector<pat::Jet> oldJetsForMET = miniAODhelper.GetSelectedJets(*pfjets, 0., 999, jetID::jetMETcorrection, '-' );
-    std::vector<pat::Jet> oldJetsForMET_uncorr = miniAODhelper.GetUncorrectedJets(oldJetsForMET);
-    std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, genjetCollection,  iSysType);
-    std::vector<pat::MET> newMETs = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmet);
-
-    pat::MET correctedMET = newMETs.at(0); 
+    pat::MET correctedMET = pfmet->at(0); 
     TLorentzVector metV(correctedMET.px(),correctedMET.py(),0.0,correctedMET.pt());
-
-       
 
     std::vector<double> csvV;
     std::vector<double> jet_combinedMVABJetTags;

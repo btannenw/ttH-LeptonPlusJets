@@ -92,9 +92,10 @@ class ttHYggdrasilScaleFactors{
   double h_MuSF_Iso_LumiTotal ;
 
   // Trif SF
-  TH2D * h_MuSF_Trig_HLTv4p2;
-  TH2D * h_MuSF_Trig_HLTv4p3;
-  TH2F * h_EleSF_Trig;
+  TH2D * h_MuSF_Trig_SF;
+  TH2D * h_MuSF_TrigEff_MC;
+  TH2F * h_EleSF_Trig_SF;
+  TH2F * h_EleSF_TrigEff_MC;
 
   // Trig Efficiency
   TH2D * h_MUEff_SingleMuonTrig;

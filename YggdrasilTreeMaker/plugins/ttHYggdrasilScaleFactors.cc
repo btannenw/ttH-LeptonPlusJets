@@ -49,17 +49,18 @@ void ttHYggdrasilScaleFactors::init_all(){
 void ttHYggdrasilScaleFactors::init_TrigElSF(){
 
   {
-    std::string input = SFfileDir +"/" + "eleTrig_SF.root";
-    h_EleSF_Trig = (TH2F*) getTH2HistogramFromFile( input , std::string ("h_eleTrig_SF") );
+    std::string input = SFfileDir +"/" + "trig/ElTriggerPerformance_Jan27.root";
+    h_EleSF_Trig_SF    = (TH2F*) getTH2HistogramFromFile( input , std::string ("electrontrig_sf_eta_pt") );
+    h_EleSF_TrigEff_MC = (TH2F*) getTH2HistogramFromFile( input , std::string ("electrontrig_eff_mc_eta_pt") );
   }
 
 }
 void ttHYggdrasilScaleFactors::init_TrigMuSF(){
 
   {
-    std::string input = SFfileDir +"/" + "MuonTriggerPerformance_Sep06.root";
-    h_MuSF_Trig_HLTv4p2 = (TH2D*) getTH2HistogramFromFile( input , std::string ("muontrig_sf_abseta_pt") );
-    h_MuSF_Trig_HLTv4p3 = (TH2D*) getTH2HistogramFromFile( input , std::string ("muontrig_sf_abseta_pt") );
+    std::string input = SFfileDir +"/" + "trig/MuonTriggerPerformance_Jan27.root";
+    h_MuSF_Trig_SF    = (TH2D*) getTH2HistogramFromFile( input , std::string ("muontrig_sf_abseta_pt") );
+    h_MuSF_TrigEff_MC = (TH2D*) getTH2HistogramFromFile( input , std::string ("muontrig_eff_mc_abseta_pt") );
   }
 
   // Root file taken from https://twiki.cern.ch/twiki/bin/view/CMS/MuonWorkInProgressAndPagResults?rev=15
@@ -563,17 +564,16 @@ double ttHYggdrasilScaleFactors::get_TrigMuSF( ttHYggdrasilEventSelection * even
     const double abs_eta = std::fabs( event->leptons().at( i )->Eta() ) ; 
     const double pt      =  event->leptons().at( i )->Pt() ; 
     
-    double w_p2 = GetBinValueFromXYValues( h_MuSF_Trig_HLTv4p2 , abs_eta , pt );
-    double w_p3 = GetBinValueFromXYValues( h_MuSF_Trig_HLTv4p3 , abs_eta , pt );
+    const double trigdr = event->getLeptonDR( i );
+    const bool isTriggered = trigdr < 0.1 ;
 
-    double ratio_p2 =  754.394 / ( 754.394 + 1908.010 ) ;
-    double ratio_p3 = 1908.010 / ( 754.394 + 1908.010 ) ;
-    
-    weight *= 
-      w_p2 * ratio_p2 
-      +
-      w_p3 * ratio_p3 ;
-
+    const double sf = GetBinValueFromXYValues( h_MuSF_Trig_SF  , abs_eta , pt );
+    if( isTriggered ){
+      weight *= sf;
+    }else{
+      const double mc_eff = GetBinValueFromXYValues( h_MuSF_TrigEff_MC , abs_eta , pt );
+      weight *= ( 1.0 - sf * mc_eff )/( 1.0 - mc_eff );
+    }
   }
   return weight ;
 }
@@ -589,7 +589,17 @@ double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * even
     const double sc_eta =  event->leptonsSCEta().at(i); 
     const double pt     =  event->leptons().at( i )->Pt() ; 
     
-    weight *= GetBinValueFromXYValues( h_EleSF_Trig , pt ,  sc_eta ); // <- Unlike Reco/Iso SF, x=PT and y=SC_Eta.
+    const double trigdr = event->getLeptonDR( i );
+    const bool isTriggered = trigdr < 0.1 ;
+
+    const double sf = GetBinValueFromXYValues( h_EleSF_Trig_SF  , sc_eta , pt );
+
+    if( isTriggered ){
+      weight *= sf;
+    }else{
+      const double mc_eff = GetBinValueFromXYValues( h_EleSF_TrigEff_MC , sc_eta , pt );
+      weight *= ( 1.0 - sf * mc_eff )/( 1.0 - mc_eff );
+    }
     
   }
   return weight ;

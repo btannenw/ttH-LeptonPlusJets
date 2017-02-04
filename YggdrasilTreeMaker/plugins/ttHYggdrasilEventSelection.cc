@@ -10,6 +10,8 @@
 
 ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
 
+ lep_trigDR = 0 ;
+
  Thre_TightMu_PT  = 26.0 ;
  Thre_LooseMu_PT  = 15.0;
 
@@ -207,6 +209,11 @@ void ttHYggdrasilEventSelection::SetLeptons( const std::vector<double> * pt,
   lep_POGTight = POGTight ;
 
 }
+
+void ttHYggdrasilEventSelection::SetLepTrigDR( const std::vector<double> * trig_dr ){
+  lep_trigDR = trig_dr ;
+} 
+
 
 void ttHYggdrasilEventSelection::SetJets( const std::vector<double> * pt, 
 					  const std::vector<double> * eta, 
@@ -896,4 +903,32 @@ float ttHYggdrasilEventSelection::metAbs(){
 }
 float ttHYggdrasilEventSelection::metPhi(){
   return * met_phi ;
+}
+
+double ttHYggdrasilEventSelection::getLeptonDR( unsigned int idx ){
+
+  if( lep_trigDR -> size() == 0 ){ return -1; } // trigDR flag has not passed to this tool by user.
+
+  if( idx >= selected_tightLeptons.size() ){ return -1 ; }
+
+  const int OriginalIdx = _GetOriginalIdxOfTightLepton( idx );
+  if( OriginalIdx < 0 ) return 100;// failed to find  original idx (should not).
+
+  if( (unsigned int)OriginalIdx >= lep_trigDR -> size() ){
+    return -1 ;
+  }
+  return  lep_trigDR->at( OriginalIdx );
+};
+
+int ttHYggdrasilEventSelection::_GetOriginalIdxOfTightLepton( unsigned int idx ){
+
+  for( unsigned int iLep = 0 ; iLep < lep_pt->size() ; iLep ++ ){
+    if( fabs(  selected_tightLeptons[idx]->Pt() - lep_pt->at(iLep)) > 0.1 ) continue ;
+
+    if( _calcDR2( selected_tightLeptons[idx]->Eta(), lep_eta ->at(iLep),
+		  selected_tightLeptons[idx]->Phi(), lep_phi ->at(iLep) ) > 0.0001 ) continue ;
+    return iLep ;
+  }
+  std::cout <<"[ERROR] _GetOriginalIdxOfTightLepton can not find original lepton" << std::endl ;
+  return -1;
 }

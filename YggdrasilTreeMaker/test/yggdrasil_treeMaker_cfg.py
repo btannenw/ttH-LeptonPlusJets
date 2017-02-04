@@ -67,18 +67,22 @@ process.maxEvents = cms.untracked.PSet(
 
 
 
+import sys
+import os.path
+
+JecLocalDataBaseName = \
+    'Summer16_23Sep2016BCDV3_DATA' if isPeriodBCD else \
+    'Summer16_23Sep2016EFV3_DATA'  if isPeriodEF1 else \
+    'Summer16_23Sep2016GV3_DATA'   if isPeriodF2G else \
+    'Summer16_23Sep2016HV3_DATA'   if isPeriodH   else 'Summer16_23Sep2016V3_MC'
+
+JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
+# This switch is needed because the variable CMSSW_BASE remains the same as local job (directory where you do "cmsenv") when the job runs on the grid.
+
+
+
 if enableJECFromLocalDB :
 
-    import sys
-    import os.path
-
-    JecLocalDataBaseName = 'Spring16_23Sep2016BCDV2_DATA' if isPeriodBCD else \
-                           'Spring16_23Sep2016EFV2_DATA'  if isPeriodEF1 else \
-                           'Spring16_23Sep2016GV2_DATA'   if isPeriodF2G else \
-                           'Spring16_23Sep2016HV2_DATA'   if isPeriodH   else 'Spring16_23Sep2016V2_MC'
-
-    JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
-    # This switch is needed because the variable CMSSW_BASE remains the same as local job (directory where you do "cmsenv") when the job runs on the grid.
 
     print "JEC is applied with LOCAL DB. -- " + JecLocalDataBaseName
                            
@@ -96,6 +100,16 @@ if enableJECFromLocalDB :
             record = cms.string('JetCorrectionsRecord'),
             tag    = cms.string('JetCorrectorParametersCollection_'+JecLocalDataBaseName+'_AK8PFchs'),
             label  = cms.untracked.string('AK8PFchs')
+            )
+        )
+    
+    #  line for PUPPI for temporal.
+    process.GlobalTag.toGet.append(
+        cms.PSet(
+            connect = cms.string( JecDBPathPrefix +'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/' + 'Summer16_25nsV5_MC'+'.db' ),
+            record = cms.string('JetCorrectionsRecord'),
+            tag    = cms.string('JetCorrectorParametersCollection_'+'Summer16_25nsV5_MC'+'_AK4PFPuppi'),
+            label  = cms.untracked.string('AK4PFPuppi')
             )
         )
 
@@ -323,6 +337,38 @@ if isMC :
 ##
 
 
+################################################
+# Instruction from https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETUncertaintyPrescription?rev=59
+#   to make met(puppi met) with correct calibration
+# 
+# Those create met object which can be obtained by 
+#     cms.InputTag("slimmedMETs","","YourProcessName")
+# and 
+# cms.InputTag("slimmedMETsPuppi","","YourProcessName")
+
+
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+runMetCorAndUncFromMiniAOD(process,
+                           isData= not isMC , 
+#(relative path from src/)  jecUncFile = ( 'filepath' ),
+                           )
+
+#Under_test_now# from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
+#Under_test_now# makePuppiesFromMiniAOD( process, True );
+#Under_test_now# runMetCorAndUncFromMiniAOD(process,
+#Under_test_now#                            isData = not isMC ,
+#Under_test_now#                            metType="Puppi",
+#Under_test_now#                            pfCandColl=cms.InputTag("puppiForMET"),
+#Under_test_now#                            recoMetFromPFCs=True,
+#Under_test_now#                            jetFlavor="AK4PFPuppi",
+#Under_test_now#                            postfix="Puppi",
+#Under_test_now# #                           jecUncFile = ( '' ),
+#Under_test_now#                            )
+#Under_test_now# process.puppiNoLep.useExistingWeights = False
+#Under_test_now# process.puppi.useExistingWeights = False
+#Under_test_now# 
+
+
 if isMC :
     if isPUPPI :
         process.ttHTreeMaker = cms.EDAnalyzer('YggdrasilTreeMaker',
@@ -365,10 +411,12 @@ process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
 
 if isMC : 
     process.p = cms.Path(
+#        process.egmPhotonIDSequence * process.puppiMETSequence * process.fullPatMetSequencePuppi *
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 #        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)
 else :
     process.p = cms.Path(
+#        process.egmPhotonIDSequence * process.puppiMETSequence * process.fullPatMetSequencePuppi *
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 #        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)

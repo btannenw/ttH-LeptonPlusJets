@@ -21,7 +21,7 @@ cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPerio
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodF2G=False|isPeriodF2G=True|g"> __yggdrasil_treeMaker_DATA_F2G_cfg.py 
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodH=False|isPeriodH=True|g"    > __yggdrasil_treeMaker_DATA_H_cfg.py 
 
-nickname="Satoshi_Moriond17_Yggdra_20170119_submit2"
+nickname="Satoshi_Moriond17_Yggdra_20170126LepTrgDRfix_submit2"
 
 JobIndexList=""
 
@@ -186,6 +186,24 @@ ds[58]=/DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunI
 
 #JobIndexList=${JobIndexList}" 50 51 52 53 54 55 56 57 58 "
 JobIndexList=${JobIndexList}" 50 "
+
+
+
+
+name[60]=ww
+ds[60]=/WW_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+ismc[60]=MC
+
+name[61]=wz
+ds[61]=/WZ_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+ismc[61]=MC
+
+name[62]=zz
+ds[62]=/ZZ_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+ismc[62]=MC
+
+JobIndexList=${JobIndexList}" 60 61 62 "
+
 
 # ds[21]=/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
 # name[21]=ttbar_dilep

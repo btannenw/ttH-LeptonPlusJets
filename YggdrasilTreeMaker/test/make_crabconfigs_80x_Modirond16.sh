@@ -21,7 +21,7 @@ cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPerio
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodF2G=False|isPeriodF2G=True|g"> __yggdrasil_treeMaker_DATA_F2G_cfg.py 
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodH=False|isPeriodH=True|g"    > __yggdrasil_treeMaker_DATA_H_cfg.py 
 
-nickname="Satoshi_Moriond17_Yggdra_20170126LepTrgDRfix_submit2"
+nickname="Satoshi_Moriond17_Yggdra_20170207_PUPPIMet"
 
 JobIndexList=""
 
@@ -343,6 +343,12 @@ JobIndexList=${JobIndexList}" 60 61 62 "
 # ismc[25]=MC
 # ismc[26]=MC
 
+
+
+ds[100]=/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[100]=tthbb
+ismc[100]=MC
+JobIndexList=${JobIndexList}" 100 " 
 
 
 for idx in ` echo $JobIndexList `

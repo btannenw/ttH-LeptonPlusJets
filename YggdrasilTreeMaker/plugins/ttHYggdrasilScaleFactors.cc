@@ -49,7 +49,7 @@ void ttHYggdrasilScaleFactors::init_all(){
 void ttHYggdrasilScaleFactors::init_TrigElSF(){
 
   {
-    std::string input = SFfileDir +"/" + "trig/ElTriggerPerformance_Jan27.root";
+    std::string input = SFfileDir +"/" + "trig/ElTriggerPerformance_Jan30.root";
     h_EleSF_Trig_SF    = (TH2F*) getTH2HistogramFromFile( input , std::string ("electrontrig_sf_eta_pt") );
     h_EleSF_TrigEff_MC = (TH2F*) getTH2HistogramFromFile( input , std::string ("electrontrig_eff_mc_eta_pt") );
   }
@@ -58,7 +58,7 @@ void ttHYggdrasilScaleFactors::init_TrigElSF(){
 void ttHYggdrasilScaleFactors::init_TrigMuSF(){
 
   {
-    std::string input = SFfileDir +"/" + "trig/MuonTriggerPerformance_Jan27.root";
+    std::string input = SFfileDir +"/" + "trig/MuonTriggerPerformance_Jan30.root";
     h_MuSF_Trig_SF    = (TH2D*) getTH2HistogramFromFile( input , std::string ("muontrig_sf_abseta_pt") );
     h_MuSF_TrigEff_MC = (TH2D*) getTH2HistogramFromFile( input , std::string ("muontrig_eff_mc_abseta_pt") );
   }

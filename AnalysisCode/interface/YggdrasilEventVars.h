@@ -132,6 +132,9 @@ struct yggdrasilEventVars{
   Float_t MET_phi_[rNumSys];
   Float_t uMET_phi_[rNumSys];
 
+  Float_t PUPPIMET_[rNumSys];
+  Float_t PUPPIMET_phi_[rNumSys];
+
   vdouble jet_combinedMVABJetTags_[rNumSys];
   vdouble jet_combinedInclusiveSecondaryVertexV2BJetTags_[rNumSys];
   vdouble jet_combinedMVABJetTags_HIP_[rNumSys];
@@ -282,6 +285,9 @@ void yggdrasilEventVars::initialize(){
     uMET_[iSys]                           = -99.9;
     MET_phi_[iSys]                        = -99.9;
     uMET_phi_[iSys]                       = -99.9;
+
+    PUPPIMET_[iSys]                            = -99.9;
+    PUPPIMET_phi_[iSys]                        = -99.9;
 
     jet_combinedMVABJetTags_[iSys].clear();
     jet_combinedInclusiveSecondaryVertexV2BJetTags_[iSys].clear();

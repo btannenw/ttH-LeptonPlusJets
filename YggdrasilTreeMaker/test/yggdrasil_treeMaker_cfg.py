@@ -49,9 +49,9 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 
 # Update global tag based on : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions?rev=568
 if isMC:
-    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v7' ##'80X_mcRun2_asymptotic_2016_miniAODv2_v1'
+    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
 else :
-    process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v15' if isPeriodH   else '80X_dataRun2_2016SeptRepro_v6'
+    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
 
 
 

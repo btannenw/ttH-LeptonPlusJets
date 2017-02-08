@@ -1924,6 +1924,9 @@ YggdrasilTreeMaker::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup
   }else{
     miniAODhelper.UpdateJetCorrectorUncertainties( iSetup );
   }
+
+  miniAODhelper.SetJER_SF_Tool( iSetup );
+
   std::cout <<"[debug message ]YggdrasilTreeMaker::beginRun() was called." << std::endl ; 
 }
 

@@ -17,6 +17,7 @@
 
 // system include files
 #include <memory>
+#include <algorithm>
 
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -821,6 +822,121 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 				 );
 
     // parameters taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopPtReweighting?rev=19
+
+
+    std::cout <<" ttbar truth infor serach started, mc size"<< mcparticles->size()  << std::endl ; 
+
+    { // gather information of top quark decay in ttbar.
+
+      MiniAODHelper::_topquarkdecayobjects topPosDecay = { }; 
+      MiniAODHelper::_topquarkdecayobjects topNegDecay = { }; 
+
+      std::vector< const reco::Candidate * > registeredTop ;
+
+      for(size_t i=0; i<mcparticles->size();i++){
+    
+	if( abs( (*mcparticles)[i].pdgId()  ) == 6 ){
+
+	  const reco::Candidate * cand =  & (*mcparticles)[i] ; 
+	  cand = miniAODhelper.GetObjectJustBeforeDecay ( cand );
+
+	  if(std::find( registeredTop.begin(), registeredTop.end(), cand ) != registeredTop.end()) {
+	    // already registered. skip.
+	    continue ; 
+	  }
+
+	  std::cout <<"top quark (pdg id = " <<  cand -> pdgId() << ") is being registerd." << std::endl ; 
+      
+	  registeredTop.push_back(cand);
+	  miniAODhelper.FillTopQuarkDecayInfomration ( cand ,
+						       ( cand -> pdgId() == 6 ) ? ( & topPosDecay ) : ( & topNegDecay ) ) ; 
+	  
+      
+	} // end if : |PDGID|==6
+      }// end MC particle loop 
+
+      // use top decay info:
+
+      
+
+      
+//  struct _topquarkdecayobjects {
+//    const reco::Candidate * top ;
+//    const reco::Candidate * bottom ;
+//    const reco::Candidate * W ;
+//    const reco::Candidate * WChild_up;
+//    const reco::Candidate * WChild_down;
+//    bool isWChild_tau ;
+//    const reco::Candidate * Tau_Neu ;
+//    std::vector< const reco::Candidate *> TauChildren ;
+//
+//    bool isLeptonicDecay(){
+//      return
+//	abs( WChild_down->pdgId() ) == 11
+//	||
+//	abs( WChild_down->pdgId() ) == 13
+//	||
+//	isWChild_tau ;
+//    }
+
+      int idx = 0 ; 
+      vint parentIdx ; 
+      std::vector< const reco::Candidate * > list ;
+      list.push_back(  topPosDecay.top );         parentIdx.push_back( -1 ) ; idx = parentIdx.size()-1;
+      list.push_back(  topPosDecay.bottom );      parentIdx.push_back( idx );
+      list.push_back(  topPosDecay.W );           parentIdx.push_back( idx ); idx = parentIdx.size()-1;
+      list.push_back(  topPosDecay.WChild_up  );  parentIdx.push_back( idx );
+      list.push_back(  topPosDecay.WChild_down ); parentIdx.push_back( idx ); idx = parentIdx.size()-1; // this particle can be tau.
+      if( topPosDecay.isWChild_tau ){
+	list .push_back( topPosDecay.Tau_Neu ) ;  parentIdx.push_back( idx );      
+	for( std::vector< const reco::Candidate *>::iterator it = topPosDecay.TauChildren.begin() ;
+	     it != topPosDecay.TauChildren.end() ;
+	     it ++
+	     ){
+	  list.push_back( (*it) );  parentIdx.push_back( idx ); 
+	}
+      }
+      // anti-top quark
+      list.push_back(  topNegDecay.top );         parentIdx.push_back( -1 ) ; idx = parentIdx.size()-1;
+      list.push_back(  topNegDecay.bottom );      parentIdx.push_back( idx );
+      list.push_back(  topNegDecay.W );           parentIdx.push_back( idx ); idx = parentIdx.size()-1;
+      list.push_back(  topNegDecay.WChild_up  );  parentIdx.push_back( idx );
+      list.push_back(  topNegDecay.WChild_down ); parentIdx.push_back( idx ); idx = parentIdx.size()-1; // this particle can be tau.
+      if( topNegDecay.isWChild_tau ){
+	list .push_back( topNegDecay.Tau_Neu ) ;  parentIdx.push_back( idx );      
+	for( std::vector< const reco::Candidate *>::iterator it = topNegDecay.TauChildren.begin() ;
+	     it != topNegDecay.TauChildren.end() ;
+	     it ++
+	     ){
+	  list.push_back( (*it) );  parentIdx.push_back( idx ); 
+	}
+      }
+
+      vfloat pt, eta, phi, m ;
+      vint pdgid; 
+      for( std::vector< const reco::Candidate *>::iterator p = list.begin();
+	   p != list.end();
+	   p ++ ){
+	pt.push_back((*p) -> pt());
+	eta.push_back((*p) -> eta() );
+	phi.push_back( (*p) -> phi() );
+	m.push_back( (*p) -> mass() );
+	pdgid . push_back( (*p) -> pdgId() );
+      }
+
+      std::cout <<" size check " <<   parentIdx.size() << " " << m.size() << std::endl ; 
+      std::cout <<" ttbar truth infor serach end." << std::endl ; 
+
+      eve -> truth_pt_ = pt;
+      eve -> truth_eta_ = eta;
+      eve -> truth_phi_ = phi;
+      eve -> truth_m_ = m;
+      eve -> truth_pdgid_ = pdgid;
+      eve -> truth_parentIdx_ = parentIdx ;
+
+    } // end of scope
+
+
 
   }else{
     eve -> weight_topPt_ = 1.0;

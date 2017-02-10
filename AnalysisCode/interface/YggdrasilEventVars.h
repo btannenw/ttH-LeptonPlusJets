@@ -19,6 +19,7 @@ using namespace std;
 typedef std::vector<std::vector<double> > vvdouble;
 typedef std::vector<std::vector<std::string> > vvstring;
 typedef std::vector<double> vdouble;
+typedef std::vector<float> vfloat;
 typedef std::vector<string> vstring;
 typedef std::vector<bool> vbool;
 typedef std::vector<int> vint;
@@ -108,6 +109,13 @@ struct yggdrasilEventVars{
   vdouble lepton_puppirelIso_;
   vdouble lepton_scEta_;
   vdouble lepton_dRSingleLepTrig_;
+
+  vfloat truth_pt_;
+  vfloat truth_eta_;
+  vfloat truth_phi_; 
+  vfloat truth_m_ ;
+  vint    truth_pdgid_;
+  vint truth_parentIdx_;
 
   Float_t wgt_lumi_;
   Float_t wgt_xs_;
@@ -248,6 +256,14 @@ void yggdrasilEventVars::initialize(){
 
   numPVs_ = -99;
   numSys_ = -99;
+
+  truth_pt_.clear();
+  truth_eta_.clear();
+  truth_phi_.clear();
+  truth_m_ .clear();
+  
+  truth_pdgid_.clear();
+  truth_parentIdx_.clear();
 
   lepton_isMuon_.clear();
   lepton_charge_.clear();

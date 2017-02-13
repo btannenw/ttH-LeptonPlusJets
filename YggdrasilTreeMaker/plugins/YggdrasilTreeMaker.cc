@@ -296,7 +296,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
   metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","MAOD") );
 
-  puppimetToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsPuppi","","MAOD") );
+  puppimetToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsPuppi","","") );
 
   // topJetsToken    = consumes< boosted::HEPTopJetCollection >(edm::InputTag("HEPTopJetsPFMatcher","heptopjets","p"));
   // subFilterJetsToken = consumes< boosted::SubFilterJetCollection >(edm::InputTag("CA12JetsCA3FilterjetsPFMatcher","subfilterjets","p"));

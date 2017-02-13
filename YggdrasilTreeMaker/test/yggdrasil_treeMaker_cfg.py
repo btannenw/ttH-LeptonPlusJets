@@ -159,7 +159,8 @@ process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-        ' /store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/120000/0CB1DE33-60BF-E611-B520-0025905A4964.root'
+        'file:///uscms/home/satoshi/temporal_strage/0CB1DE33-60BF-E611-B520-0025905A4964.root'
+#        ' /store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/120000/0CB1DE33-60BF-E611-B520-0025905A4964.root'
 #        '/store/user/puigh/TTHSync/ttjets_phys14_20bx25_withfatjets_v2.root'
             #'/store/mc/Phys14DR/TTbarH_M-125_13TeV_amcatnlo-pythia8-tauola/MINIAODSIM/PU20bx25_tsg_PHYS14_25_V1-v2/00000/08B36E8F-5E7F-E411-9D5A-002590200AE4.root'
             #'/store/mc/Phys14DR/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/MINIAODSIM/PU20bx25_PHYS14_25_V1-v1/00000/00C90EFC-3074-E411-A845-002590DB9262.root'
@@ -170,12 +171,6 @@ process.source = cms.Source("PoolSource",
 
 
 
-
-#  # Electron Energy Regression
-#  from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
-#  process = regressionWeights(process)
-#  process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
-#  
 
 
 # Egamma energy smearing for mc
@@ -379,21 +374,21 @@ runMetCorAndUncFromMiniAOD(process,
                            )
 
 process.load("Configuration.StandardSequences.GeometryDB_cff")
-
-from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
-makePuppiesFromMiniAOD( process, True );
-runMetCorAndUncFromMiniAOD(process,
-                           isData = not isMC ,
-                           metType="Puppi",
-                           pfCandColl=cms.InputTag("puppiForMET"),
-                           recoMetFromPFCs=True,
-                           jetFlavor="AK4PFPuppi",
-                           postfix="Puppi",
-#                           jecUncFile = ( '' ),
-                           )
-process.puppiNoLep.useExistingWeights = False
-process.puppi.useExistingWeights = False
-
+#escape 
+#escape from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
+#escape makePuppiesFromMiniAOD( process, True );
+#escape runMetCorAndUncFromMiniAOD(process,
+#escape                            isData = not isMC ,
+#escape                            metType="Puppi",
+#escape                            pfCandColl=cms.InputTag("puppiForMET"),
+#escape                            recoMetFromPFCs=True,
+#escape                            jetFlavor="AK4PFPuppi",
+#escape                            postfix="Puppi",
+#escape #                           jecUncFile = ( '' ),
+#escape                            )
+#escape process.puppiNoLep.useExistingWeights = False
+#escape process.puppi.useExistingWeights = False
+#escape 
 
 
 if isMC :
@@ -436,17 +431,32 @@ process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
                                          , configuration = cms.string( "##" )
                                          )
 
+
+
+
+# Electron Energy Regression
+from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
+process = regressionWeights(process)
+process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
+
+process.load('RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi')
+process.load('RecoEgamma.PhotonIdentification.PhotonMVAValueMapProducer_cfi')
+process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
+process.photonMVAValueMapProducer.srcMiniAOD   = cms.InputTag('slimmedPhotons')
+
+
 if isMC : 
+    print "[debuyg message ]  process process.calibratedPatElectrons is added."
     process.p = cms.Path(
+        process.regressionApplication *   #<- Electron energy regression 
         process.calibratedPatElectrons * # <- Electron Smearing. MC only.
-#        process.regressionApplication *   #<- Electron energy regression 
 #        process.egmPhotonIDSequence * process.puppiMETSequence * process.fullPatMetSequencePuppi *
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 #        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)
 else :
     process.p = cms.Path(
-#        process.regressionApplication *   #<- Electron energy regression 
+        process.regressionApplication *   #<- Electron energy regression 
 #        process.egmPhotonIDSequence * process.puppiMETSequence * process.fullPatMetSequencePuppi *
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 #        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)

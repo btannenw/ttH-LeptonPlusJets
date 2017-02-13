@@ -169,6 +169,31 @@ process.source = cms.Source("PoolSource",
 )
 
 
+
+
+#  # Electron Energy Regression
+#  from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
+#  process = regressionWeights(process)
+#  process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
+#  
+
+
+# Egamma energy smearing for mc
+if isMC :
+    process.load("Configuration.StandardSequences.Services_cff")
+    process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
+                                                       calibratedPatElectrons = cms.PSet(
+            initialSeed = cms.untracked.uint32(81),
+            engineName  = cms.untracked.string("TRandom3")
+        )
+    )
+    process.load("EgammaAnalysis.ElectronTools.calibratedElectronsRun2_cfi")
+    from EgammaAnalysis.ElectronTools.calibratedElectronsRun2_cfi import files
+    process.calibratedPatElectrons.isMC = cms.bool(True)
+    process.calibratedPatElectrons.correctionFile = cms.string(files["Moriond2017_JEC"])
+  
+
+
 ###############
 ### GenJet production from ChargedLeptonVetoedGenParticles
 
@@ -413,12 +438,15 @@ process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
 
 if isMC : 
     process.p = cms.Path(
+        process.calibratedPatElectrons * # <- Electron Smearing. MC only.
+#        process.regressionApplication *   #<- Electron energy regression 
 #        process.egmPhotonIDSequence * process.puppiMETSequence * process.fullPatMetSequencePuppi *
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 #        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)
 else :
     process.p = cms.Path(
+#        process.regressionApplication *   #<- Electron energy regression 
 #        process.egmPhotonIDSequence * process.puppiMETSequence * process.fullPatMetSequencePuppi *
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 #        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)

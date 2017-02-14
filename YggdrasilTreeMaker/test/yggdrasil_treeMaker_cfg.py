@@ -49,9 +49,9 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 
 # Update global tag based on : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions?rev=568
 if isMC:
-    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v7' ##'80X_mcRun2_asymptotic_2016_miniAODv2_v1'
+    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
 else :
-    process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v15' if isPeriodH   else '80X_dataRun2_2016SeptRepro_v6'
+    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
 
 
 
@@ -353,20 +353,22 @@ runMetCorAndUncFromMiniAOD(process,
 #(relative path from src/)  jecUncFile = ( 'filepath' ),
                            )
 
-#Under_test_now# from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
-#Under_test_now# makePuppiesFromMiniAOD( process, True );
-#Under_test_now# runMetCorAndUncFromMiniAOD(process,
-#Under_test_now#                            isData = not isMC ,
-#Under_test_now#                            metType="Puppi",
-#Under_test_now#                            pfCandColl=cms.InputTag("puppiForMET"),
-#Under_test_now#                            recoMetFromPFCs=True,
-#Under_test_now#                            jetFlavor="AK4PFPuppi",
-#Under_test_now#                            postfix="Puppi",
-#Under_test_now# #                           jecUncFile = ( '' ),
-#Under_test_now#                            )
-#Under_test_now# process.puppiNoLep.useExistingWeights = False
-#Under_test_now# process.puppi.useExistingWeights = False
-#Under_test_now# 
+process.load("Configuration.StandardSequences.GeometryDB_cff")
+
+from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
+makePuppiesFromMiniAOD( process, True );
+runMetCorAndUncFromMiniAOD(process,
+                           isData = not isMC ,
+                           metType="Puppi",
+                           pfCandColl=cms.InputTag("puppiForMET"),
+                           recoMetFromPFCs=True,
+                           jetFlavor="AK4PFPuppi",
+                           postfix="Puppi",
+#                           jecUncFile = ( '' ),
+                           )
+process.puppiNoLep.useExistingWeights = False
+process.puppi.useExistingWeights = False
+
 
 
 if isMC :

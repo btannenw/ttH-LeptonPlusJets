@@ -153,6 +153,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
 
   edm::EDGetTokenT <pat::JetCollection> jetToken;
   edm::EDGetTokenT <pat::METCollection> metToken;
+  edm::EDGetTokenT <pat::METCollection> puppimetToken;
 
   // edm::EDGetTokenT< boosted::HEPTopJetCollection > topJetsToken;
   // edm::EDGetTokenT< boosted::SubFilterJetCollection > subFilterJetsToken;
@@ -289,6 +290,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
   metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","MAOD") );
 
+  puppimetToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsPuppi","","MAOD") );
+
   // topJetsToken    = consumes< boosted::HEPTopJetCollection >(edm::InputTag("HEPTopJetsPFMatcher","heptopjets","p"));
   // subFilterJetsToken = consumes< boosted::SubFilterJetCollection >(edm::InputTag("CA12JetsCA3FilterjetsPFMatcher","subfilterjets","p"));
 
@@ -336,9 +339,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   intLumi_ = 20000;
 
   analysisType::analysisType iAnalysisType = analysisType::LJ;
-  bool isData = ( insample_<0 );
 
-  miniAODhelper.SetUp(era, insample_, iAnalysisType, isData);
+  miniAODhelper.SetUp(era, insample_, iAnalysisType, ! isMC );
 
    // miniAODhelper.SetUpElectronMVA("MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB1_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB2_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EE_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml");
   
@@ -434,6 +436,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   edm::Handle<pat::METCollection> pfmet;
   iEvent.getByToken(metToken,pfmet);
+
+  edm::Handle<pat::METCollection> puppimet;
+  iEvent.getByToken(puppimetToken,puppimet);
 
   edm::Handle<pat::PackedCandidateCollection> packedPFcands;
   iEvent.getByToken(packedpfToken,packedPFcands);
@@ -1496,6 +1501,7 @@ n_fatjets++;
     }
          
     pat::MET correctedMET = pfmet->at(0); 
+    pat::MET correctedPUPPIMET = puppimet->at(0); 
     TLorentzVector metV(correctedMET.px(),correctedMET.py(),0.0,correctedMET.pt());
 
     std::vector<double> csvV;
@@ -1610,6 +1616,9 @@ n_fatjets++;
     // MET
     eve->MET_[iSys]      = correctedMET.pt();
     eve->MET_phi_[iSys]  = correctedMET.phi();
+
+    eve->PUPPIMET_[iSys]      = correctedPUPPIMET.pt();
+    eve->PUPPIMET_phi_[iSys]  = correctedPUPPIMET.phi();
     
     eve->jet_combinedMVABJetTags_[iSys] = jet_combinedMVABJetTags;
     eve->jet_combinedInclusiveSecondaryVertexV2BJetTags_[iSys] = jet_combinedInclusiveSecondaryVertexV2BJetTags;

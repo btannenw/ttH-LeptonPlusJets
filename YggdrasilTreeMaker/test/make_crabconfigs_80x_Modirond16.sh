@@ -21,22 +21,23 @@ cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPerio
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodF2G=False|isPeriodF2G=True|g"> __yggdrasil_treeMaker_DATA_F2G_cfg.py 
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodH=False|isPeriodH=True|g"    > __yggdrasil_treeMaker_DATA_H_cfg.py 
 
-nickname="Satoshi_Moriond17_Yggdra_20170207_PUPPIMet"
+nickname="Satoshi_Moriond17_Yggdra_20170213_EleRegressSmear_ReMiniAODData_v4_3"
 
 JobIndexList=""
 
-ds[1]=/SingleElectron/Run2016B-23Sep2016-v3/MINIAOD
-ds[2]=/SingleElectron/Run2016C-23Sep2016-v1/MINIAOD
-ds[3]=/SingleElectron/Run2016D-23Sep2016-v1/MINIAOD
-ds[4]=/SingleElectron/Run2016E-23Sep2016-v1/MINIAOD
+ds[1]=/SingleElectron/Run2016B-03Feb2017_ver2-v2/MINIAOD
+ds[2]=/SingleElectron/Run2016C-03Feb2017-v1/MINIAOD	  
+ds[3]=/SingleElectron/Run2016D-03Feb2017-v1/MINIAOD	  
+ds[4]=/SingleElectron/Run2016E-03Feb2017-v1/MINIAOD	  
 
-ds[5]=/SingleElectron/Run2016F-23Sep2016-v1/MINIAOD
-ds[6]=/SingleElectron/Run2016F-23Sep2016-v1/MINIAOD
+ds[5]=/SingleElectron/Run2016F-03Feb2017-v1/MINIAOD
+ds[6]=/SingleElectron/Run2016F-03Feb2017-v1/MINIAOD
 # |_ Jobs for Period F twice, on purpsoe
 
-ds[7]=/SingleElectron/Run2016G-23Sep2016-v1/MINIAOD
-ds[8]=/SingleElectron/Run2016H-PromptReco-v2/MINIAOD
-ds[9]=/SingleElectron/Run2016H-PromptReco-v3/MINIAOD
+ds[7]=/SingleElectron/Run2016G-03Feb2017-v1/MINIAOD	  
+ds[8]=/SingleElectron/Run2016H-03Feb2017_ver2-v1/MINIAOD
+ds[9]=/SingleElectron/Run2016H-03Feb2017_ver3-v1/MINIAOD
+
 
 
 name[1]=DataElB
@@ -61,17 +62,18 @@ ismc[9]=DATA_H
 
 JobIndexList=${JobIndexList}" 1 2 3 4 5 6 7 8 9 "
 
-ds[11]=/SingleMuon/Run2016B-23Sep2016-v3/MINIAOD
-ds[12]=/SingleMuon/Run2016C-23Sep2016-v1/MINIAOD
-ds[13]=/SingleMuon/Run2016D-23Sep2016-v1/MINIAOD
-ds[14]=/SingleMuon/Run2016E-23Sep2016-v1/MINIAOD
+ds[11]=/SingleMuon/Run2016B-03Feb2017_ver2-v2/MINIAOD
+ds[12]=/SingleMuon/Run2016C-03Feb2017-v1/MINIAOD
+ds[13]=/SingleMuon/Run2016D-03Feb2017-v1/MINIAOD
+ds[14]=/SingleMuon/Run2016E-03Feb2017-v1/MINIAOD
 
-ds[15]=/SingleMuon/Run2016F-23Sep2016-v1/MINIAOD
-ds[16]=/SingleMuon/Run2016F-23Sep2016-v1/MINIAOD
+ds[15]=/SingleMuon/Run2016F-03Feb2017-v1/MINIAOD
+ds[16]=/SingleMuon/Run2016F-03Feb2017-v1/MINIAOD
 # Period F twiwce.
-ds[17]=/SingleMuon/Run2016G-23Sep2016-v1/MINIAOD
-ds[18]=/SingleMuon/Run2016H-PromptReco-v2/MINIAOD
-ds[19]=/SingleMuon/Run2016H-PromptReco-v3/MINIAOD
+ds[17]=/SingleMuon/Run2016G-03Feb2017-v1/MINIAOD     
+ds[18]=/SingleMuon/Run2016H-03Feb2017_ver2-v1/MINIAOD
+ds[19]=/SingleMuon/Run2016H-03Feb2017_ver3-v1/MINIAOD
+
 
 name[11]=DataMuB
 name[12]=DataMuC

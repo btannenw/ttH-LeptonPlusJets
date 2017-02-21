@@ -1742,7 +1742,18 @@ n_fatjets++;
 
     eve->PUPPIMET_[iSys]      = correctedPUPPIMET.pt();
     eve->PUPPIMET_phi_[iSys]  = correctedPUPPIMET.phi();
-    
+
+    eve->MET_Type1xy_[iSys]      = correctedMET.corPt(pat::MET::Type1XY);
+    eve->MET_Type1xy_phi_[iSys]  = correctedMET.corPhi(pat::MET::Type1XY);
+    eve->PUPPIMET_Type1xy_[iSys]      = correctedPUPPIMET.corPt(pat::MET::Type1XY);
+    eve->PUPPIMET_Type1xy_phi_[iSys]  = correctedPUPPIMET.corPhi(pat::MET::Type1XY);
+
+    if( false ){ // For test of met correction type : 
+      //  std::cout <<"Test satoshi_et: " << correctedMET.pt() << " " << correctedMET.corPt() << " " << correctedMET.corPt(pat::MET::Type1) << " " << correctedMET.corPt(pat::MET::Type1XY) << std::endl ; 
+      // std::cout <<"Test satoshi_phi : " << correctedMET.phi() << " " << correctedMET.corPhi() << " " << correctedMET.corPhi(pat::MET::Type1) << " " << correctedMET.corPhi(pat::MET::Type1XY) << std::endl ; 
+      //// list of correction types are here : https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/DataFormats/PatCandidates/interface/MET.h#L151-L168
+    }
+
     eve->jet_combinedMVABJetTags_[iSys] = jet_combinedMVABJetTags;
     eve->jet_combinedInclusiveSecondaryVertexV2BJetTags_[iSys] = jet_combinedInclusiveSecondaryVertexV2BJetTags;
 

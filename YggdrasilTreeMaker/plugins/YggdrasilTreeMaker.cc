@@ -216,6 +216,11 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   const bool isTTbarMC ;
   const bool usePUPPI ;
 
+  bool checkIfRegisterd( const reco::Candidate * candidate , std::vector< const reco::Candidate * > list ) ;
+  const reco::Candidate * TraceBackToJustAfterBirth( const reco::Candidate * particle );
+  void DumpDecay (  const reco::Candidate * c ,  int depth = 0 );
+
+
 
   // - - - - - - PDF uncertainty - - - - - - - - -
   LHAPDF::PDFSet * CT14nlo_PDFSet;
@@ -803,7 +808,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   TLorentzVector GenTopQuark, GenAntitopQuark;
   eve->ttbarDecayType_ = isMC ? miniAODhelper.GetTTbarDecay(mcparticles , & GenTopQuark , & GenAntitopQuark ) : -10 ;
 
-  if( isTTbarMC ){
+  if( ! isTTbarMC ){
+    eve -> weight_topPt_ = 1.0;
+  }else{
+    
     edm::Handle<TtGenEvent> genEvt ;
     iEvent.getByToken( TtGenEventToken, genEvt );
 
@@ -822,95 +830,303 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 				 );
 
     // parameters taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopPtReweighting?rev=19
+  }
 
 
-    std::cout <<" ttbar truth infor serach started, mc size"<< mcparticles->size()  << std::endl ; 
-
-    { // gather information of top quark decay in ttbar.
+  if( isMC ){
 
       MiniAODHelper::_topquarkdecayobjects topPosDecay = { }; 
       MiniAODHelper::_topquarkdecayobjects topNegDecay = { }; 
 
       std::vector< const reco::Candidate * > registeredTop ;
+      std::vector< const reco::Candidate * > list ;
+      vint parentIdx ; 
 
-      for(size_t i=0; i<mcparticles->size();i++){
-    
-	if( abs( (*mcparticles)[i].pdgId()  ) == 6 ){
+//      if( isTTbarMC ){
+//      // gather information of top quark decay in ttbar.
+//
+//      for(size_t i=0; i<mcparticles->size();i++){
+//    
+//	if( abs( (*mcparticles)[i].pdgId()  ) == 6 ){
+//
+//	  const reco::Candidate * cand =  & (*mcparticles)[i] ; 
+//	  cand = miniAODhelper.GetObjectJustBeforeDecay ( cand );
+//
+//	  if(std::find( registeredTop.begin(), registeredTop.end(), cand ) != registeredTop.end()) {
+//	    // already registered. skip.
+//	    continue ; 
+//	  }
+//
+//	  std::cout <<"top quark (pdg id = " <<  cand -> pdgId() << ") is being registerd." << std::endl ; 
+//      
+//	  registeredTop.push_back(cand);
+//	  miniAODhelper.FillTopQuarkDecayInfomration ( cand ,
+//						       ( cand -> pdgId() == 6 ) ? ( & topPosDecay ) : ( & topNegDecay ) ) ; 
+//	  
+//      
+//	} // end if : |PDGID|==6
+//      }// end MC particle loop 
+//
+////  struct _topquarkdecayobjects {
+////    const reco::Candidate * top ;
+////    const reco::Candidate * bottom ;
+////    const reco::Candidate * W ;
+////    const reco::Candidate * WChild_up;
+////    const reco::Candidate * WChild_down;
+////    bool isWChild_tau ;
+////    const reco::Candidate * Tau_Neu ;
+////    std::vector< const reco::Candidate *> TauChildren ;
+////
+////    bool isLeptonicDecay(){
+////      return
+////	abs( WChild_down->pdgId() ) == 11
+////	||
+////	abs( WChild_down->pdgId() ) == 13
+////	||
+////	isWChild_tau ;
+////    }
+//
+//      int idx = 0 ; 
+//      list.push_back(  topPosDecay.top );         parentIdx.push_back( -1 ) ; idx = parentIdx.size()-1;
+//      list.push_back(  topPosDecay.bottom );      parentIdx.push_back( idx );
+//      list.push_back(  topPosDecay.W );           parentIdx.push_back( idx ); idx = parentIdx.size()-1;
+//      list.push_back(  topPosDecay.WChild_down ); parentIdx.push_back( idx ); idx = parentIdx.size()-1; // this particle can be tau.
+//      if( topPosDecay.isWChild_tau ){
+//	list .push_back( topPosDecay.Tau_Neu ) ;  parentIdx.push_back( idx );      
+//	for( std::vector< const reco::Candidate *>::iterator it = topPosDecay.TauChildren.begin() ;
+//	     it != topPosDecay.TauChildren.end() ;
+//	     it ++
+//	     ){
+//	  list.push_back( (*it) );  parentIdx.push_back( idx ); 
+//	}
+//      }
+//      // anti-top quark
+//      list.push_back(  topNegDecay.top );         parentIdx.push_back( -1 ) ; idx = parentIdx.size()-1;
+//      list.push_back(  topNegDecay.bottom );      parentIdx.push_back( idx );
+//      list.push_back(  topNegDecay.W );           parentIdx.push_back( idx ); idx = parentIdx.size()-1;
+//      list.push_back(  topNegDecay.WChild_up  );  parentIdx.push_back( idx );
+//      list.push_back(  topNegDecay.WChild_down ); parentIdx.push_back( idx ); idx = parentIdx.size()-1; // this particle can be tau.
+//      if( topNegDecay.isWChild_tau ){
+//	list .push_back( topNegDecay.Tau_Neu ) ;  parentIdx.push_back( idx );      
+//	for( std::vector< const reco::Candidate *>::iterator it = topNegDecay.TauChildren.begin() ;
+//	     it != topNegDecay.TauChildren.end() ;
+//	     it ++
+//	     ){
+//	  list.push_back( (*it) );  parentIdx.push_back( idx ); 
+//	}
+//      }
+//
+//      } // end if "isTTbar MC"
 
+
+      std::vector<const reco::Candidate * > idx_higgs ; 
+      std::vector<const reco::Candidate * > idx_Z ; 
+      std::vector<const reco::Candidate * > idx_W ; 
+      std::vector<const reco::Candidate * > idx_singletop ; 
+      std::vector<const reco::Candidate * > idx_rescured_zw ;  
+      for(size_t i=0; i < mcparticles ->size();i++){ 
+	
+	if ( abs( (*mcparticles)[i].pdgId() )  == 6 ){
 	  const reco::Candidate * cand =  & (*mcparticles)[i] ; 
 	  cand = miniAODhelper.GetObjectJustBeforeDecay ( cand );
-
-	  if(std::find( registeredTop.begin(), registeredTop.end(), cand ) != registeredTop.end()) {
-	    // already registered. skip.
-	    continue ; 
+	  if ( ! checkIfRegisterd( cand , idx_singletop ) ){
+	    idx_singletop . push_back( cand );
 	  }
+	}
 
-	  std::cout <<"top quark (pdg id = " <<  cand -> pdgId() << ") is being registerd." << std::endl ; 
-      
-	  registeredTop.push_back(cand);
-	  miniAODhelper.FillTopQuarkDecayInfomration ( cand ,
-						       ( cand -> pdgId() == 6 ) ? ( & topPosDecay ) : ( & topNegDecay ) ) ; 
+	// - - - Check Higgs - - - - 
+	if ( (*mcparticles)[i].pdgId()  == 25 ){
+	  const reco::Candidate * cand =  & (*mcparticles)[i] ; 
+	  cand = miniAODhelper.GetObjectJustBeforeDecay ( cand );
+	  if ( ! checkIfRegisterd( cand , idx_higgs ) ){
+	    idx_higgs . push_back( cand );
+	  }
+	}
+       
+	// - - - Check Z boson - - - - 
+	if ( (*mcparticles)[i].pdgId()  == 23 ){
+	  const reco::Candidate * cand =  & (*mcparticles)[i] ; 
+	  cand = miniAODhelper.GetObjectJustBeforeDecay ( cand );
+	  if ( ! checkIfRegisterd( cand , idx_Z ) ){
+
+	    std::cout <<"Z candidate" << std::endl ; 
+
+	    const reco::Candidate * cand_afterbirth = TraceBackToJustAfterBirth( & (*mcparticles)[i] ) ;
+	    bool isZbosonFromHiggs = false ;
+	    for ( unsigned int i = 0 ; i <  cand_afterbirth -> numberOfMothers(); i++ ){
+	      if(       cand_afterbirth -> mother( i ) -> pdgId()  ==  25 ){
+		isZbosonFromHiggs = true ; 
+	      }
+	    }
+	    if( ! isZbosonFromHiggs ){
+	      if( ! checkIfRegisterd( cand , idx_Z ) ){ idx_Z . push_back( cand ) ; }
+	    }
+	  }
+	}//// end Z boson
+
+	///  =----- check W
+	if ( abs( (*mcparticles)[i].pdgId() )  == 24 ){
+	  const reco::Candidate * cand =  & (*mcparticles)[i] ; 
+	  cand = miniAODhelper.GetObjectJustBeforeDecay ( cand );
+	  if ( ! checkIfRegisterd( cand , idx_W ) ){
+
+	    // - check its parent, and requore not top/H;.
+	    const reco::Candidate * cand_afterbirth = TraceBackToJustAfterBirth( cand ) ;
+
+	    bool isWbosonFromTopOrHiggs = false ; 
+	    for ( unsigned int i = 0 ; i <  cand_afterbirth -> numberOfMothers(); i++ ){
+	      if(       cand_afterbirth -> mother( i ) -> pdgId()  ==  25 ||
+			fabs( cand_afterbirth -> mother( i ) -> pdgId() ) ==  6 ||
+			fabs( cand_afterbirth -> mother( i ) -> pdgId() ) == 15 ){
+		isWbosonFromTopOrHiggs = true ; 
+	      }
+	    }
+	    if( ! isWbosonFromTopOrHiggs ){
+	      if( ! checkIfRegisterd( cand , idx_W ) ){ idx_W . push_back( cand ); }
+	    }
+	  }
+	}//// end W boson
+
+	// Tricky Z boson (and also W.)
+	//  - I found non negligible events where chaged leptons emrge skipping Zboson(pdgid 23) but from partons.
+	//  - to catch such leptons as prompt, check if the gen particle has two leptons in pair (consistent with W/Z assumption))
+	//    Require no hadron particles in that decay, allow photons and quarks.
+	{
+	  if( abs( (*mcparticles)[i].pdgId() )  != 24 && // not w
+	      abs( (*mcparticles)[i].pdgId() )  != 23 && // not z
+	      abs( (*mcparticles)[i].pdgId() )  != 25 && // not H
+	      abs( (*mcparticles)[i].pdgId() )  != 15 && // not tau
+	      abs( (*mcparticles)[i].pdgId() )  < 100 && // not hadron
+	      (*mcparticles)[i].numberOfDaughters() >=2 ){
+	    const reco::Candidate * posPDGID_lepton = 0 ;
+	    const reco::Candidate * negPDGID_lepton = 0 ;
+	    bool noExtraHandrons = true; 
+	    for ( unsigned int iDaug = 0 ; iDaug < (*mcparticles)[i].numberOfDaughters() ; iDaug++ ){
+
+	      int pdgid = (*mcparticles)[i].daughter( iDaug ) -> pdgId() ;
+
+	      if(  abs( pdgid ) >= 100 ){ noExtraHandrons = false ; break ; }
+
+	      if(  11 <= pdgid && pdgid <=  16 ) posPDGID_lepton = TraceBackToJustAfterBirth( ( (*mcparticles)[i].daughter( iDaug ) ) );
+	      if( -11 >= pdgid && pdgid >= -16 ) negPDGID_lepton = TraceBackToJustAfterBirth( ( (*mcparticles)[i].daughter( iDaug ) ) );
+	    }
+	    
+	    if( noExtraHandrons && posPDGID_lepton != 0 && negPDGID_lepton != 0 
+		&& ! checkIfRegisterd( posPDGID_lepton , idx_rescured_zw )
+		&& ! checkIfRegisterd( negPDGID_lepton , idx_rescured_zw )
+		){
+	      // require minimum energy to cut off noise...
+	      if( posPDGID_lepton -> pt() > 10.0 && fabs( posPDGID_lepton -> eta() ) < 3.0 ){ 
+		idx_rescured_zw . push_back( posPDGID_lepton ); 
+	      }
+	      if( negPDGID_lepton -> pt() > 10.0 && fabs( negPDGID_lepton -> eta() ) < 3.0 ){ 
+		idx_rescured_zw . push_back( negPDGID_lepton );
+	      }
+	    }
+	  }
+	}
+
+
+      }// end of W/H/Z search.
+
+      // debug 
+      if( false ){
+	for(size_t i=0; i < mcparticles ->size();i++){ 
 	  
-      
-	} // end if : |PDGID|==6
-      }// end MC particle loop 
-
-      // use top decay info:
-
-      
-
-      
-//  struct _topquarkdecayobjects {
-//    const reco::Candidate * top ;
-//    const reco::Candidate * bottom ;
-//    const reco::Candidate * W ;
-//    const reco::Candidate * WChild_up;
-//    const reco::Candidate * WChild_down;
-//    bool isWChild_tau ;
-//    const reco::Candidate * Tau_Neu ;
-//    std::vector< const reco::Candidate *> TauChildren ;
-//
-//    bool isLeptonicDecay(){
-//      return
-//	abs( WChild_down->pdgId() ) == 11
-//	||
-//	abs( WChild_down->pdgId() ) == 13
-//	||
-//	isWChild_tau ;
-//    }
-
-      int idx = 0 ; 
-      vint parentIdx ; 
-      std::vector< const reco::Candidate * > list ;
-      list.push_back(  topPosDecay.top );         parentIdx.push_back( -1 ) ; idx = parentIdx.size()-1;
-      list.push_back(  topPosDecay.bottom );      parentIdx.push_back( idx );
-      list.push_back(  topPosDecay.W );           parentIdx.push_back( idx ); idx = parentIdx.size()-1;
-      list.push_back(  topPosDecay.WChild_up  );  parentIdx.push_back( idx );
-      list.push_back(  topPosDecay.WChild_down ); parentIdx.push_back( idx ); idx = parentIdx.size()-1; // this particle can be tau.
-      if( topPosDecay.isWChild_tau ){
-	list .push_back( topPosDecay.Tau_Neu ) ;  parentIdx.push_back( idx );      
-	for( std::vector< const reco::Candidate *>::iterator it = topPosDecay.TauChildren.begin() ;
-	     it != topPosDecay.TauChildren.end() ;
-	     it ++
-	     ){
-	  list.push_back( (*it) );  parentIdx.push_back( idx ); 
-	}
+	  if( (*mcparticles)[i]. numberOfMothers() == 0 ){
+	    DumpDecay( &((*mcparticles)[i]) , 0 );
+	  }
+	}//debug
       }
-      // anti-top quark
-      list.push_back(  topNegDecay.top );         parentIdx.push_back( -1 ) ; idx = parentIdx.size()-1;
-      list.push_back(  topNegDecay.bottom );      parentIdx.push_back( idx );
-      list.push_back(  topNegDecay.W );           parentIdx.push_back( idx ); idx = parentIdx.size()-1;
-      list.push_back(  topNegDecay.WChild_up  );  parentIdx.push_back( idx );
-      list.push_back(  topNegDecay.WChild_down ); parentIdx.push_back( idx ); idx = parentIdx.size()-1; // this particle can be tau.
-      if( topNegDecay.isWChild_tau ){
-	list .push_back( topNegDecay.Tau_Neu ) ;  parentIdx.push_back( idx );      
-	for( std::vector< const reco::Candidate *>::iterator it = topNegDecay.TauChildren.begin() ;
-	     it != topNegDecay.TauChildren.end() ;
-	     it ++
-	     ){
-	  list.push_back( (*it) );  parentIdx.push_back( idx ); 
+
+
+      // - - - 
+      // Store the information of gen particles in interest.
+      // - - - -
+
+
+      // idx_singletop
+      for( unsigned int iTop  = 0 ; iTop < idx_singletop . size ()  ; iTop ++ ){
+
+	MiniAODHelper::_topquarkdecayobjects top = { };
+	miniAODhelper.FillTopQuarkDecayInfomration (  idx_singletop[iTop] , & top ) ;
+
+	int idx = -1 ; 
+	list.push_back(  top.top );         parentIdx.push_back( -1 ) ; idx = parentIdx.size()-1;
+	list.push_back(  top.bottom );      parentIdx.push_back( idx );
+	list.push_back(  top.W );           parentIdx.push_back( idx ); idx = parentIdx.size()-1;
+	list.push_back(  top.WChild_up  );  parentIdx.push_back( idx );
+	list.push_back(  top.WChild_down ); parentIdx.push_back( idx ); idx = parentIdx.size()-1; // this particle can be tau.
+	if( top.isWChild_tau ){
+	  list .push_back( top.Tau_Neu ) ;  parentIdx.push_back( idx );      
+	  for( std::vector< const reco::Candidate *>::iterator it = top.TauChildren.begin() ;
+	       it != top.TauChildren.end() ;
+	       it ++
+	       ){
+	    list.push_back( (*it) );  parentIdx.push_back( idx ); 
+	  }
+	} // tau decay
+
+      } // top loop 
+
+
+
+
+      std::vector<const reco::Candidate * > idx_sum;
+      for( std::vector<const reco::Candidate * >::iterator i = idx_higgs.begin() ; i != idx_higgs.end(); i++ ){ idx_sum . push_back( * i );}
+      for( std::vector<const reco::Candidate * >::iterator i = idx_W    .begin() ; i != idx_W    .end(); i++ ){ idx_sum . push_back( * i );}
+      for( std::vector<const reco::Candidate * >::iterator i = idx_Z    .begin() ; i != idx_Z    .end(); i++ ){ idx_sum . push_back( * i );}
+
+
+      std::vector<const reco::Candidate * > idx_tau ;  // keep tau later.
+      std::vector< int  > idx_tausParent;  
+
+      for( unsigned int iParent  = 0 ; iParent < idx_sum . size ()  ; iParent ++ ){
+
+	list.push_back( idx_sum[iParent] );
+	parentIdx.push_back( -1 ) ; // -1 = no parent is assigned
+	int ThisParentIdx = parentIdx.size()-1;
+
+	for( unsigned int iChild  = 0 ; iChild < idx_sum[iParent]-> numberOfDaughters()  ; iChild ++ ){
+	  if( abs( idx_sum[iParent]->daughter( iChild ) ->pdgId() ) == 15 ){
+	    idx_tau . push_back( miniAODhelper.GetObjectJustBeforeDecay(  idx_sum[iParent]->daughter( iChild ) ) );
+	    idx_tausParent.push_back( ThisParentIdx );
+	  }else{
+	    list.push_back( miniAODhelper.GetObjectJustBeforeDecay(  idx_sum[iParent]->daughter( iChild ) ) );
+	    parentIdx.push_back( ThisParentIdx  ) ;
+	  }
 	}
+
       }
+
+      // idx_rescured_zw ; 
+      for( unsigned int iLep  = 0 ; iLep < idx_rescured_zw . size ()  ; iLep ++ ){
+
+	if( fabs( idx_rescured_zw[iLep] -> pdgId() ) == 15 ){
+	  idx_tau . push_back( miniAODhelper.GetObjectJustBeforeDecay(  idx_rescured_zw[iLep])  );
+	  idx_tausParent . push_back(-1);
+	}else{
+	  list.push_back( idx_rescured_zw[iLep] );
+	  parentIdx.push_back( -1 ) ; // -1 = no parent is assigned
+	}
+
+      }
+
+      // fill tau;
+      for( unsigned int iTau = 0 ; iTau  < idx_tau . size() ;  iTau ++){
+	
+	list.push_back( idx_tau[iTau] );
+	parentIdx.push_back( idx_tausParent[iTau] );
+	const int idx_ThisTau = parentIdx.size()-1;
+	
+	for( unsigned int iChild = 0 ; iChild < idx_tau[iTau] -> numberOfDaughters()  ; iChild ++ ){ 
+	  list.push_back( miniAODhelper.GetObjectJustBeforeDecay(  idx_tau[iTau]->daughter( iChild ) ) );
+	  parentIdx.push_back( idx_ThisTau  ) ;
+	}
+
+      }
+
+
 
       vfloat pt, eta, phi, m ;
       vint pdgid; 
@@ -924,9 +1140,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	pdgid . push_back( (*p) -> pdgId() );
       }
 
-      std::cout <<" size check " <<   parentIdx.size() << " " << m.size() << std::endl ; 
-      std::cout <<" ttbar truth infor serach end." << std::endl ; 
-
       eve -> truth_pt_ = pt;
       eve -> truth_eta_ = eta;
       eve -> truth_phi_ = phi;
@@ -934,13 +1147,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       eve -> truth_pdgid_ = pdgid;
       eve -> truth_parentIdx_ = parentIdx ;
 
-    } // end of scope
+  } // end of "isMC".
 
 
 
-  }else{
-    eve -> weight_topPt_ = 1.0;
-  }
 
   /////////
   ///
@@ -1048,8 +1258,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	    bool isBoth = obj.hasPathName( pathNamesAll[iPathName], true, true ); 
 	    if (isBoth){
 
-	      std::cout << "[debug] Trigger Object Fired the trigger)" <<
-		"| pt " << obj.pt() << ", eta " << obj.eta() << ", phi " << obj.phi() << std::endl;
 	      if( location3 == 0 ) {
 		// electron trigger 
 		SingleElTriggerDirection   . push_back( std::pair<float, float>(  obj.eta(), obj.phi() ) );
@@ -1070,9 +1278,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       } // end of trigger object loop
     } // end of if the trigger fired.
   } // end of trigger-bit loop (look into all HLT path)
-
-  std::cout << "size of trigger muon : " << SingleMuonTriggerDirection.size() << std::endl ; 
-  std::cout << "size of trigger el : " << SingleElTriggerDirection.size() << std::endl ; 
 
 
 
@@ -2009,6 +2214,50 @@ n_fatjets++;
   }
 
 }
+
+
+void YggdrasilTreeMaker::DumpDecay (  const reco::Candidate * c ,
+			      int depth ){
+
+  for( unsigned int i = 0 ; i < c->numberOfDaughters(); i ++ ){
+    
+    for( int _k = 0 ; _k < depth ; _k ++ ){
+      std::cout <<"\t";
+    }
+    std::cout << c->daughter(i) ->pdgId() << " ("
+	      << c->daughter(i) ->pt()    << ", "
+	      << c->daughter(i) ->eta()   <<  ")" << std::endl ; 
+    DumpDecay( c->daughter(i) , depth + 1  );
+
+  }
+
+}
+
+
+const reco::Candidate * YggdrasilTreeMaker::TraceBackToJustAfterBirth( const reco::Candidate * particle ){
+
+  for ( unsigned int i = 0 ; i <  particle -> numberOfMothers(); i++ ){
+    if( particle -> mother( i ) -> pdgId()  ==  particle -> pdgId() ){
+      return TraceBackToJustAfterBirth( particle -> mother (i) ) ; 
+    }
+  }
+
+  return particle ; 
+}
+
+
+bool YggdrasilTreeMaker::checkIfRegisterd( const reco::Candidate * candidate , std::vector< const reco::Candidate * > list ){
+
+  for ( std::vector< const reco::Candidate * >::iterator it = list.begin() ; 
+	it != list.end() ; 
+	it ++ ){
+    if( candidate == * it  ) return true  ;
+  }
+  
+  return false ;
+
+} 
+
 
 
 // ------------ method called once each job just before starting event loop  ------------

@@ -273,7 +273,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   filterResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), filterTag));
 
   TriggerObjectStandAloneToken = consumes <pat::TriggerObjectStandAloneCollection>
-    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
+    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "PAT") )) ; // <- ( Re-miniAOD 2017.)
+  //    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
 
   if( isMC ){
     jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFCHSL1FastL2L3Corrector","","")) ;

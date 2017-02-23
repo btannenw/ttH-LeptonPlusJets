@@ -428,7 +428,7 @@ process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
                                          , srcLepton =cms.string('slimmedMuons')
                                          , dR = cms.double( 0.4 ) 
                                          , mixFraction = cms.double( 0.5 ) 
-                                         , configuration = cms.string( "##" )
+                                         , configuration = cms.string( "#detail#" )
                                          )
 
 

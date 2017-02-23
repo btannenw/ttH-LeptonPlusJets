@@ -152,6 +152,13 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT < edm::View<pat::Muon> > muonview_Token;
   edm::EDGetTokenT< edm::ValueMap<double> > token_PuppuMuIso_Combined ; 
 
+  edm::EDGetTokenT< edm::ValueMap<double> > token_PuppuMuIso_WithLep_CH ; 
+  edm::EDGetTokenT< edm::ValueMap<double> > token_PuppuMuIso_WithLep_NH ; 
+  edm::EDGetTokenT< edm::ValueMap<double> > token_PuppuMuIso_WithLep_PH ; 
+  edm::EDGetTokenT< edm::ValueMap<double> > token_PuppuMuIso_WithoutLep_CH ; 
+  edm::EDGetTokenT< edm::ValueMap<double> > token_PuppuMuIso_WithoutLep_NH ; 
+  edm::EDGetTokenT< edm::ValueMap<double> > token_PuppuMuIso_WithoutLep_PH ; 
+
   edm::EDGetTokenT <pat::JetCollection> jetToken;
   edm::EDGetTokenT <pat::METCollection> metToken;
   edm::EDGetTokenT <pat::METCollection> puppimetToken;
@@ -291,6 +298,14 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
   muonview_Token = consumes < edm::View<pat::Muon> > (edm::InputTag(std::string("slimmedMuons")));
   token_PuppuMuIso_Combined =  consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiCombined" ,"") ) ; 
+
+  token_PuppuMuIso_WithLep_CH    = consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiWithLeptonCH","") )    ;
+  token_PuppuMuIso_WithLep_NH    = consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiWithLeptonNH","") )    ;
+  token_PuppuMuIso_WithLep_PH    = consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiWithLeptonPH","") )    ;
+  token_PuppuMuIso_WithoutLep_CH = consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiWithoutLeptonCH","") ) ;
+  token_PuppuMuIso_WithoutLep_NH = consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiWithoutLeptonNH","") ) ;
+  token_PuppuMuIso_WithoutLep_PH = consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiWithoutLeptonPH","") ) ;
+
 
   if( usePUPPI ){
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
@@ -442,6 +457,19 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   iEvent.getByToken(muonview_Token, muons_view);
   edm::Handle< edm::ValueMap<double> > iso_PuppiCombined ; 
   iEvent.getByToken( token_PuppuMuIso_Combined , iso_PuppiCombined );
+
+  edm::Handle< edm::ValueMap<double> > iso_PuppiWithLep_CH   ;
+  edm::Handle< edm::ValueMap<double> > iso_PuppiWithLep_NH   ;
+  edm::Handle< edm::ValueMap<double> > iso_PuppiWithLep_PH   ;
+  iEvent.getByToken( token_PuppuMuIso_WithLep_CH , iso_PuppiWithLep_CH );
+  iEvent.getByToken( token_PuppuMuIso_WithLep_NH , iso_PuppiWithLep_NH );
+  iEvent.getByToken( token_PuppuMuIso_WithLep_PH , iso_PuppiWithLep_PH );
+  edm::Handle< edm::ValueMap<double> > iso_PuppiWithoutLep_CH ;
+  edm::Handle< edm::ValueMap<double> > iso_PuppiWithoutLep_NH ;
+  edm::Handle< edm::ValueMap<double> > iso_PuppiWithoutLep_PH ;
+  iEvent.getByToken( token_PuppuMuIso_WithoutLep_CH , iso_PuppiWithoutLep_CH );
+  iEvent.getByToken( token_PuppuMuIso_WithoutLep_NH , iso_PuppiWithoutLep_NH );
+  iEvent.getByToken( token_PuppuMuIso_WithoutLep_PH , iso_PuppiWithoutLep_PH );
 
   edm::Handle<pat::JetCollection> pfjets;
   iEvent.getByToken(jetToken,pfjets);
@@ -1309,6 +1337,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   vdouble lepton_e;
   vdouble lepton_relIso;
   vdouble lepton_puppirelIso;
+  vdouble lepton_puppiIsoWithLep_CH   ;
+  vdouble lepton_puppiIsoWithLep_NH   ;
+  vdouble lepton_puppiIsoWithLep_PH   ;
+  vdouble lepton_puppiIsoWithoutLep_CH;
+  vdouble lepton_puppiIsoWithoutLep_NH;
+  vdouble lepton_puppiIsoWithoutLep_PH;
   vdouble lepton_iso_sumChargedHadronPt;
   vdouble lepton_iso_sumNeutralHadronEt;
   vdouble lepton_iso_sumPhotonEt;
@@ -1410,6 +1444,14 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_e.push_back(iMu->energy());
     lepton_relIso.push_back( miniAODhelper.GetMuonRelIso(*iMu, coneSize::R04, corrType::deltaBeta) ) ;
     lepton_puppirelIso.push_back( (*iso_PuppiCombined)[ muons_view->ptrAt(  iMu - muons->begin()  ) ] ) ;
+
+    lepton_puppiIsoWithLep_CH    . push_back( (* iso_PuppiWithLep_CH    )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
+    lepton_puppiIsoWithLep_NH    . push_back( (* iso_PuppiWithLep_NH    )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
+    lepton_puppiIsoWithLep_PH    . push_back( (* iso_PuppiWithLep_PH    )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
+    lepton_puppiIsoWithoutLep_CH . push_back( (* iso_PuppiWithoutLep_CH )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
+    lepton_puppiIsoWithoutLep_NH . push_back( (* iso_PuppiWithoutLep_NH )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
+    lepton_puppiIsoWithoutLep_PH . push_back( (* iso_PuppiWithoutLep_PH )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
+
     lepton_iso_sumChargedHadronPt.push_back(iMu->pfIsolationR03().sumChargedHadronPt);
     lepton_iso_sumNeutralHadronEt.push_back(iMu->pfIsolationR03().sumNeutralHadronEt);
     lepton_iso_sumPhotonEt.push_back(iMu->pfIsolationR03().sumPhotonEt);
@@ -1572,6 +1614,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_e.push_back(iEle->energy());
     lepton_relIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::spring16) );
     lepton_puppirelIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::spring16) );
+    lepton_puppiIsoWithLep_CH   .push_back(0);
+    lepton_puppiIsoWithLep_NH   .push_back(0);
+    lepton_puppiIsoWithLep_PH   .push_back(0);
+    lepton_puppiIsoWithoutLep_CH.push_back(0);
+    lepton_puppiIsoWithoutLep_NH.push_back(0);
+    lepton_puppiIsoWithoutLep_PH.push_back(0);
     lepton_iso_sumChargedHadronPt.push_back(iEle->pfIsolationVariables().sumChargedHadronPt);
     lepton_iso_sumNeutralHadronEt.push_back(iEle->pfIsolationVariables().sumNeutralHadronEt);
     lepton_iso_sumPhotonEt.push_back(iEle->pfIsolationVariables().sumPhotonEt);
@@ -1645,6 +1693,14 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->lepton_e_              = lepton_e;
   eve->lepton_relIso_           = lepton_relIso;
   eve->lepton_puppirelIso_           = lepton_puppirelIso;
+
+  eve -> lepton_puppiIsoWithLep_CH_    = lepton_puppiIsoWithLep_CH    ;
+  eve -> lepton_puppiIsoWithLep_NH_    = lepton_puppiIsoWithLep_NH    ;
+  eve -> lepton_puppiIsoWithLep_PH_    = lepton_puppiIsoWithLep_PH    ;
+  eve -> lepton_puppiIsoWithoutLep_CH_ = lepton_puppiIsoWithoutLep_CH ;
+  eve -> lepton_puppiIsoWithoutLep_NH_ = lepton_puppiIsoWithoutLep_NH ;
+  eve -> lepton_puppiIsoWithoutLep_PH_ = lepton_puppiIsoWithoutLep_PH ;
+
   eve->lepton_scEta_           = lepton_scEta;
 
   eve->lepton_dRSingleLepTrig_        = lepton_dRSingleLepTrig ;

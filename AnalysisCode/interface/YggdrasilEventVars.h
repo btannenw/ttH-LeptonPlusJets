@@ -107,6 +107,12 @@ struct yggdrasilEventVars{
   vdouble lepton_e_;
   vdouble lepton_relIso_;
   vdouble lepton_puppirelIso_;
+  vdouble lepton_puppiIsoWithLep_CH_    ;
+  vdouble lepton_puppiIsoWithLep_NH_    ;
+  vdouble lepton_puppiIsoWithLep_PH_    ;
+  vdouble lepton_puppiIsoWithoutLep_CH_ ;
+  vdouble lepton_puppiIsoWithoutLep_NH_ ;
+  vdouble lepton_puppiIsoWithoutLep_PH_ ;
   vdouble lepton_scEta_;
   vdouble lepton_dRSingleLepTrig_;
 
@@ -281,6 +287,12 @@ void yggdrasilEventVars::initialize(){
   lepton_e_.clear();
   lepton_relIso_.clear();
   lepton_puppirelIso_.clear();
+  lepton_puppiIsoWithLep_CH_   .clear() ;
+  lepton_puppiIsoWithLep_NH_   .clear() ;
+  lepton_puppiIsoWithLep_PH_   .clear() ;
+  lepton_puppiIsoWithoutLep_CH_.clear() ;
+  lepton_puppiIsoWithoutLep_NH_.clear() ;
+  lepton_puppiIsoWithoutLep_PH_.clear() ;
   lepton_scEta_.clear();
   lepton_dRSingleLepTrig_.clear();
 

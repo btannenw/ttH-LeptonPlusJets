@@ -1625,7 +1625,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     for( std::vector< std::pair<float,float>>::iterator trig = SingleElTriggerDirection.begin ();
 	 trig != SingleElTriggerDirection.end() ; 
 	 trig ++ ){
-      float d_eta = iEle->eta() - trig->first;
+      float d_eta = scEta       - trig->first;
       float d_phi = iEle->phi() - trig->second;
       d_phi = ( d_phi < M_PI ) ? d_phi : 2 * M_PI - d_phi ; 
       double dr =  sqrt( d_eta*d_eta + d_phi*d_phi );

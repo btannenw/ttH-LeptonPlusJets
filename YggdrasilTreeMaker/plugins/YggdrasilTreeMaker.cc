@@ -1531,8 +1531,15 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     if( iEle->gsfTrack().isAvailable() ) trkCharge = iEle->gsfTrack()->charge();
 
 
-    int isPOGTight = miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedM ) ? 1 : 0  ;
-    int isPOGLoose = miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedL ) ? 1 : 0  ;
+    bool inCrack = false;
+    double scEta = -99;
+    if( iEle->superCluster().isAvailable() ){
+      inCrack = ( fabs(iEle->superCluster()->position().eta())>1.4442 && fabs(iEle->superCluster()->position().eta())<1.5660 );
+      scEta = iEle->superCluster()->position().eta();
+    }
+
+    int isPOGTight = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedM ) ? 1 : 0  ;
+    int isPOGLoose = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedL ) ? 1 : 0  ;
 
 
     // our pre-selections 
@@ -1542,13 +1549,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 
     double mvaTrigValue = -99;//myMVATrig->mvaValue(*iEle,false);
-
-    bool inCrack = false;
-    double scEta = -99;
-    if( iEle->superCluster().isAvailable() ){
-      inCrack = ( fabs(iEle->superCluster()->position().eta())>1.4442 && fabs(iEle->superCluster()->position().eta())<1.5660 );
-      scEta = iEle->superCluster()->position().eta();
-    }
 
     double ooEmooP = -999;
     if( iEle->ecalEnergy() == 0 ) ooEmooP = 1e30;

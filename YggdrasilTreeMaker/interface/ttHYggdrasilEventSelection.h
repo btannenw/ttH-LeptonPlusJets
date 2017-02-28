@@ -112,10 +112,17 @@ class ttHYggdrasilEventSelection{
 
   double getLeptonDR( unsigned int idx );
 
+  int getnNonIsoEl();
+  int getnNonIsoMu() ;
+
+  void SetFakeEstimationModeON();
+
  private :
 
   bool b_InfoDumpForDebug;
-   
+
+  bool b_FakeEstimation;
+
   void _InitInternalVariables();
 
   void _ElectronSelection();
@@ -229,6 +236,9 @@ class ttHYggdrasilEventSelection{
   std::vector<long> nEvent_passElMuCh;
 
   int    _GetOriginalIdxOfTightLepton( unsigned int idx );
+
+  int nNonIsolatedElectron ;
+  int nNonIsolatedMuon ;
 
 };
 

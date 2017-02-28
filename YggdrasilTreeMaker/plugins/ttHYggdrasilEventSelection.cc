@@ -37,6 +37,8 @@ ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
 
  b_InfoDumpForDebug = false ;
 
+ b_FakeEstimation = false ;
+
  for( int i = 0 ; i < 20 ; i ++ ){
    nEvent_passSingleMuCh .push_back(0);
    nEvent_passSingleElCh .push_back(0);
@@ -418,10 +420,29 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
     selected_looseLeptonsIsMuon.push_back( 0 );
     selected_looseLeptonsCharge.push_back( lep_charge -> at(idx) );
 
-    if(     lep_POGTight -> at(idx)  != 1  ) continue ;
+
+  }
+
+  nNonIsolatedElectron = 0 ; 
+
+  for( unsigned int idx = 0 ; idx < lep_pt->size() ; idx++ ){
+    
+    if( lep_isMuon -> at(idx) != 0 ) continue ;
     if(        lep_pt    -> at(idx)   < Thre_TightEl_PT  ) continue ;
     if( fabs( lep_eta    -> at(idx) ) > Thre_TightEl_Eta ) continue ;
-    if( fabs( lep_relIso -> at(idx) ) > Thre_TightEl_Iso ) continue ;
+
+    if(     lep_POGLoose -> at(idx)  != 1  ) continue ;
+    nNonIsolatedElectron ++ ;
+
+    if( ! b_FakeEstimation  &&  ( lep_POGTight -> at(idx)  != 1  ||  fabs( lep_relIso -> at(idx) ) > Thre_TightEl_Iso ) ) continue ;
+    if(   b_FakeEstimation  &&    lep_POGTight -> at(idx)  == 1  ) continue ;
+    // Note : electron ID requires relIso in ID, and no need to check iso after requiring tight!=1.
+	  
+    TLorentzVector * vec = new TLorentzVector;
+    vec->SetPtEtaPhiE( lep_pt  -> at(idx),
+		       lep_eta -> at(idx),
+		       lep_phi -> at(idx),
+		       lep_e   -> at(idx) );
 
     selected_tightLeptons.push_back( vec );
     selected_tightLeptonsRelIso.push_back( lep_relIso -> at(idx) );
@@ -481,11 +502,29 @@ void ttHYggdrasilEventSelection::_MuonSelection(){
     selected_looseLeptonsScEta.push_back( lep_scEta -> at(idx) );
     selected_looseLeptonsIsMuon.push_back( 1 );
     selected_looseLeptonsCharge.push_back( lep_charge -> at(idx) );
+  }
+
+  nNonIsolatedMuon = 0 ; 
+
+  for( unsigned int idx = 0 ; idx < lep_pt->size() ; idx++ ){
+
+    if( lep_isMuon -> at(idx) != 1 ) continue ;
 
     if(     lep_POGTight -> at(idx)  != 1  ) continue ;
     if(        lep_pt    -> at(idx)   < Thre_TightMu_PT  ) continue ;
     if( fabs( lep_eta    -> at(idx) ) > Thre_TightMu_Eta ) continue ;
-    if( fabs( lep_relIso -> at(idx) ) > Thre_TightMu_Iso ) continue ;
+
+    nNonIsolatedMuon ++ ; 
+  
+    if( ! b_FakeEstimation && fabs( lep_relIso -> at(idx) ) > Thre_TightMu_Iso ) continue ;
+    if(   b_FakeEstimation && fabs( lep_relIso -> at(idx) ) < Thre_TightMu_Iso ) continue ;
+
+
+    TLorentzVector * vec = new TLorentzVector;
+    vec->SetPtEtaPhiE( lep_pt  -> at(idx),
+		       lep_eta -> at(idx),
+		       lep_phi -> at(idx),
+		       lep_e   -> at(idx) );
 
     selected_tightLeptons.push_back( vec );
     selected_tightLeptonsRelIso.push_back( lep_relIso -> at(idx) );
@@ -932,3 +971,9 @@ int ttHYggdrasilEventSelection::_GetOriginalIdxOfTightLepton( unsigned int idx )
   std::cout <<"[ERROR] _GetOriginalIdxOfTightLepton can not find original lepton" << std::endl ;
   return -1;
 }
+
+int ttHYggdrasilEventSelection::getnNonIsoEl(){ return  nNonIsolatedElectron  ;}
+int ttHYggdrasilEventSelection::getnNonIsoMu(){ return  nNonIsolatedMuon  ; }
+
+
+void ttHYggdrasilEventSelection::SetFakeEstimationModeON(  ){ b_FakeEstimation = true ; }

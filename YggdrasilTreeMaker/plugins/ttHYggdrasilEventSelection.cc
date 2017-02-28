@@ -976,4 +976,7 @@ int ttHYggdrasilEventSelection::getnNonIsoEl(){ return  nNonIsolatedElectron  ;}
 int ttHYggdrasilEventSelection::getnNonIsoMu(){ return  nNonIsolatedMuon  ; }
 
 
-void ttHYggdrasilEventSelection::SetFakeEstimationModeON(  ){ b_FakeEstimation = true ; }
+void ttHYggdrasilEventSelection::SetFakeEstimationModeON(  ){ 
+  b_FakeEstimation = true ; 
+  std::cout <<"ttHYggdrasilEventSelection [debug] : b_FakeEstimation is set to true." << std::endl ; 
+}

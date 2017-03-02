@@ -980,3 +980,13 @@ void ttHYggdrasilEventSelection::SetFakeEstimationModeON(  ){
   b_FakeEstimation = true ; 
   std::cout <<"ttHYggdrasilEventSelection [debug] : b_FakeEstimation is set to true." << std::endl ; 
 }
+
+
+void ttHYggdrasilEventSelection::SetTightMuonRelIsoCut( double cut ){
+  Thre_TightMu_Iso = cut ; 
+  std::cout <<"[ttHYggdrasilEventSelection.cc] : Tight muon isolation is set to " << Thre_TightMu_Iso << std::endl ; 
+}
+void ttHYggdrasilEventSelection::SetLooseMuonRelIsoCut( double cut ){
+  Thre_LooseMu_Iso = cut ;
+  std::cout <<"[ttHYggdrasilEventSelection.cc] : Loose muon isolation is set to " << Thre_LooseMu_Iso << std::endl ; 
+}

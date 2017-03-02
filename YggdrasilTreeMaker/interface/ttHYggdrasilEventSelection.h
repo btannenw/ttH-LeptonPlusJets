@@ -117,6 +117,9 @@ class ttHYggdrasilEventSelection{
 
   void SetFakeEstimationModeON();
 
+  void SetTightMuonRelIsoCut( double cut );
+  void SetLooseMuonRelIsoCut( double cut );
+
  private :
 
   bool b_InfoDumpForDebug;

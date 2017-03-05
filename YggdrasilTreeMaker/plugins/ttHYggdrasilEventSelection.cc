@@ -399,7 +399,11 @@ void ttHYggdrasilEventSelection::_InitInternalVariables(){
 
 void ttHYggdrasilEventSelection::_ElectronSelection(){
 
+  std::vector<bool> registeredAsLoose ; 
+
   for( unsigned int idx = 0 ; idx < lep_pt->size() ; idx++ ){
+
+    registeredAsLoose.push_back( false );
 
     if( lep_isMuon -> at(idx) != 0 ) continue ;
     
@@ -420,6 +424,7 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
     selected_looseLeptonsIsMuon.push_back( 0 );
     selected_looseLeptonsCharge.push_back( lep_charge -> at(idx) );
 
+    registeredAsLoose[idx] = true ;
 
   }
 
@@ -449,6 +454,14 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
     selected_tightLeptonsScEta.push_back( lep_scEta -> at(idx) );
     selected_tightLeptonsIsMuon.push_back( 0 );
     selected_tightLeptonsCharge.push_back( lep_charge -> at(idx) );
+
+    if( b_FakeEstimation && ! ( registeredAsLoose.at(idx) ) ){
+      selected_looseLeptons.push_back( vec );
+      selected_looseLeptonsRelIso.push_back( lep_relIso -> at(idx) );
+      selected_looseLeptonsScEta.push_back( lep_scEta -> at(idx) );
+      selected_looseLeptonsIsMuon.push_back( 0 );
+      selected_looseLeptonsCharge.push_back( lep_charge -> at(idx) );
+    }
 
   }
 
@@ -482,7 +495,11 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
 
 void ttHYggdrasilEventSelection::_MuonSelection(){
 
+  std::vector<bool> registeredAsLoose ;
+
   for( unsigned int idx = 0 ; idx < lep_pt->size() ; idx++ ){
+
+    registeredAsLoose.push_back( false );
 
     if( lep_isMuon -> at(idx) != 1 ) continue ;
     
@@ -502,6 +519,8 @@ void ttHYggdrasilEventSelection::_MuonSelection(){
     selected_looseLeptonsScEta.push_back( lep_scEta -> at(idx) );
     selected_looseLeptonsIsMuon.push_back( 1 );
     selected_looseLeptonsCharge.push_back( lep_charge -> at(idx) );
+
+    registeredAsLoose[idx] = true ;
   }
 
   nNonIsolatedMuon = 0 ; 
@@ -531,6 +550,15 @@ void ttHYggdrasilEventSelection::_MuonSelection(){
     selected_tightLeptonsScEta.push_back( lep_scEta -> at(idx) );
     selected_tightLeptonsIsMuon.push_back( 1 );
     selected_tightLeptonsCharge.push_back( lep_charge -> at(idx) );
+
+
+    if( b_FakeEstimation && ! ( registeredAsLoose.at(idx) ) ){
+      selected_looseLeptons.push_back( vec );
+      selected_looseLeptonsRelIso.push_back( lep_relIso -> at(idx) );
+      selected_looseLeptonsScEta.push_back( lep_scEta -> at(idx) );
+      selected_looseLeptonsIsMuon.push_back( 1 );
+      selected_looseLeptonsCharge.push_back( lep_charge -> at(idx) );
+    }
 
   }
 

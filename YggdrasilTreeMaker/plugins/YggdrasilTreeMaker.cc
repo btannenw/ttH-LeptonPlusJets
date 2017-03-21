@@ -532,6 +532,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   bool passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1 = false;
   bool passHLT_Ele27_eta2p1_WPTight_Gsf_v = false;
+
+  bool passHLT_Ele27_WPTight_Gsf_v = false;
   
 
   bool passHLT_IsoMu24_v = false;
@@ -615,6 +617,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	
 
 	if( pathName.find( "HLT_Ele27_eta2p1_WPTight_Gsf_v"        ,0) == MatchedAtTheBegining ){ passHLT_Ele27_eta2p1_WPTight_Gsf_v = true;}
+	if( pathName.find( "HLT_Ele27_WPTight_Gsf_v"        ,0) == MatchedAtTheBegining ){ passHLT_Ele27_WPTight_Gsf_v = true;}
 	if( pathName.find( "HLT_IsoMu22_v"        ,0) == MatchedAtTheBegining ){ passHLT_IsoMu22_v = true;}
 	if( pathName.find( "HLT_IsoTkMu22_v"        ,0) == MatchedAtTheBegining ){ passHLT_IsoTkMu22_v = true;}
 	if( pathName.find( "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v"        ,0) == MatchedAtTheBegining ){ passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v = true;}
@@ -1253,6 +1256,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_           = ( passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v           ) ? 1 : 0 ;
 
   eve->passHLT_Ele27_eta2p1_WPTight_Gsf_v_ =  ( passHLT_Ele27_eta2p1_WPTight_Gsf_v) ? 1 : 0;
+  eve->passHLT_Ele27_WPTight_Gsf_v =  ( passHLT_Ele27_WPTight_Gsf_v) ? 1 : 0;
   eve->passHLT_IsoMu22_v_ =  ( passHLT_IsoMu22_v) ? 1 : 0;
   eve->passHLT_IsoTkMu22_v_ =  ( passHLT_IsoTkMu22_v) ? 1 : 0;
   eve->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ =  ( passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v ) ? 1 : 0;
@@ -1266,7 +1270,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
        
     unsigned long location1  = names.triggerName(i).find( "HLT_IsoMu24_v" ,0);
     unsigned long location2  = names.triggerName(i).find( "HLT_IsoTkMu24_v" ,0);
-    unsigned long location3  = names.triggerName(i).find( "HLT_Ele27_eta2p1_WPTight_Gsf_v" ,0);
+    unsigned long location3  = names.triggerName(i).find( "HLT_Ele27_WPTight_Gsf_v" ,0);
     
     if( ( location1 == 0 || location2 == 0 || location3 == 0 ) && triggerResults->accept(i) ){
 
@@ -1281,7 +1285,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	      ||
 	      ( location2 == 0 && pathNamesAll[iPathName] . find( "HLT_IsoTkMu24_v" , 0 ) == 0 )
 	      ||
-	      ( location3 == 0 && pathNamesAll[iPathName] . find( "HLT_Ele27_eta2p1_WPTight_Gsf_v" , 0 ) == 0 )
+	      ( location3 == 0 && pathNamesAll[iPathName] . find( "HLT_Ele27_WPTight_Gsf_v" , 0 ) == 0 )
 	      ){
 
 	    bool isBoth = obj.hasPathName( pathNamesAll[iPathName], true, true ); 
@@ -2083,7 +2087,7 @@ n_fatjets++;
 		     eve->passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v_ 
 		     ) ? 1 : 0 ;
 
-    selection . SetElTrigger( & eve->passHLT_Ele27_eta2p1_WPTight_Gsf_v_ );
+    selection . SetElTrigger( & eve->passHLT_Ele27_WPTight_Gsf_v ) ;
     selection . SetMuTrigger( & MuTrig );
     selection . SetElElTrigger( & ( eve->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_  ) );
     selection . SetElMuTrigger( & ElMuTrig );

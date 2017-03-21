@@ -21,7 +21,7 @@ cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPerio
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodF2G=False|isPeriodF2G=True|g"> __yggdrasil_treeMaker_DATA_F2G_cfg.py 
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodH=False|isPeriodH=True|g"    > __yggdrasil_treeMaker_DATA_H_cfg.py 
 
-nickname="Satoshi_Moriond17_Yggdra_20170213_EleRegressSmear_ReMiniAODData_v4_3"
+nickname="Satoshi_Moriond17_Yggdra_20170224_ElLoosen"
 
 JobIndexList=""
 
@@ -279,6 +279,16 @@ name[100]=tthbb
 ismc[100]=MC
 JobIndexList=${JobIndexList}" 100 " 
 
+
+ds[110]=/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[110]=ttto2l2nu
+ismc[110]=MC
+
+ds[111]=/TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[111]=tttosemilep
+ismc[111]=MC
+
+JobIndexList=${JobIndexList}" 110 111 " 
 
 
 for idx in ` echo $JobIndexList `

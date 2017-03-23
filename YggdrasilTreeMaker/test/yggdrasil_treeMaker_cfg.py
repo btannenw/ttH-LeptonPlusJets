@@ -171,22 +171,78 @@ process.source = cms.Source("PoolSource",
 
 
 
+# collection placeholders
+#
+electronCollection = cms.InputTag("slimmedElectrons", "", "PAT")
+muonCollection     = cms.InputTag("slimmedMuons", "", "PAT")
+tauCollection      = cms.InputTag("slimmedTaus", "", "PAT")
+photonCollection   = cms.InputTag("slimmedPhotons", "", "PAT")
+METCollection      = cms.InputTag("slimmedMETs", "", "PAT")
+jetCollection      = cms.InputTag("slimmedJets", "", "PAT")
 
 
-# Egamma energy smearing for mc
-if isMC :
-    process.load("Configuration.StandardSequences.Services_cff")
-    process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
-                                                       calibratedPatElectrons = cms.PSet(
-            initialSeed = cms.untracked.uint32(81),
-            engineName  = cms.untracked.string("TRandom3")
-        )
-    )
-    process.load("EgammaAnalysis.ElectronTools.calibratedElectronsRun2_cfi")
-    from EgammaAnalysis.ElectronTools.calibratedElectronsRun2_cfi import files
-    process.calibratedPatElectrons.isMC = cms.bool(True)
-    process.calibratedPatElectrons.correctionFile = cms.string(files["Moriond2017_JEC"])
+# deterministic seed producer
+#
+process.load("PhysicsTools.PatUtils.deterministicSeeds_cfi")
+process.deterministicSeeds.produceCollections = cms.bool(True)
+process.deterministicSeeds.produceValueMaps   = cms.bool(False)
+process.deterministicSeeds.electronCollection = electronCollection
+process.deterministicSeeds.muonCollection     = muonCollection
+process.deterministicSeeds.tauCollection      = tauCollection
+process.deterministicSeeds.photonCollection   = photonCollection
+process.deterministicSeeds.jetCollection      = jetCollection
+process.deterministicSeeds.METCollection      = METCollection
+# overwrite output collections
+electronCollection = cms.InputTag("deterministicSeeds", "electronsWithSeed", process.name_())
+muonCollection     = cms.InputTag("deterministicSeeds", "muonsWithSeed", process.name_())
+tauCollection      = cms.InputTag("deterministicSeeds", "tausWithSeed", process.name_())
+photonCollection   = cms.InputTag("deterministicSeeds", "photonsWithSeed", process.name_())
+jetCollection      = cms.InputTag("deterministicSeeds", "jetsWithSeed", process.name_())
+METCollection      = cms.InputTag("deterministicSeeds", "METsWithSeed", process.name_())
+
+
+
+
+
+###################################
+
+
+from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
+process = regressionWeights(process)
+process.load("EgammaAnalysis.ElectronTools.regressionApplication_cff")
+# User add "process.regressionApplication" to the sequence.
+
+# set the electron and photon sources
+process.slimmedElectrons.src = electronCollection
+process.slimmedPhotons.src = photonCollection
+# overwrite output collections
+electronCollection = cms.InputTag("slimmedElectrons", "", process.name_())
+photonCollection = cms.InputTag("slimmedPhotons", "", process.name_())
+
+
+###################################
+# Egamma energy smearing for data and mc
+
+process.selectedElectrons = cms.EDFilter("PATElectronSelector",
+    src = electronCollection,
+    cut = cms.string("pt>5 && abs(superCluster.eta)<2.5")
+)
+electronCollection = cms.InputTag("selectedElectrons", "", process.name_())
+# setup the smearing
+process.load("EgammaAnalysis.ElectronTools.calibratedPatElectronsRun2_cfi")
+from EgammaAnalysis.ElectronTools.calibratedPatElectronsRun2_cfi import files
+process.calibratedPatElectrons.isMC           = cms.bool( isMC )
+process.calibratedPatElectrons.correctionFile = cms.string(files[ "Moriond17_23Jan" ])
+process.calibratedPatElectrons.electrons      = electronCollection
+#  seq += process.calibratedPatElectrons -> Satoshi added to the seqyence by hand. See the bottom part of this script.
+
+# use our deterministic seeds :
+process.calibratedPatElectrons.seedUserInt = process.deterministicSeeds.seedUserInt
+# overwrite output collections
+electronCollection = cms.InputTag("calibratedPatElectrons", "", process.name_())
   
+
+###################################
 
 
 ###############
@@ -433,12 +489,6 @@ process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
 
 
 
-
-# Electron Energy Regression
-from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
-process = regressionWeights(process)
-process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
-
 process.load('RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi')
 process.load('RecoEgamma.PhotonIdentification.PhotonMVAValueMapProducer_cfi')
 process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
@@ -449,7 +499,7 @@ if isMC :
     print "[debuyg message ]  process process.calibratedPatElectrons is added."
     process.p = cms.Path(
         process.regressionApplication *   #<- Electron energy regression 
-        process.calibratedPatElectrons * # <- Electron Smearing. MC only.
+        process.calibratedPatElectrons * 
 #        process.egmPhotonIDSequence * process.puppiMETSequence * process.fullPatMetSequencePuppi *
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
@@ -457,6 +507,7 @@ if isMC :
 else :
     process.p = cms.Path(
         process.regressionApplication *   #<- Electron energy regression 
+        process.calibratedPatElectrons * 
 #        process.egmPhotonIDSequence * process.puppiMETSequence * process.fullPatMetSequencePuppi *
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 #        process.PUPPIMuonRelIso * process.electronMVAValueMapProducer * process.ttHTreeMaker)

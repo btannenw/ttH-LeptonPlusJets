@@ -71,10 +71,10 @@ import sys
 import os.path
 
 JecLocalDataBaseName = \
-    'Summer16_23Sep2016BCDV3_DATA' if isPeriodBCD else \
-    'Summer16_23Sep2016EFV3_DATA'  if isPeriodEF1 else \
-    'Summer16_23Sep2016GV3_DATA'   if isPeriodF2G else \
-    'Summer16_23Sep2016HV3_DATA'   if isPeriodH   else 'Summer16_23Sep2016V3_MC'
+    'Summer16_23Sep2016BCDV4_DATA' if isPeriodBCD else \
+    'Summer16_23Sep2016EFV4_DATA'  if isPeriodEF1 else \
+    'Summer16_23Sep2016GV4_DATA'   if isPeriodF2G else \
+    'Summer16_23Sep2016HV4_DATA'   if isPeriodH   else 'Summer16_23Sep2016V4_MC'
 
 JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
 # This switch is needed because the variable CMSSW_BASE remains the same as local job (directory where you do "cmsenv") when the job runs on the grid.

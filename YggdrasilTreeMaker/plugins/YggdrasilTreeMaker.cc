@@ -1542,8 +1542,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       scEta = iEle->superCluster()->position().eta();
     }
 
-    int isPOGTight = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedM ) ? 1 : 0  ;
-    int isPOGLoose = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedL ) ? 1 : 0  ;
+    int isPOGTight = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedT ) ? 1 : 0  ;
+    int isPOGLoose = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedV ) ? 1 : 0  ;
 
 
     // our pre-selections 

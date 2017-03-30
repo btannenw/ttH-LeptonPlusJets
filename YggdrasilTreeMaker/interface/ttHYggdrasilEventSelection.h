@@ -120,6 +120,9 @@ class ttHYggdrasilEventSelection{
   void SetTightMuonRelIsoCut( double cut );
   void SetLooseMuonRelIsoCut( double cut );
 
+  double MinDRLepJet();
+
+
  private :
 
   bool b_InfoDumpForDebug;

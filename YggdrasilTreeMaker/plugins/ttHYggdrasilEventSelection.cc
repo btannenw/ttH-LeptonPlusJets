@@ -1018,3 +1018,25 @@ void ttHYggdrasilEventSelection::SetLooseMuonRelIsoCut( double cut ){
   Thre_LooseMu_Iso = cut ;
   std::cout <<"[ttHYggdrasilEventSelection.cc] : Loose muon isolation is set to " << Thre_LooseMu_Iso << std::endl ; 
 }
+
+double ttHYggdrasilEventSelection::MinDRLepJet(){
+  
+  double minDR2 = 10000 ;
+
+  for( std::vector<const TLorentzVector*>::iterator lep = selected_tightLeptons.begin(); 
+       lep != selected_tightLeptons.end();
+       lep ++ ) {
+
+    for( std::vector<const TLorentzVector*>::iterator jet = selected_jets.begin(); 
+	 jet != selected_jets.end();
+	 jet ++ ) {
+      
+      double dr2 = _calcDR2( (*lep)->Eta() , (*jet)->Eta(), (*lep)->Phi() , (*jet)->Phi() );
+      minDR2 = minDR2 < dr2 ? minDR2 : dr2 ;
+
+    }
+  }
+
+  return sqrt( minDR2 );
+
+}

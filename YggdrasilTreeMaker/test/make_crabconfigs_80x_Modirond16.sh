@@ -291,6 +291,12 @@ ismc[111]=MC
 JobIndexList=${JobIndexList}" 110 111 " 
 
 
+ds[100]=/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[100]=tthbb
+ismc[100]=MC
+JobIndexList=${JobIndexList}" 100 " 
+
+
 for idx in ` echo $JobIndexList `
 do
 

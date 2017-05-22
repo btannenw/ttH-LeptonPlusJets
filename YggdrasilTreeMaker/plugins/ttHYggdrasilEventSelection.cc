@@ -37,6 +37,8 @@ ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
 
  b_InfoDumpForDebug = false ;
 
+ b_FakeEstimation = false ;
+
  for( int i = 0 ; i < 20 ; i ++ ){
    nEvent_passSingleMuCh .push_back(0);
    nEvent_passSingleElCh .push_back(0);
@@ -397,7 +399,11 @@ void ttHYggdrasilEventSelection::_InitInternalVariables(){
 
 void ttHYggdrasilEventSelection::_ElectronSelection(){
 
+  std::vector<bool> registeredAsLoose ; 
+
   for( unsigned int idx = 0 ; idx < lep_pt->size() ; idx++ ){
+
+    registeredAsLoose.push_back( false );
 
     if( lep_isMuon -> at(idx) != 0 ) continue ;
     
@@ -418,16 +424,44 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
     selected_looseLeptonsIsMuon.push_back( 0 );
     selected_looseLeptonsCharge.push_back( lep_charge -> at(idx) );
 
-    if(     lep_POGTight -> at(idx)  != 1  ) continue ;
+    registeredAsLoose[idx] = true ;
+
+  }
+
+  nNonIsolatedElectron = 0 ; 
+
+  for( unsigned int idx = 0 ; idx < lep_pt->size() ; idx++ ){
+    
+    if( lep_isMuon -> at(idx) != 0 ) continue ;
     if(        lep_pt    -> at(idx)   < Thre_TightEl_PT  ) continue ;
     if( fabs( lep_eta    -> at(idx) ) > Thre_TightEl_Eta ) continue ;
-    if( fabs( lep_relIso -> at(idx) ) > Thre_TightEl_Iso ) continue ;
+
+    if(     lep_POGLoose -> at(idx)  != 1  ) continue ;
+    nNonIsolatedElectron ++ ;
+
+    if( ! b_FakeEstimation  &&  ( lep_POGTight -> at(idx)  != 1  ||  fabs( lep_relIso -> at(idx) ) > Thre_TightEl_Iso ) ) continue ;
+    if(   b_FakeEstimation  &&    lep_POGTight -> at(idx)  == 1  ) continue ;
+    // Note : electron ID requires relIso in ID, and no need to check iso after requiring tight!=1.
+	  
+    TLorentzVector * vec = new TLorentzVector;
+    vec->SetPtEtaPhiE( lep_pt  -> at(idx),
+		       lep_eta -> at(idx),
+		       lep_phi -> at(idx),
+		       lep_e   -> at(idx) );
 
     selected_tightLeptons.push_back( vec );
     selected_tightLeptonsRelIso.push_back( lep_relIso -> at(idx) );
     selected_tightLeptonsScEta.push_back( lep_scEta -> at(idx) );
     selected_tightLeptonsIsMuon.push_back( 0 );
     selected_tightLeptonsCharge.push_back( lep_charge -> at(idx) );
+
+    if( b_FakeEstimation && ! ( registeredAsLoose.at(idx) ) ){
+      selected_looseLeptons.push_back( vec );
+      selected_looseLeptonsRelIso.push_back( lep_relIso -> at(idx) );
+      selected_looseLeptonsScEta.push_back( lep_scEta -> at(idx) );
+      selected_looseLeptonsIsMuon.push_back( 0 );
+      selected_looseLeptonsCharge.push_back( lep_charge -> at(idx) );
+    }
 
   }
 
@@ -461,7 +495,11 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
 
 void ttHYggdrasilEventSelection::_MuonSelection(){
 
+  std::vector<bool> registeredAsLoose ;
+
   for( unsigned int idx = 0 ; idx < lep_pt->size() ; idx++ ){
+
+    registeredAsLoose.push_back( false );
 
     if( lep_isMuon -> at(idx) != 1 ) continue ;
     
@@ -482,16 +520,45 @@ void ttHYggdrasilEventSelection::_MuonSelection(){
     selected_looseLeptonsIsMuon.push_back( 1 );
     selected_looseLeptonsCharge.push_back( lep_charge -> at(idx) );
 
+    registeredAsLoose[idx] = true ;
+  }
+
+  nNonIsolatedMuon = 0 ; 
+
+  for( unsigned int idx = 0 ; idx < lep_pt->size() ; idx++ ){
+
+    if( lep_isMuon -> at(idx) != 1 ) continue ;
+
     if(     lep_POGTight -> at(idx)  != 1  ) continue ;
     if(        lep_pt    -> at(idx)   < Thre_TightMu_PT  ) continue ;
     if( fabs( lep_eta    -> at(idx) ) > Thre_TightMu_Eta ) continue ;
-    if( fabs( lep_relIso -> at(idx) ) > Thre_TightMu_Iso ) continue ;
+
+    nNonIsolatedMuon ++ ; 
+  
+    if( ! b_FakeEstimation && fabs( lep_relIso -> at(idx) ) > Thre_TightMu_Iso ) continue ;
+    if(   b_FakeEstimation && fabs( lep_relIso -> at(idx) ) < Thre_TightMu_Iso ) continue ;
+
+
+    TLorentzVector * vec = new TLorentzVector;
+    vec->SetPtEtaPhiE( lep_pt  -> at(idx),
+		       lep_eta -> at(idx),
+		       lep_phi -> at(idx),
+		       lep_e   -> at(idx) );
 
     selected_tightLeptons.push_back( vec );
     selected_tightLeptonsRelIso.push_back( lep_relIso -> at(idx) );
     selected_tightLeptonsScEta.push_back( lep_scEta -> at(idx) );
     selected_tightLeptonsIsMuon.push_back( 1 );
     selected_tightLeptonsCharge.push_back( lep_charge -> at(idx) );
+
+
+    if( b_FakeEstimation && ! ( registeredAsLoose.at(idx) ) ){
+      selected_looseLeptons.push_back( vec );
+      selected_looseLeptonsRelIso.push_back( lep_relIso -> at(idx) );
+      selected_looseLeptonsScEta.push_back( lep_scEta -> at(idx) );
+      selected_looseLeptonsIsMuon.push_back( 1 );
+      selected_looseLeptonsCharge.push_back( lep_charge -> at(idx) );
+    }
 
   }
 
@@ -931,4 +998,45 @@ int ttHYggdrasilEventSelection::_GetOriginalIdxOfTightLepton( unsigned int idx )
   }
   std::cout <<"[ERROR] _GetOriginalIdxOfTightLepton can not find original lepton" << std::endl ;
   return -1;
+}
+
+int ttHYggdrasilEventSelection::getnNonIsoEl(){ return  nNonIsolatedElectron  ;}
+int ttHYggdrasilEventSelection::getnNonIsoMu(){ return  nNonIsolatedMuon  ; }
+
+
+void ttHYggdrasilEventSelection::SetFakeEstimationModeON(  ){ 
+  b_FakeEstimation = true ; 
+  std::cout <<"ttHYggdrasilEventSelection [debug] : b_FakeEstimation is set to true." << std::endl ; 
+}
+
+
+void ttHYggdrasilEventSelection::SetTightMuonRelIsoCut( double cut ){
+  Thre_TightMu_Iso = cut ; 
+  std::cout <<"[ttHYggdrasilEventSelection.cc] : Tight muon isolation is set to " << Thre_TightMu_Iso << std::endl ; 
+}
+void ttHYggdrasilEventSelection::SetLooseMuonRelIsoCut( double cut ){
+  Thre_LooseMu_Iso = cut ;
+  std::cout <<"[ttHYggdrasilEventSelection.cc] : Loose muon isolation is set to " << Thre_LooseMu_Iso << std::endl ; 
+}
+
+double ttHYggdrasilEventSelection::MinDRLepJet(){
+  
+  double minDR2 = 10000 ;
+
+  for( std::vector<const TLorentzVector*>::iterator lep = selected_tightLeptons.begin(); 
+       lep != selected_tightLeptons.end();
+       lep ++ ) {
+
+    for( std::vector<const TLorentzVector*>::iterator jet = selected_jets.begin(); 
+	 jet != selected_jets.end();
+	 jet ++ ) {
+      
+      double dr2 = _calcDR2( (*lep)->Eta() , (*jet)->Eta(), (*lep)->Phi() , (*jet)->Phi() );
+      minDR2 = minDR2 < dr2 ? minDR2 : dr2 ;
+
+    }
+  }
+
+  return sqrt( minDR2 );
+
 }

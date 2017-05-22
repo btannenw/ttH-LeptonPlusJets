@@ -180,8 +180,8 @@ lepton_scEta_   : Electron Super Cluster. For muon, -99 is filled.
 [*1] POG lepton ID : 
  Muon     POG Tight ID : = Tight ID.
  Muon     POG loose ID is not used at the moment. Always 1.
- Electron POG Tight = GeneralPurposeMVA2016 WP80
- Electron POG Loose = GeneralPurposeMVA2016 WP90
+ Electron POG Tight = Cut base ID "tight"
+ Electron POG Loose = Cut base ID "veto"
 
  lepnums_  : number of tight/loose leptons [*2]
 [2*] not used in YggdrasilTupleMaker(and not filled) but needed by "AnalysisCode/macros/Yggdrasil_Slim.C"

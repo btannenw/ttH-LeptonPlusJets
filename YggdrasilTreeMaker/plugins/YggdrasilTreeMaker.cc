@@ -1334,7 +1334,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   vvdouble vvleptons;
 
   
-  vint lepton_genId, lepton_genParentId, lepton_genGrandParentId, lepton_trkCharge, lepton_isMuon, lepton_isTight, lepton_isLoose;
+  vint lepton_genId, lepton_genParentId, lepton_genGrandParentId, lepton_trkCharge, lepton_isMuon, lepton_isTight, lepton_isLoose, lepton_isLooseAlt;
   vdouble lepton_pt;
   vdouble lepton_eta;
   vdouble lepton_phi;
@@ -1439,6 +1439,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_isMuon.push_back(1);
     lepton_isTight.push_back(isPOGTight);
     lepton_isLoose.push_back(isPOGLoose);
+    lepton_isLooseAlt.push_back(isPOGLoose);
     lepton_genId.push_back(genId);
     lepton_genParentId.push_back(genParentId);
     lepton_genGrandParentId.push_back(genGrandParentId);
@@ -1544,6 +1545,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
     int isPOGTight = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedT ) ? 1 : 0  ;
     int isPOGLoose = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedV ) ? 1 : 0  ;
+    int isPOGLooseAlt = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedL ) ? 1 : 0  ;
 
 
     // our pre-selections 
@@ -1609,6 +1611,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_isMuon.push_back(0);
     lepton_isTight.push_back(isPOGTight);
     lepton_isLoose.push_back(isPOGLoose);
+    lepton_isLooseAlt.push_back(isPOGLooseAlt);
     lepton_genId.push_back(genId);
     lepton_genParentId.push_back(genParentId);
     lepton_genGrandParentId.push_back(genGrandParentId);
@@ -1691,6 +1694,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->lepton_isMuon_           = lepton_isMuon;
   eve->lepton_isTight_          = lepton_isTight;
   eve->lepton_isLoose_          = lepton_isLoose;
+  eve->lepton_isLooseAlt_          = lepton_isLooseAlt ;
   eve->lepton_pt_               = lepton_pt;
   eve->lepton_eta_              = lepton_eta;
   eve->lepton_phi_              = lepton_phi;

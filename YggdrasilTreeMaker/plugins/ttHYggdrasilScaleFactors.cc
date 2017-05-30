@@ -129,15 +129,23 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
 
 TH2* ttHYggdrasilScaleFactors::getTH2HistogramFromFile( std::string input , std::string histoname ){
 
+  TDirectory * main_directory = gDirectory;
   TFile * f = TFile::Open( input.c_str() );
-  TH2F * h_2f = 0 ;
-  TH2D * h_2d = 0 ;
-  f-> GetObject ( histoname.c_str(), h_2d );
-  f-> GetObject ( histoname.c_str(), h_2f );
-  if( h_2d != 0 ){
+  main_directory->cd();
+  
+  TH2D * h_2d_tmp = 0 ;
+  f-> GetObject ( histoname.c_str(), h_2d_tmp );
+  if( h_2d_tmp != 0 ){
+    TH2D * h_2d = new TH2D(*h_2d_tmp) ;
+    f->Close();
     return h_2d ; 
   }
-  if( h_2f != 0 ){
+
+  TH2F * h_2f_tmp = 0 ;
+  f-> GetObject ( histoname.c_str(), h_2f_tmp );
+  if( h_2f_tmp != 0 ){
+    TH2F * h_2f = new TH2F(*h_2f_tmp) ;
+    f->Close();
     return h_2f ; 
   }
   std::cout <<"Failed to obtain histogarm named " << histoname<< " from file " << input << std::endl ; 
@@ -492,7 +500,8 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
       f -> GetObject( "pileup" , h ) ;
       for( int i = 0 ; i < 75 ; i++ ){
 	PU_DATA[i] = h->GetBinContent( i + 1 );
-      } 
+      }
+      f -> Close();
     }
 
 

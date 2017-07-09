@@ -1755,7 +1755,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     case 33 : iSysType =  sysType::JESRelativeJERHFup; break ;
     case 34 : iSysType =  sysType::JESRelativeFSRup; break ;
     case 35 : iSysType =  sysType::JESRelativeStatFSRup; break ;
-      //    case 36 : iSysType =  sysType::JESRelativeStatEC2up; break ;
+      //    case 36 : iSysType =  sysType::JESRelativeStatEC2up; break ; ) RelativeStatEC2 is not supported._
     case 37 : iSysType =  sysType::JESRelativeStatECup; break ;
     case 38 : iSysType =  sysType::JESRelativeStatHFup; break ;
     case 39 : iSysType =  sysType::JESRelativePtBBup; break ;
@@ -1783,7 +1783,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     case 60 : iSysType =  sysType::JESRelativeJERHFdown; break ;
     case 61 : iSysType =  sysType::JESRelativeFSRdown; break ;
     case 62 : iSysType =  sysType::JESRelativeStatFSRdown; break ;
-      //    case 63 : iSysType =  sysType::JESRelativeStatEC2down; break ;
+      //    case 63 : iSysType =  sysType::JESRelativeStatEC2down; break ; (  RelativeStatEC2 is not supported. )
     case 64 : iSysType =  sysType::JESRelativeStatECdown; break ;
     case 65 : iSysType =  sysType::JESRelativeStatHFdown; break ;
     case 66 : iSysType =  sysType::JESRelativePtBBdown; break ;

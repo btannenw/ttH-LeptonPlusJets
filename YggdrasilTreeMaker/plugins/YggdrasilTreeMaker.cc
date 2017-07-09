@@ -175,7 +175,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
 
   edm::EDGetTokenT <GenEventInfoProduct> genInfoProductToken;
 
-  edm::EDGetTokenT <LHEEventProduct> LHEEventProductToken;
+  //  edm::EDGetTokenT <LHEEventProduct> LHEEventProductToken;
 
   edm::EDGetTokenT <pat::JetCollection> tempjetToken;
   
@@ -331,7 +331,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   if( isMC ){
     mcparicleToken = consumes <reco::GenParticleCollection> (edm::InputTag(std::string("prunedGenParticles")));
     genInfoProductToken = consumes <GenEventInfoProduct> (edm::InputTag(std::string("generator")));
-    LHEEventProductToken = consumes<LHEEventProduct> ( edm::InputTag(std::string("externalLHEProducer") )  );
+    //    LHEEventProductToken = consumes<LHEEventProduct> ( edm::InputTag(std::string("externalLHEProducer") )  );
     TtGenEventToken = consumes< TtGenEvent >( edm::InputTag("genEvt") );
   }
 
@@ -510,10 +510,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   // iEvent.getByToken( subFilterJetsToken,h_subfilterjet );
 
   edm::Handle<GenEventInfoProduct> GenEventInfoHandle;
-  edm::Handle<LHEEventProduct> LHEEventProductHandle;
+  //  edm::Handle<LHEEventProduct> LHEEventProductHandle;
   if( isMC ){
   iEvent.getByToken(genInfoProductToken,GenEventInfoHandle);
-  iEvent.getByToken(LHEEventProductToken,  LHEEventProductHandle) ;
+  //  iEvent.getByToken(LHEEventProductToken,  LHEEventProductHandle) ;
   }
 
   edm::Handle<boosted::BoostedJetCollection> h_boostedjet;
@@ -689,9 +689,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->additionalJetEventId_ = *genTtbarId;
   
     const int idx_Q2_upup     = 1005;
-    eve->weight_q2_upup_     = LHEEventProductHandle -> weights()[idx_Q2_upup]    .wgt / LHEEventProductHandle -> originalXWGTUP(); 
+    //    eve->weight_q2_upup_     = LHEEventProductHandle -> weights()[idx_Q2_upup]    .wgt / LHEEventProductHandle -> originalXWGTUP(); 
     const int idx_Q2_downdown = 1009;
-    eve->weight_q2_downdown_ = LHEEventProductHandle -> weights()[idx_Q2_downdown].wgt / LHEEventProductHandle -> originalXWGTUP(); 
+    //    eve->weight_q2_downdown_ = LHEEventProductHandle -> weights()[idx_Q2_downdown].wgt / LHEEventProductHandle -> originalXWGTUP(); 
 
 
     auto pdfInfos = GenEventInfoHandle -> pdf();

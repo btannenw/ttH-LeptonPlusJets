@@ -7,6 +7,8 @@ echo "# - - - - - - - "
 echo remove large files from directory to submit jobs.
 rm -rf ../../AnalysisCode/data/*
 echo " Removing large file is done..."
+echO " Removing files ${CMSSW_BASE}/lib/slc6_amd64_gcc530/proclib/*openloop*so because they are too large."
+rm -rf ${CMSSW_BASE}/lib/slc6_amd64_gcc530/proclib/*openloop*so
 echo "# - - - - - - "
 
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=False|isMC=True|g" > __yggdrasil_treeMaker_MC_cfg.py 
@@ -21,7 +23,7 @@ cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPerio
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodF2G=False|isPeriodF2G=True|g"> __yggdrasil_treeMaker_DATA_F2G_cfg.py 
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodH=False|isPeriodH=True|g"    > __yggdrasil_treeMaker_DATA_H_cfg.py 
 
-nickname="Satoshi_Moriond17_Yggdra_20170224_ElLoosen"
+nickname="Satoshi_Moriond17_Yggdra_20170530_JECDefactUnct"
 
 JobIndexList=""
 
@@ -288,7 +290,60 @@ ds[111]=/TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISumme
 name[111]=tttosemilep
 ismc[111]=MC
 
-JobIndexList=${JobIndexList}" 110 111 " 
+JobIndexList=${JobIndexList}" 110 111 "
+
+
+ismc[112]=MC
+ismc[113]=MC
+ismc[114]=MC
+ismc[115]=MC
+ismc[116]=MC
+ismc[117]=MC
+ismc[118]=MC
+ismc[119]=MC
+ismc[120]=MC
+ismc[121]=MC
+ismc[122]=MC
+ismc[123]=MC
+
+
+ds[112]=/TT_TuneCUETP8M2T4_mtop1735_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+ds[113]=/TT_TuneCUETP8M2T4_mtop1715_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[112]=ttbarmass1735
+name[113]=ttbarmass1715
+
+ds[114]=/TT_TuneCUETP8M2T4up_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+ds[115]=/TT_TuneCUETP8M2T4down_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[114]=ttbartuneup
+name[115]=ttbartunedown
+
+ds[116]=/TT_hdampUP_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[116]=ttbarhdampup
+
+ds[117]=/TT_hdampDOWN_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[117]=ttbarhdampdown
+
+ds[118]=/TT_widthx0p2_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[118]=ttbarwidth0p2
+
+ds[119]=/TT_widthx0p5_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[119]=ttbarwidth0p5
+
+ds[120]=/TT_widthx4_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[120]=ttbarwithd4
+
+ds[121]=/TT_widthx8_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[121]=ttbarwidth8
+
+ds[122]=/TT_TuneCUETP8M2T4_13TeV-powheg-colourFlip-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[122]=ttbarcolorflip
+
+ds[123]=/TT_TuneCUETP8M2T4_erdON_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[123]=ttbarerdon
+
+
+JobIndexList=${JobIndexList}" 112 113 114 115 116 117 118 119 120 121 122 123  "
+
 
 
 for idx in ` echo $JobIndexList `

@@ -44,6 +44,7 @@ struct yggdrasilEventVars{
   Int_t   additionalJetEventId_;
   Int_t   higgsDecayType_;
   Int_t   ttbarDecayType_;
+  Int_t   additionalJetEventId__;
 
   int passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1_;
   
@@ -220,6 +221,7 @@ void yggdrasilEventVars::initialize(){
   additionalJetEventId_ = -1;
   higgsDecayType_      = -1;
   ttbarDecayType_      = 0 ;
+  additionalJetEventId_ = 0 ; 
 
   passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1_ = -99;
   

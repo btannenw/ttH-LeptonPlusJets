@@ -119,20 +119,24 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   
   // Input tags
   edm::EDGetTokenT<reco::GenJetCollection> genJetsToken_;
+  edm::EDGetTokenT<reco::GenJetCollection> genJetsForTTHFToken_;
   
   edm::EDGetTokenT<std::vector<int> > genBHadJetIndexToken_;
-  const edm::EDGetTokenT<std::vector<int> > genBHadFlavourToken_;
-  const edm::EDGetTokenT<std::vector<int> > genBHadFromTopWeakDecayToken_;
+  edm::EDGetTokenT<std::vector<int> > genBHadFlavourToken_;
+  edm::EDGetTokenT<std::vector<int> > genBHadFromTopWeakDecayToken_;
+  edm::EDGetTokenT<std::vector<int> > genCHadFromTopWeakDecayToken_;
   const edm::EDGetTokenT<std::vector<reco::GenParticle> > genBHadPlusMothersToken_;
   const edm::EDGetTokenT<std::vector<std::vector<int> > > genBHadPlusMothersIndicesToken_;
-  const edm::EDGetTokenT<std::vector<int> > genBHadIndexToken_;
+  edm::EDGetTokenT<std::vector<int> > genBHadIndexToken_;
+  edm::EDGetTokenT<std::vector<int> > genCHadIndexToken_;
+  edm::EDGetTokenT<std::vector<int> > genBHadFlavour_;
+  edm::EDGetTokenT<std::vector<int> > genCHadFlavour_;
   const edm::EDGetTokenT<std::vector<int> > genBHadLeptonHadronIndexToken_;
   const edm::EDGetTokenT<std::vector<int> > genBHadLeptonViaTauToken_;
   
-  const edm::EDGetTokenT<std::vector<int> > genCHadJetIndexToken_;
-  const edm::EDGetTokenT<std::vector<int> > genCHadFlavourToken_;
-  const edm::EDGetTokenT<std::vector<int> > genCHadFromTopWeakDecayToken_;
-  const edm::EDGetTokenT<std::vector<int> > genCHadBHadronIdToken_;
+  edm::EDGetTokenT<std::vector<int> > genCHadJetIndexToken_;
+  edm::EDGetTokenT<std::vector<int> > genCHadFlavourToken_;
+  edm::EDGetTokenT<std::vector<int> > genCHadBHadronIdToken_;
 
   //----------
 
@@ -261,6 +265,7 @@ typedef std::vector< TLorentzVector >          vecTLorentzVector;
 //
 YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   genJetsToken_ ( consumes <reco::GenJetCollection> ( iConfig.getParameter<edm::InputTag>("genjet") ) )
+  ,  genJetsForTTHFToken_ ( consumes <reco::GenJetCollection> ( iConfig.getParameter<edm::InputTag>("genjetfortthf") ) )
   ,  isMC(iConfig.getParameter<std::string>("inputfiletype") != "data" )
   ,  isTTbarMC(iConfig.getParameter<std::string>("inputfiletype") == "TTbarMC" )
   , usePUPPI(iConfig.getParameter<std::string>("jetPU") == "PUPPI" )
@@ -346,6 +351,25 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
   if( isMC ){
   genTtbarIdToken_ = consumes<int>( edm::InputTag( "categorizeGenTtbar", "genTtbarId","" ) )  ;
+
+
+  genBHadJetIndexToken_ = consumes< std::vector<int> >( edm::InputTag("matchGenBHadron", "genBHadJetIndex", "") );
+  genCHadJetIndexToken_ = consumes< std::vector<int> >( edm::InputTag("matchGenCHadron", "genCHadJetIndex", "") );
+
+  genBHadIndexToken_ = consumes< std::vector<int> >( edm::InputTag("matchGenBHadron" , "genBHadIndex", "") );
+  genCHadIndexToken_ = consumes< std::vector<int> >( edm::InputTag("matchGenCHadron" , "genCHadIndex", "") );
+
+  genBHadFlavour_ = consumes< std::vector<int> >( edm::InputTag("matchGenBHadron","genBHadFlavour", "") );
+  genCHadFlavour_ = consumes< std::vector<int> >( edm::InputTag("matchGenCHadron","genCHadFlavour", "") );
+
+
+  genBHadFlavourToken_ = consumes< std::vector<int> >( edm::InputTag("matchGenBHadron", "genBHadFlavour", "") );
+  genCHadFlavourToken_ = consumes< std::vector<int> >( edm::InputTag("matchGenCHadron", "genCHadFlavour", "") );
+
+  genBHadFromTopWeakDecayToken_ = consumes< std::vector<int> >( edm::InputTag("matchGenBHadron", "genBHadFromTopWeakDecay", "") );
+  genCHadFromTopWeakDecayToken_ = consumes< std::vector<int> >( edm::InputTag("matchGenCHadron", "genCHadFromTopWeakDecay", "") );
+
+  genCHadBHadronIdToken_ = consumes< std::vector<int> >( edm::InputTag("matchGenCHadron", "genCHadBHadronId", "") );
   }
 
   edm::Service<TFileService> fs_;
@@ -353,7 +377,6 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   eve=0; 
   worldTree->Branch("eve.", "yggdrasilEventVars", &eve, 8000, 1);
 
-  genBHadJetIndexToken_ = consumes< std::vector<int> >( edm::InputTag("matchGenBHadron", "genBHadJetIndex", "") );
 
   nevents=0;
 
@@ -641,6 +664,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     
     edm::Handle<std::vector<int> > genBHadJetIndex;
     iEvent.getByToken(genBHadJetIndexToken_, genBHadJetIndex);
+
+    edm::Handle<std::vector<int> > genCHadJetIndex;
+    iEvent.getByToken(genCHadJetIndexToken_, genCHadJetIndex);
     
     const std::vector<reco::GenJet> * genjets  = genjetCollection.product();
 
@@ -666,6 +692,193 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
     // memo : https://github.com/hsatoshi/MiniAODPrivateTuple/blob/master/TupleMaker/plugins/TupleMaker.cc#L3303
 
+
+
+    
+    // https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/PhysicsTools/JetMCAlgos/test/matchGenHFHadrons.cc 
+
+    std::vector<int> additionalBJetIds ; // done
+    std::vector<int> pseudoadditionalBJetIds ; // done
+    std::map<int, int> bJetBeforeTopIds ; // done
+    std::map<int, int> bJetAfterTopIds ; // done
+    std::map<int,int> bJetFromTopIds ;  // done 
+
+
+    std::vector<int> additionalCJetIds ; //  done
+    std::vector<int> pseudoadditionalCJetIds ; //done
+    std::map<int, int> cJetBeforeTopIds ; // done
+    std::map<int, int> cJetAfterTopIds ; // done
+
+    
+    edm::Handle<reco::GenJetCollection> genjetCollectionForTTHF ;
+    iEvent.getByToken( genJetsForTTHFToken_ , genjetCollectionForTTHF );
+      
+
+    edm::Handle<std::vector<int> > genBHadIndex;
+    iEvent.getByToken(genBHadIndexToken_, genBHadIndex);
+
+
+    edm::Handle<std::vector<int> > genCHadIndex;
+    iEvent.getByToken(genCHadIndexToken_, genCHadIndex);
+
+    edm::Handle<std::vector<int> > genBHadFlavour;
+    iEvent.getByToken(genBHadFlavourToken_, genBHadFlavour);
+
+    edm::Handle<std::vector<int> > genCHadFlavour;
+    iEvent.getByToken(genCHadFlavourToken_, genCHadFlavour);
+
+    edm::Handle<std::vector<int> > genBHadFromTopWeakDecay;
+    iEvent.getByToken(genBHadFromTopWeakDecayToken_, genBHadFromTopWeakDecay);
+
+    edm::Handle<std::vector<int> > genCHadFromTopWeakDecay;
+    iEvent.getByToken(genCHadFromTopWeakDecayToken_, genCHadFromTopWeakDecay);
+
+    edm::Handle<std::vector<int> > genCHadBHadronId;
+    iEvent.getByToken(genCHadBHadronIdToken_, genCHadBHadronId);
+
+    const double genJetPtMin_    =  20.0;
+    const double genJetAbsEtaMax_=   2.4;
+
+    for(size_t hadronId = 0; hadronId < genBHadIndex->size(); ++hadronId) {
+      // Flavour of the hadron's origin
+      const int flavour = genBHadFlavour->at(hadronId);
+      if(std::abs(flavour) == 24) continue;
+      const bool afterTopDecay = genBHadFromTopWeakDecay->at(hadronId) > 0 ? true : false;
+      const int jetIndex = genBHadJetIndex->at(hadronId);
+
+      if(jetIndex < 0) continue;
+
+      if(genjetCollectionForTTHF->at(jetIndex).pt() < genJetPtMin_) continue;
+
+      if(std::fabs(genjetCollectionForTTHF->at(jetIndex).eta()) > genJetAbsEtaMax_) continue;
+
+      if(std::abs(flavour) == 6) {
+	if(bJetFromTopIds.count(jetIndex) < 1) bJetFromTopIds[jetIndex] = 1;
+	else bJetFromTopIds[jetIndex]++;
+      }
+      if(std::abs(flavour) == 6) continue;
+
+      if(!afterTopDecay) {
+	if(bJetBeforeTopIds.count(jetIndex) < 1) bJetBeforeTopIds[jetIndex] = 1;
+	else bJetBeforeTopIds[jetIndex]++;
+      }else{
+	if(bJetAfterTopIds.count(jetIndex) < 1) bJetAfterTopIds[jetIndex] = 1;
+	else bJetAfterTopIds[jetIndex]++;
+      }
+    }
+
+
+    for(std::map<int, int>::iterator it = bJetBeforeTopIds.begin(); it != bJetBeforeTopIds.end(); ++it) {
+      const int jetId = it->first;
+      // Skipping the jet if it contains a b hadron directly from top quark decay
+      if(bJetFromTopIds.count(jetId) > 0) continue;
+      additionalBJetIds.push_back(jetId);
+    }
+    for(std::map<int, int>::iterator it = bJetAfterTopIds.begin(); it != bJetAfterTopIds.end(); ++it) {
+      const int jetId = it->first;
+      // Skipping the jet if it contains a b hadron directly from top quark decay
+      if(bJetFromTopIds.count(jetId) > 0) continue;
+      pseudoadditionalBJetIds.push_back(jetId);
+    }
+
+    // Counting number of specific hadrons in each c jet
+    for(size_t hadronId = 0; hadronId < genCHadJetIndex->size(); ++hadronId) {
+
+
+      if(genCHadBHadronId->at(hadronId) >= 0) continue;
+      const int flavour = genCHadFlavour->at(hadronId);
+
+      if(std::abs(flavour) == 24) continue;
+
+      const int jetIndex = genCHadJetIndex->at(hadronId);
+      const bool afterTopDecay = genCHadFromTopWeakDecay->at(hadronId) > 0 ? true : false;
+
+      if(jetIndex < 0) continue;
+
+      if(genjetCollectionForTTHF->at(jetIndex).pt() < genJetPtMin_) continue;
+
+
+      if(std::fabs(genjetCollectionForTTHF->at(jetIndex).eta()) > genJetAbsEtaMax_) continue;
+
+      if(!afterTopDecay) {
+	if(cJetBeforeTopIds.count(jetIndex) < 1) cJetBeforeTopIds[jetIndex] = 1;
+	else cJetBeforeTopIds[jetIndex]++;
+      }else{
+	if(cJetAfterTopIds.count(jetIndex) < 1) cJetAfterTopIds[jetIndex] = 1;
+	else cJetAfterTopIds[jetIndex]++;
+      }
+
+    }
+    for(std::map<int, int>::iterator it = cJetBeforeTopIds.begin(); it != cJetBeforeTopIds.end(); ++it) {
+      const int jetId = it->first;
+      // Skipping the jet if it contains a b hadron directly from top quark decay
+      if(bJetFromTopIds.count(jetId) > 0) continue;
+      additionalCJetIds.push_back(jetId);
+    }
+    for(std::map<int, int>::iterator it = cJetAfterTopIds.begin(); it != cJetAfterTopIds.end(); ++it) {
+      const int jetId = it->first;
+      // Skipping the jet if it contains a b hadron directly from top quark decay
+      if(bJetFromTopIds.count(jetId) > 0) continue;
+      pseudoadditionalCJetIds.push_back(jetId);
+    }
+
+
+    // Categorizing event based on number of additional b/c jets and number of corresponding hadrons in each of them 
+    // Exclusively for dileptonic final states of the ttbar system (may be unapplicable for other decay channels)
+    int additionalJetEventId_ = bJetFromTopIds.size()*100;
+    // tt + 1 additional b jet
+    if (additionalBJetIds.size() == 1) {
+      int nHadronsInJet = bJetBeforeTopIds[additionalBJetIds.at(0)];
+      // tt + 1 additional b jet from 1 additional b hadron
+      if(nHadronsInJet == 1) additionalJetEventId_ += 51;
+      // tt + 1 additional b jet from >=2 additional b hadrons
+      else additionalJetEventId_ += 52;
+    }
+    // tt + 2 additional b jets
+    else if (additionalBJetIds.size() > 1) {
+      int nHadronsInJet1 = bJetBeforeTopIds[additionalBJetIds.at(0)];
+      int nHadronsInJet2 = bJetBeforeTopIds[additionalBJetIds.at(1)];
+      // tt + 2 additional b jets each from 1 additional b hadron
+      if(std::max(nHadronsInJet1, nHadronsInJet2) == 1) additionalJetEventId_ += 53;
+      // tt + 2 additional b jets one of which from >=2 overlapping additional b hadrons
+      else if(std::min(nHadronsInJet1, nHadronsInJet2) == 1 && std::max(nHadronsInJet1, nHadronsInJet2) > 1) additionalJetEventId_ += 54;
+      // tt + 2 additional b jets each from >=2 additional b hadrons
+      else if(std::min(nHadronsInJet1, nHadronsInJet2) > 1) additionalJetEventId_ += 55;
+    }
+    // tt + no additional b jets
+    else if(additionalBJetIds.size() == 0) {
+      // tt + >=1 pseudo-additional b jet with b hadrons after top quark decay
+      if(pseudoadditionalBJetIds.size() > 0) additionalJetEventId_ += 56;
+      // tt + 1 additional c jet
+      else if(additionalCJetIds.size() == 1) {
+	int nHadronsInJet = cJetBeforeTopIds[additionalCJetIds.at(0)];
+	// tt + 1 additional c jet from 1 additional c hadron
+	if(nHadronsInJet == 1) additionalJetEventId_ += 41;
+	// tt + 1 additional c jet from >=2 overlapping additional c hadrons
+	else additionalJetEventId_ += 42;
+      }
+      // tt + >=2 additional c jets
+      else if(additionalCJetIds.size() > 1) {
+	int nHadronsInJet1 = cJetBeforeTopIds[additionalCJetIds.at(0)];
+	int nHadronsInJet2 = cJetBeforeTopIds[additionalCJetIds.at(1)];
+	// tt + 2 additional c jets each from 1 additional c hadron
+	if(std::max(nHadronsInJet1, nHadronsInJet2) == 1) additionalJetEventId_ += 43;
+	// tt + 2 additional c jets one of which from >=2 overlapping additional c hadrons
+	else if(std::min(nHadronsInJet1, nHadronsInJet2) == 1 && std::max(nHadronsInJet1, nHadronsInJet2) > 1) additionalJetEventId_ += 44;
+	// tt + 2 additional c jets each from >=2 additional c hadrons
+	else if(std::min(nHadronsInJet1, nHadronsInJet2) > 1) additionalJetEventId_ += 45;
+      }
+      // tt + no additional c jets
+      else if(additionalCJetIds.size() == 0) {
+	// tt + >=1 pseudo-additional c jet with c hadrons after top quark decay
+	if(pseudoadditionalCJetIds.size() > 0) additionalJetEventId_ += 46;
+	// tt + light jets
+	else additionalJetEventId_ += 0;
+      }
+    }
+
+    eve->additionalJetEventId_ = additionalJetEventId_ ; 
+
   }
 
 
@@ -684,9 +897,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   h_ttbarId_->Fill(*genTtbarId);
    
   // Fill ID based only on additional b/c jets
-  h_ttbarAdditionalJetId_->Fill(*genTtbarId%100);
-  
-  eve->additionalJetEventId_ = *genTtbarId;
+  //  h_ttbarAdditionalJetId_->Fill(*genTtbarId%100);
+  //   eve->additionalJetEventId_ = *genTtbarId;
   
     const int idx_Q2_upup     = 1005;
     //    eve->weight_q2_upup_     = LHEEventProductHandle -> weights()[idx_Q2_upup]    .wgt / LHEEventProductHandle -> originalXWGTUP(); 

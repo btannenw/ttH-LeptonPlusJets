@@ -62,7 +62,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(10000)
     )
 
 
@@ -159,7 +159,7 @@ process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-        'file:///uscms/home/satoshi/temporal_strage/0CB1DE33-60BF-E611-B520-0025905A4964.root'
+        '/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root'
 #        ' /store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/120000/0CB1DE33-60BF-E611-B520-0025905A4964.root'
 #        '/store/user/puigh/TTHSync/ttjets_phys14_20bx25_withfatjets_v2.root'
             #'/store/mc/Phys14DR/TTbarH_M-125_13TeV_amcatnlo-pythia8-tauola/MINIAODSIM/PU20bx25_tsg_PHYS14_25_V1-v2/00000/08B36E8F-5E7F-E411-9D5A-002590200AE4.root'
@@ -452,12 +452,14 @@ if isMC :
     if isPUPPI :
         process.ttHTreeMaker = cms.EDAnalyzer('YggdrasilTreeMaker',
                                               genjet =  genjetInputTag,
-                                              inputfiletype   =  cms.string("TTbarMC") if isTTBARMC else cms.string("MC") ,
+                                              genjetfortthf  = cms.InputTag( genJetCollection, "",""),
+                                               inputfiletype   =  cms.string("TTbarMC") if isTTBARMC else cms.string("MC") ,
                                               jetPU = cms.string( "PUPPI" )
                                           )
     else:
         process.ttHTreeMaker = cms.EDAnalyzer('YggdrasilTreeMaker',
                                               genjet =  genjetInputTag,
+                                              genjetfortthf  = cms.InputTag( genJetCollection, "",""),
                                               inputfiletype   =  cms.string("TTbarMC") if isTTBARMC else cms.string("MC") ,
                                           jetPU = cms.string( "CHS" )
                                           )
@@ -466,12 +468,14 @@ else :
     if isPUPPI :
         process.ttHTreeMaker = cms.EDAnalyzer('YggdrasilTreeMaker',
                                               genjet =  genjetInputTag,
+                                              genjetfortthf  = cms.InputTag( "dummy", "",""),
                                           inputfiletype    =  cms.string("data"),
                                           jetPU = cms.string( "PUPPI" )
                                           )
     else:
         process.ttHTreeMaker = cms.EDAnalyzer('YggdrasilTreeMaker',
                                               genjet =  genjetInputTag,
+                                              genjetfortthf  = cms.InputTag( "dummy", "",""),
                                           inputfiletype    =  cms.string("data"),
                                           jetPU = cms.string( "CHS" )
                                           )

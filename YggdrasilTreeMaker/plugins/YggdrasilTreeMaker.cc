@@ -294,7 +294,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   // EDMeleMVAcategoriesToken       = consumes<edm::ValueMap<int> >(edm::InputTag("electronMVAValueMapProducer",  "ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories",""));
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
-  electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
+  electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("calibratedPatElectrons")));
   muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
   muonview_Token = consumes < edm::View<pat::Muon> > (edm::InputTag(std::string("slimmedMuons")));
   token_PuppuMuIso_Combined =  consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiCombined" ,"") ) ; 

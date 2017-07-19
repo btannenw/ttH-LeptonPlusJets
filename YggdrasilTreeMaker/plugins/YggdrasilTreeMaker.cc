@@ -2099,6 +2099,8 @@ n_fatjets++;
 
     selection . SetGoodVtx( & ( eve->GoodFirstPV_ ) );
 
+    selection . SetLepTrigDR( & eve->lepton_dRSingleLepTrig_ );
+
     selection . SetLeptons( & eve->lepton_pt_, 
 			    & eve->lepton_eta_, 
 			    & eve->lepton_scEta_, 

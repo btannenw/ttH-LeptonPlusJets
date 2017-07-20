@@ -23,7 +23,7 @@ cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPerio
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodF2G=False|isPeriodF2G=True|g"> __yggdrasil_treeMaker_DATA_F2G_cfg.py 
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodH=False|isPeriodH=True|g"    > __yggdrasil_treeMaker_DATA_H_cfg.py 
 
-nickname="Satoshi_Moriond17_Yggdra_20170530_JECDefactUnct"
+nickname="Satoshi_Moriond17_Yggdra_20170709_TopHadIDAdded3"
 
 JobIndexList=""
 
@@ -148,7 +148,36 @@ ds[30]=/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond1
 name[30]=ttbar
 ismc[30]=MC
 
-JobIndexList=${JobIndexList}" 30 "
+
+ds[31]=/TT_TuneCUETP8M2T4_13TeV-powheg-isrup-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[31]=ttbarISRUp
+ismc[31]=MC
+
+ds[32]=/TT_TuneCUETP8M2T4_13TeV-powheg-isrdown-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[32]=ttbarISRDown
+ismc[32]=MC
+
+ds[33]=/TT_TuneCUETP8M2T4_13TeV-powheg-fsrup-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[33]=ttbarFSRUp
+ismc[33]=MC
+
+ds[34]=/TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[34]=ttbarFSRDown
+ismc[34]=MC
+
+
+
+ds[35]=/TT_TuneCUETP8M2T4up_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+
+name[35]=ttbarUEup
+ismc[35]=MC
+
+ds[36]=/TT_TuneCUETP8M2T4down_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[36]=ttbarUEdown
+ismc[36]=MC
+
+
+JobIndexList=${JobIndexList}" 30 31 32 33 34 35 36 "
 
 ds[40]=/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
 name[40]=WjetIncl
@@ -350,6 +379,34 @@ ds[100]=/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISummer1
 name[100]=tthbb
 ismc[100]=MC
 JobIndexList=${JobIndexList}" 100 " 
+
+
+
+ds[150]=/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM
+ds[151]=/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v3/MINIAODSIM
+ds[152]=/TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+ds[153]=/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+ds[154]=/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM
+ds[155]=/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext3-v1/MINIAODSIM
+ds[156]=/TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+
+name[150]=TTWJetsToLNu_1
+name[151]=TTWJetsToLNu_2
+name[152]=TTWJetsToQQ
+name[153]=TTZToLLNuNu_1
+name[154]=TTZToLLNuNu_2
+name[155]=TTZToLLNuNu_3
+name[156]=TTZToQQ
+
+ismc[150]=MC
+ismc[151]=MC
+ismc[152]=MC
+ismc[153]=MC
+ismc[154]=MC
+ismc[155]=MC
+ismc[156]=MC
+
+JobIndexList=${JobIndexList}" 150 151 152 153 154 155 156 " 
 
 
 for idx in ` echo $JobIndexList `

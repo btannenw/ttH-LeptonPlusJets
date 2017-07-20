@@ -83,6 +83,9 @@
 
 #include "AnalysisDataFormats/TopObjects/interface/TtGenEvent.h"
 
+
+#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/RoccoR.h"
+
 //
 // class declaration
 //
@@ -215,6 +218,8 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
  
   MiniAODHelper miniAODhelper;
 
+  RoccoR * muon_roc ;
+
   BDTvars bdtVARS;
   
   TopTagger toptagger;
@@ -295,7 +300,10 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
   electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("calibratedPatElectrons")));
-  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
+
+  //(Normal Muon from Miniaod)  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
+  muonToken = consumes <pat::MuonCollection> (edm::InputTag("deterministicSeeds", "muonsWithSeed",""));
+
   muonview_Token = consumes < edm::View<pat::Muon> > (edm::InputTag(std::string("slimmedMuons")));
   token_PuppuMuIso_Combined =  consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiCombined" ,"") ) ; 
 
@@ -310,8 +318,9 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   if( usePUPPI ){
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
   }else{
-    jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
-    // jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets"))); // for hip mitigation
+    // (Normal jet->) jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+
+    jetToken = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds","jetsWithSeed","" ));  // Jet with random seed.
   }
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
@@ -368,6 +377,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   analysisType::analysisType iAnalysisType = analysisType::LJ;
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, ! isMC );
+
+  muon_roc = new RoccoR ( std::string(  getenv("CMSSW_BASE") ) + "/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/rcdata.2016.v3" );
 
    // miniAODhelper.SetUpElectronMVA("MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB1_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB2_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EE_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml");
   
@@ -981,8 +992,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	  cand = miniAODhelper.GetObjectJustBeforeDecay ( cand );
 	  if ( ! checkIfRegisterd( cand , idx_Z ) ){
 
-	    std::cout <<"Z candidate" << std::endl ; 
-
 	    const reco::Candidate * cand_afterbirth = TraceBackToJustAfterBirth( & (*mcparticles)[i] ) ;
 	    bool isZbosonFromHiggs = false ;
 	    for ( unsigned int i = 0 ; i <  cand_afterbirth -> numberOfMothers(); i++ ){
@@ -1443,7 +1452,29 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_genId.push_back(genId);
     lepton_genParentId.push_back(genParentId);
     lepton_genGrandParentId.push_back(genGrandParentId);
-    lepton_pt.push_back(iMu->pt());
+
+
+    {
+      double _mu_pt = iMu->pt() ;
+      double sf = 1.0 ; 
+      if( isMC ){
+	TRandom3 rnd ;
+        rnd.SetSeed((uint32_t)( iMu -> userInt("deterministicSeed")));
+	if( (iMu->genLepton()) ){// todo
+	  sf = muon_roc->kScaleFromGenMC ( trkCharge , _mu_pt, iMu->eta(), iMu->phi(), trackerLayersWithMeasurement, iMu->genLepton()->pt() , rnd.Rndm() ) ;
+	}else{
+	  sf = muon_roc->kScaleAndSmearMC( trkCharge , _mu_pt, iMu->eta(), iMu->phi() , trackerLayersWithMeasurement, rnd.Rndm(), rnd.Rndm() ) ;
+	}
+	
+      }else{
+	// = data.
+	sf = muon_roc->kScaleDT( trkCharge , _mu_pt, iMu->eta(), iMu->phi());
+      }
+      
+      lepton_pt.push_back(iMu->pt() * sf  );
+    }
+
+
     lepton_eta.push_back(iMu->eta());
     lepton_phi.push_back(iMu->phi());
     lepton_e.push_back(iMu->energy());

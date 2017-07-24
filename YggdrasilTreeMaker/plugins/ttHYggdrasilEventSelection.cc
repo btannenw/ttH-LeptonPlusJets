@@ -39,6 +39,8 @@ ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
 
  b_FakeEstimation = false ;
 
+ jet_pt_beforeRecorrection = 0 ;
+
  for( int i = 0 ; i < 20 ; i ++ ){
    nEvent_passSingleMuCh .push_back(0);
    nEvent_passSingleElCh .push_back(0);
@@ -217,6 +219,13 @@ void ttHYggdrasilEventSelection::SetLepTrigDR( const std::vector<double> * trig_
 } 
 
 
+
+void ttHYggdrasilEventSelection::SetJetsPTBeforRecorrection( const std::vector<double> * pt ,
+							     const std::vector<double> * phi ){
+  jet_pt_beforeRecorrection = pt ; 
+  jet_phi_beforeRecorrection = phi ; 
+}
+
 void ttHYggdrasilEventSelection::SetJets( const std::vector<double> * pt, 
 					  const std::vector<double> * eta, 
 					  const std::vector<double> * phi, 
@@ -234,8 +243,9 @@ void ttHYggdrasilEventSelection::SetJets( const std::vector<double> * pt,
 
 void ttHYggdrasilEventSelection::SetMet( const float * _met_pt, const float * _met_phi ){
 
-  met_pt  = _met_pt ;
-  met_phi = _met_phi ;
+  met_preRecorrection_pt  = _met_pt ;
+  met_preRecorrection_phi = _met_phi ;
+
 
 }
 
@@ -249,6 +259,39 @@ void ttHYggdrasilEventSelection::doEventSelection(){
   _SortChargedLepton();
   _JetSelection();
 
+  _MetCorrection();
+
+}
+
+
+void ttHYggdrasilEventSelection::_MetCorrection(){
+
+  float x = (*met_preRecorrection_pt) * cos( *met_preRecorrection_phi );
+  float y = (*met_preRecorrection_pt) * sin( *met_preRecorrection_phi );
+
+  for( unsigned int iJet = 0 ; iJet < selected_jets.size() ; iJet ++ ){
+    
+    double delta_x = 
+      selected_jets[iJet]->Px() 
+      - 
+      selected_jetPt_preRecorrection . at(iJet) * cos( selected_jetPhi_preRecorrection . at(iJet) ) ; 
+    double delta_y = 
+      selected_jets[iJet]->Py() 
+      - 
+      selected_jetPt_preRecorrection . at(iJet) * sin( selected_jetPhi_preRecorrection . at(iJet) ) ; 
+
+
+    std::cout <<"delta x y = " << delta_x << " " << delta_y << " " << selected_jets[iJet]->Pt() << " " << selected_jetPt_preRecorrection . at(iJet) 
+	      << " " << selected_jets[iJet]->Px() << " " <<  selected_jetPt_preRecorrection . at(iJet) * cos( selected_jetPhi_preRecorrection . at(iJet) )
+	      << " " << selected_jets[iJet]->Phi() << " " <<  selected_jetPhi_preRecorrection . at(iJet) << std::endl ; ; 
+
+    x -= delta_x ;
+    y -= delta_y ;
+    
+  }
+  
+  met_pt  = sqrt( x*x +y*y );
+  met_phi = atan2( y , x );
   
 }
 
@@ -373,7 +416,9 @@ void ttHYggdrasilEventSelection::_InitInternalVariables(){
   selected_jets.clear();
   selected_jetsBdiscriminant.clear();
   selected_jetsFlav.clear();
-  
+  selected_jetPt_preRecorrection.clear();
+  selected_jetPhi_preRecorrection.clear();
+
   selected_bjets.clear();
   selected_bjetsBdiscriminant.clear();
   selected_bjetsFlav.clear();
@@ -394,6 +439,9 @@ void ttHYggdrasilEventSelection::_InitInternalVariables(){
   DLsofterselected_bjets.clear();
   DLsofterselected_bjetsBdiscriminant.clear();
   DLsofterselected_bjetsFlav.clear();
+
+  met_pt  = 0 ; 
+  met_phi = 0 ;
 
 }
 
@@ -608,6 +656,10 @@ void ttHYggdrasilEventSelection::_JetSelection(){
     selected_jetsBdiscriminant.push_back( jet_bDiscriminant ->at(idx) );
     selected_jetsFlav         .push_back( jet_flav ->at(idx) );
 
+    selected_jetPt_preRecorrection  . push_back(  jet_pt_beforeRecorrection -> at(idx)  );
+    selected_jetPhi_preRecorrection . push_back(  jet_phi_beforeRecorrection -> at(idx) );
+
+
     if( jet_bDiscriminant ->at(idx) < Thre_Jet_Btag ) continue ;
 
     selected_bjets.push_back( vec );
@@ -768,7 +820,7 @@ bool ttHYggdrasilEventSelection::PassElEl(){
   nEvent_passElElCh[ i_step++ ]++ ; 
 
   // MET>=40 GeV for ee and mumu (study removal or adjustment of cut, perhaps also 2D: MET vs. mll).
-  if( (*met_pt) < 40 ) { return false ;} 
+  if( met_pt < 40 ) { return false ;} 
   nEvent_passElElCh[ i_step++ ]++ ; 
 
   // >=1 b-tags.
@@ -823,7 +875,7 @@ bool ttHYggdrasilEventSelection::PassMuMu(){
   nEvent_passMuMuCh[ i_step++ ]++ ; 
 
   // MET>=40 GeV for ee and mumu (study removal or adjustment of cut, perhaps also 2D: MET vs. mll).
-  if( (*met_pt) < 40 ){ return false ;}
+  if( met_pt < 40 ){ return false ;}
   nEvent_passMuMuCh[ i_step++ ]++ ; 
 
   // >=1 b-tags.
@@ -966,10 +1018,10 @@ bool ttHYggdrasilEventSelection::passElMuTrig(){
 }
 
 float ttHYggdrasilEventSelection::metAbs(){
-  return * met_pt ;
+  return met_pt ;
 }
 float ttHYggdrasilEventSelection::metPhi(){
-  return * met_phi ;
+  return met_phi ;
 }
 
 double ttHYggdrasilEventSelection::getLeptonDR( unsigned int idx ){

@@ -7,6 +7,8 @@ echo "# - - - - - - - "
 echo remove large files from directory to submit jobs.
 rm -rf ../../AnalysisCode/data/*
 echo " Removing large file is done..."
+echO " Removing files ${CMSSW_BASE}/lib/slc6_amd64_gcc530/proclib/*openloop*so because they are too large."
+rm -rf ${CMSSW_BASE}/lib/slc6_amd64_gcc530/proclib/*openloop*so
 echo "# - - - - - - "
 
 cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=False|isMC=True|g" > __yggdrasil_treeMaker_MC_cfg.py 
@@ -16,12 +18,13 @@ cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=False|isMC=True|g" | sed "s|isTTBAR
 diff yggdrasil_treeMaker_cfg.py __yggdrasil_treeMaker_MCTTBAR_cfg.py
 
 
-cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodBCD=False|isPeriodBCD=True|g"> __yggdrasil_treeMaker_DATA_BCD_cfg.py 
-cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodEF1=False|isPeriodEF1=True|g"> __yggdrasil_treeMaker_DATA_EF1_cfg.py 
-cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodF2G=False|isPeriodF2G=True|g"> __yggdrasil_treeMaker_DATA_F2G_cfg.py 
-cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodH=False|isPeriodH=True|g"    > __yggdrasil_treeMaker_DATA_H_cfg.py 
+for P in B C D E F1 F2 G H2 H3
+do
+cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|XXXPERIODXXX|2016${P}|g"> __yggdrasil_treeMaker_DATA_${P}_cfg.py 
+done
 
-nickname="Satoshi_Moriond17_Yggdra_20170224_ElLoosen"
+
+nickname="Satoshi_Moriond17_Yggdra_20170721_UpdatedSejection"
 
 JobIndexList=""
 
@@ -50,15 +53,15 @@ name[7]=DataElG
 name[8]=DataElHv2
 name[9]=DataElHv3
 
-ismc[1]=DATA_BCD
-ismc[2]=DATA_BCD
-ismc[3]=DATA_BCD
-ismc[4]=DATA_EF1
-ismc[5]=DATA_EF1
-ismc[6]=DATA_F2G
-ismc[7]=DATA_F2G
-ismc[8]=DATA_H
-ismc[9]=DATA_H
+ismc[1]=DATA_B
+ismc[2]=DATA_C
+ismc[3]=DATA_D
+ismc[4]=DATA_E
+ismc[5]=DATA_F1
+ismc[6]=DATA_F2
+ismc[7]=DATA_G
+ismc[8]=DATA_H2
+ismc[9]=DATA_H3
 
 JobIndexList=${JobIndexList}" 1 2 3 4 5 6 7 8 9 "
 
@@ -85,15 +88,16 @@ name[17]=DataMuG
 name[18]=DataMuHv2
 name[19]=DataMuHv3
 
-ismc[11]=DATA_BCD
-ismc[12]=DATA_BCD
-ismc[13]=DATA_BCD
-ismc[14]=DATA_EF1
-ismc[15]=DATA_EF1
-ismc[16]=DATA_F2G
-ismc[17]=DATA_F2G
-ismc[18]=DATA_H
-ismc[19]=DATA_H
+
+ismc[11]=DATA_B
+ismc[12]=DATA_C
+ismc[13]=DATA_D
+ismc[14]=DATA_E
+ismc[15]=DATA_F1
+ismc[16]=DATA_F2
+ismc[17]=DATA_G
+ismc[18]=DATA_H2
+ismc[19]=DATA_H3
 
 JobIndexList=${JobIndexList}" 11 12 13 14 15 16 17 18 19"
 
@@ -146,7 +150,36 @@ ds[30]=/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond1
 name[30]=ttbar
 ismc[30]=MC
 
-JobIndexList=${JobIndexList}" 30 "
+
+ds[31]=/TT_TuneCUETP8M2T4_13TeV-powheg-isrup-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[31]=ttbarISRUp
+ismc[31]=MC
+
+ds[32]=/TT_TuneCUETP8M2T4_13TeV-powheg-isrdown-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[32]=ttbarISRDown
+ismc[32]=MC
+
+ds[33]=/TT_TuneCUETP8M2T4_13TeV-powheg-fsrup-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[33]=ttbarFSRUp
+ismc[33]=MC
+
+ds[34]=/TT_TuneCUETP8M2T4_13TeV-powheg-fsrdown-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[34]=ttbarFSRDown
+ismc[34]=MC
+
+
+
+ds[35]=/TT_TuneCUETP8M2T4up_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+
+name[35]=ttbarUEup
+ismc[35]=MC
+
+ds[36]=/TT_TuneCUETP8M2T4down_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[36]=ttbarUEdown
+ismc[36]=MC
+
+
+JobIndexList=${JobIndexList}" 30 31 32 33 34 35 36 "
 
 ds[40]=/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
 name[40]=WjetIncl
@@ -288,13 +321,94 @@ ds[111]=/TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISumme
 name[111]=tttosemilep
 ismc[111]=MC
 
-JobIndexList=${JobIndexList}" 110 111 " 
+JobIndexList=${JobIndexList}" 110 111 "
+
+
+ismc[112]=MC
+ismc[113]=MC
+ismc[114]=MC
+ismc[115]=MC
+ismc[116]=MC
+ismc[117]=MC
+ismc[118]=MC
+ismc[119]=MC
+ismc[120]=MC
+ismc[121]=MC
+ismc[122]=MC
+ismc[123]=MC
+
+
+ds[112]=/TT_TuneCUETP8M2T4_mtop1735_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+ds[113]=/TT_TuneCUETP8M2T4_mtop1715_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[112]=ttbarmass1735
+name[113]=ttbarmass1715
+
+ds[114]=/TT_TuneCUETP8M2T4up_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+ds[115]=/TT_TuneCUETP8M2T4down_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[114]=ttbartuneup
+name[115]=ttbartunedown
+
+ds[116]=/TT_hdampUP_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[116]=ttbarhdampup
+
+ds[117]=/TT_hdampDOWN_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[117]=ttbarhdampdown
+
+ds[118]=/TT_widthx0p2_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[118]=ttbarwidth0p2
+
+ds[119]=/TT_widthx0p5_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[119]=ttbarwidth0p5
+
+ds[120]=/TT_widthx4_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[120]=ttbarwithd4
+
+ds[121]=/TT_widthx8_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[121]=ttbarwidth8
+
+ds[122]=/TT_TuneCUETP8M2T4_13TeV-powheg-colourFlip-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+name[122]=ttbarcolorflip
+
+ds[123]=/TT_TuneCUETP8M2T4_erdON_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+name[123]=ttbarerdon
+
+
+JobIndexList=${JobIndexList}" 112 113 114 115 116 117 118 119 120 121 122 123  "
+
 
 
 ds[100]=/ttHTobb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
 name[100]=tthbb
 ismc[100]=MC
 JobIndexList=${JobIndexList}" 100 " 
+
+
+
+ds[150]=/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM
+ds[151]=/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v3/MINIAODSIM
+ds[152]=/TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+ds[153]=/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+ds[154]=/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM
+ds[155]=/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext3-v1/MINIAODSIM
+ds[156]=/TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+
+name[150]=TTWJetsToLNu_1
+name[151]=TTWJetsToLNu_2
+name[152]=TTWJetsToQQ
+name[153]=TTZToLLNuNu_1
+name[154]=TTZToLLNuNu_2
+name[155]=TTZToLLNuNu_3
+name[156]=TTZToQQ
+
+ismc[150]=MC
+ismc[151]=MC
+ismc[152]=MC
+ismc[153]=MC
+ismc[154]=MC
+ismc[155]=MC
+ismc[156]=MC
+
+JobIndexList=${JobIndexList}" 150 151 152 153 154 155 156 " 
 
 
 for idx in ` echo $JobIndexList `

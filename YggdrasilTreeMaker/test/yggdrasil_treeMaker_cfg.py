@@ -11,8 +11,8 @@ isMC=True
 # 
 isTTBARMC=False
 
-isGridJob=False
-# isGridJob=True
+# isGridJob=False
+isGridJob=True
 
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
 #genjetInputTag = cms.InputTag("ak4GenJetsReproduced","","")
@@ -25,10 +25,14 @@ enableJECFromLocalDB=True
 # Special option for Morind17 analysis
 #  This is a flag used to apply dedicated JEC for each data set.
 #  The placeholder will be replaced by crab job make script.
-isPeriodBCD=False
-isPeriodEF1=False
-isPeriodF2G=False
-isPeriodH=False
+
+period="XXXPERIODXXX"
+# "2016B" , "2016C", "2016D"
+# "2016E" , "2016F1"
+# "2016F2", "2016G" 
+# "2016H1", "2016H2"
+
+
 # - - - - - - - - - - - - - - - - - - - -
 
 # Switch to perform lumi-mask inside this python script.
@@ -47,6 +51,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
 
+process.load("Configuration.StandardSequences.GeometryDB_cff")
+
 # Update global tag based on : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions?rev=568
 if isMC:
     process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
@@ -62,8 +68,9 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(-1)
     )
+
 
 
 
@@ -71,14 +78,13 @@ import sys
 import os.path
 
 JecLocalDataBaseName = \
-    'Summer16_23Sep2016BCDV4_DATA' if isPeriodBCD else \
-    'Summer16_23Sep2016EFV4_DATA'  if isPeriodEF1 else \
-    'Summer16_23Sep2016GV4_DATA'   if isPeriodF2G else \
-    'Summer16_23Sep2016HV4_DATA'   if isPeriodH   else 'Summer16_23Sep2016V4_MC'
+    'Summer16_23Sep2016BCDV4_DATA' if period in ("2016B" , "2016C", "2016D") else \
+    'Summer16_23Sep2016EFV4_DATA'  if period in ("2016E" , "2016F1") else \
+    'Summer16_23Sep2016GV4_DATA'   if period in ("2016F2", "2016G" ) else \
+    'Summer16_23Sep2016HV4_DATA'   if period in ("2016H1", "2016H2") else 'Summer16_23Sep2016V4_MC'
 
 JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
 # This switch is needed because the variable CMSSW_BASE remains the same as local job (directory where you do "cmsenv") when the job runs on the grid.
-
 
 
 if enableJECFromLocalDB :
@@ -159,13 +165,11 @@ process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-        'file:///uscms/home/satoshi/temporal_strage/0CB1DE33-60BF-E611-B520-0025905A4964.root'
-#        ' /store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/120000/0CB1DE33-60BF-E611-B520-0025905A4964.root'
-#        '/store/user/puigh/TTHSync/ttjets_phys14_20bx25_withfatjets_v2.root'
-            #'/store/mc/Phys14DR/TTbarH_M-125_13TeV_amcatnlo-pythia8-tauola/MINIAODSIM/PU20bx25_tsg_PHYS14_25_V1-v2/00000/08B36E8F-5E7F-E411-9D5A-002590200AE4.root'
-            #'/store/mc/Phys14DR/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/MINIAODSIM/PU20bx25_PHYS14_25_V1-v1/00000/00C90EFC-3074-E411-A845-002590DB9262.root'
-            #'/store/mc/Spring14miniaod/TTbarH_M-125_13TeV_amcatnlo-pythia8-tauola/MINIAODSIM/PU20bx25_POSTLS170_V5-v1/00000/1E4F9BDC-3E1E-E411-A56C-001E67396EAA.root'
-            #'/store/mc/Spring14miniaod/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/MINIAODSIM/PU20bx25_POSTLS170_V5-v2/00000/004C6DA7-FB03-E411-96BD-0025905A497A.root'
+# ttH
+#         'file:///uscms/home/satoshi/temporal_strage/44949CF4-96C6-E611-B9A0-0025905A6122.root'
+
+# data 
+ 'file:///uscms/home/satoshi/temporal_strage/00B336D6-6AEC-E611-8581-E0071B7AC7B0.root'
             )
 )
 
@@ -413,24 +417,104 @@ if isMC :
 ##
 
 
-################################################
-# Instruction from https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETUncertaintyPrescription?rev=59
-#   to make met(puppi met) with correct calibration
-# 
-# Those create met object which can be obtained by 
-#     cms.InputTag("slimmedMETs","","YourProcessName")
-# and 
-# cms.InputTag("slimmedMETsPuppi","","YourProcessName")
+
+#
+# electron VIDs
+#
+
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat, \
+        switchOnVIDElectronIdProducer, setupAllVIDIdsInModule, setupVIDElectronSelection
+
+eleVIDModules = [
+    "RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_Trig_V1_cff",
+    "RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff",
+    "RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff"
+]
+
+switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
+
+
+
+
+for mod in eleVIDModules:
+    setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
+
+# update some VID modules to work with potentially changed electron collections
+process.egmGsfElectronIDs.physicsObjectSrc = electronCollection
+process.electronRegressionValueMapProducer.srcMiniAOD = electronCollection
+process.electronMVAValueMapProducer.srcMiniAOD = electronCollection
+
+
+
+
+
 
 
 from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+# do not use a postfix here!
 runMetCorAndUncFromMiniAOD(process,
-                           isData= not isMC , 
-#(relative path from src/)  jecUncFile = ( 'filepath' ),
-                           )
+    isData           = not isMC,
+    electronColl     = electronCollection.value(),
+    muonColl         = muonCollection.value(),
+    tauColl          = tauCollection.value(),
+    photonColl       = photonCollection.value(),
+    jetCollUnskimmed = jetCollection.value(),
+    recoMetFromPFCs  = True
+)
+METCollection = cms.InputTag("slimmedMETs", "", process.name_())
 
-process.load("Configuration.StandardSequences.GeometryDB_cff")
+# also add MET corrections due to e/g corrections, such as the slew rate fix in reMiniAOD
+if not isMC :
+    from PhysicsTools.PatUtils.tools.corMETFromMuonAndEG import corMETFromMuonAndEG
+    corMETFromMuonAndEG(process,
+        pfCandCollection      = "",
+        electronCollection    = "slimmedElectronsBeforeGSFix",
+        photonCollection      = "slimmedPhotonsBeforeGSFix",
+        corElectronCollection = electronCollection.value(),
+        corPhotonCollection   = photonCollection.value(),
+        allMETEGCorrected     = True,
+        muCorrection          = False,
+        eGCorrection          = True,
+        runOnMiniAOD          = True,
+        postfix               = "MuEGClean"
+    )
+    process.slimmedMETsMuEGClean = getattr(process, METCollection.getModuleLabel()).clone(
+        src             = cms.InputTag("patPFMetT1MuEGClean"),
+        rawVariation    = cms.InputTag("patPFMetRawMuEGClean"),
+        t1Uncertainties = cms.InputTag("patPFMetT1%sMuEGClean")
+    )
+    del process.slimmedMETsMuEGClean.caloMET
 
+    # overwrite output collections
+    METCollection = cms.InputTag("slimmedMETsMuEGClean", "", process.name_())
+
+
+# patch the phi correction parameter sets that are used in runMetCorAndUncFromMiniAOD,
+# we only need to overwrite patMultPhiCorrParams_T1Txy_25ns with the new one
+if not isMC :
+    if period in ("2016B", "2016C", "2016D", "2016E", "2016F1" , "2016F2"):
+        from MetTools.MetPhiCorrections.tools.multPhiCorr_ReMiniAOD_Data_BCDEF_80X_sumPt_cfi \
+                import multPhiCorr_Data_BCDEF_80X as metPhiCorrParams
+    else: 
+        from MetTools.MetPhiCorrections.tools.multPhiCorr_ReMiniAOD_Data_GH_80X_sumPt_cfi \
+                import multPhiCorr_Data_GH_80X as metPhiCorrParams
+else:
+    from MetTools.MetPhiCorrections.tools.multPhiCorr_Summer16_MC_DY_80X_sumPt_cfi \
+            import multPhiCorr_MC_DY_sumPT_80X as metPhiCorrParams
+# actual patch
+getattr(process, "patPFMetTxyCorr").parameters = cms.VPSet(pset for pset in metPhiCorrParams)
+
+
+
+#
+#from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+#runMetCorAndUncFromMiniAOD(process,
+#                           isData= not isMC , 
+##(relative path from src/)  jecUncFile = ( 'filepath' ),
+#                           )
+#
+#process.load("Configuration.StandardSequences.GeometryDB_cff")
+#
 #escape 
 #escape from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
 #escape makePuppiesFromMiniAOD( process, True );
@@ -446,6 +530,22 @@ process.load("Configuration.StandardSequences.GeometryDB_cff")
 #escape process.puppiNoLep.useExistingWeights = False
 #escape process.puppi.useExistingWeights = False
 #escape 
+
+
+process.load("RecoMET.METFilters.BadPFMuonFilter_cfi")
+process.BadPFMuonFilter.muons        = muonCollection
+process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+
+process.load("RecoMET.METFilters.BadChargedCandidateFilter_cfi")
+process.BadChargedCandidateFilter.muons        = muonCollection
+process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+
+process.load("RecoMET.METFilters.badGlobalMuonTaggersMiniAOD_cff")
+process.badGlobalMuonTaggerMAOD.muons         = muonCollection
+process.badGlobalMuonTaggerMAOD.taggingMode   = cms.bool(True)
+process.cloneGlobalMuonTaggerMAOD.muons       = muonCollection
+process.cloneGlobalMuonTaggerMAOD.taggingMode = cms.bool(True)
+
 
 
 if isMC :
@@ -490,10 +590,10 @@ process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
 
 
 
-process.load('RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi')
-process.load('RecoEgamma.PhotonIdentification.PhotonMVAValueMapProducer_cfi')
-process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
-process.photonMVAValueMapProducer.srcMiniAOD   = cms.InputTag('slimmedPhotons')
+# process.load('RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi')
+# process.load('RecoEgamma.PhotonIdentification.PhotonMVAValueMapProducer_cfi')
+# process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
+# process.photonMVAValueMapProducer.srcMiniAOD   = cms.InputTag('slimmedPhotons')
 
 
 if isMC : 

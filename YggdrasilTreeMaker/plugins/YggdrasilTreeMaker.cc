@@ -83,6 +83,9 @@
 
 #include "AnalysisDataFormats/TopObjects/interface/TtGenEvent.h"
 
+
+#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/RoccoR.h"
+
 //
 // class declaration
 //
@@ -175,7 +178,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
 
   edm::EDGetTokenT <GenEventInfoProduct> genInfoProductToken;
 
-  edm::EDGetTokenT <LHEEventProduct> LHEEventProductToken;
+  //  edm::EDGetTokenT <LHEEventProduct> LHEEventProductToken;
 
   edm::EDGetTokenT <pat::JetCollection> tempjetToken;
   
@@ -214,6 +217,8 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   // EGammaMvaEleEstimatorCSA14* myMVATrig;
  
   MiniAODHelper miniAODhelper;
+
+  RoccoR * muon_roc ;
 
   BDTvars bdtVARS;
   
@@ -294,8 +299,11 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   // EDMeleMVAcategoriesToken       = consumes<edm::ValueMap<int> >(edm::InputTag("electronMVAValueMapProducer",  "ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories",""));
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
-  electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
-  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
+  electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("calibratedPatElectrons")));
+
+  //(Normal Muon from Miniaod)  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
+  muonToken = consumes <pat::MuonCollection> (edm::InputTag("deterministicSeeds", "muonsWithSeed",""));
+
   muonview_Token = consumes < edm::View<pat::Muon> > (edm::InputTag(std::string("slimmedMuons")));
   token_PuppuMuIso_Combined =  consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiCombined" ,"") ) ; 
 
@@ -310,14 +318,20 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   if( usePUPPI ){
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
   }else{
-    jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
-    // jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets"))); // for hip mitigation
+    // (Normal jet->) jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+
+    jetToken = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds","jetsWithSeed","" ));  // Jet with random seed.
   }
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
-  metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","MAOD") );
 
-  puppimetToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsPuppi","","MAOD") );
+  if( isMC ){
+    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","MAOD") );
+  }else{
+    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsMuEGClean","","") );
+  }
+
+  puppimetToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsPuppi","","") );
 
   // topJetsToken    = consumes< boosted::HEPTopJetCollection >(edm::InputTag("HEPTopJetsPFMatcher","heptopjets","p"));
   // subFilterJetsToken = consumes< boosted::SubFilterJetCollection >(edm::InputTag("CA12JetsCA3FilterjetsPFMatcher","subfilterjets","p"));
@@ -331,7 +345,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   if( isMC ){
     mcparicleToken = consumes <reco::GenParticleCollection> (edm::InputTag(std::string("prunedGenParticles")));
     genInfoProductToken = consumes <GenEventInfoProduct> (edm::InputTag(std::string("generator")));
-    LHEEventProductToken = consumes<LHEEventProduct> ( edm::InputTag(std::string("externalLHEProducer") )  );
+    //    LHEEventProductToken = consumes<LHEEventProduct> ( edm::InputTag(std::string("externalLHEProducer") )  );
     TtGenEventToken = consumes< TtGenEvent >( edm::InputTag("genEvt") );
   }
 
@@ -368,6 +382,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   analysisType::analysisType iAnalysisType = analysisType::LJ;
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, ! isMC );
+
+  muon_roc = new RoccoR ( std::string(  getenv("CMSSW_BASE") ) + "/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/rcdata.2016.v3" );
 
    // miniAODhelper.SetUpElectronMVA("MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB1_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB2_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EE_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml");
   
@@ -510,10 +526,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   // iEvent.getByToken( subFilterJetsToken,h_subfilterjet );
 
   edm::Handle<GenEventInfoProduct> GenEventInfoHandle;
-  edm::Handle<LHEEventProduct> LHEEventProductHandle;
+  //  edm::Handle<LHEEventProduct> LHEEventProductHandle;
   if( isMC ){
   iEvent.getByToken(genInfoProductToken,GenEventInfoHandle);
-  iEvent.getByToken(LHEEventProductToken,  LHEEventProductHandle) ;
+  //  iEvent.getByToken(LHEEventProductToken,  LHEEventProductHandle) ;
   }
 
   edm::Handle<boosted::BoostedJetCollection> h_boostedjet;
@@ -689,9 +705,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->additionalJetEventId_ = *genTtbarId;
   
     const int idx_Q2_upup     = 1005;
-    eve->weight_q2_upup_     = LHEEventProductHandle -> weights()[idx_Q2_upup]    .wgt / LHEEventProductHandle -> originalXWGTUP(); 
+    //    eve->weight_q2_upup_     = LHEEventProductHandle -> weights()[idx_Q2_upup]    .wgt / LHEEventProductHandle -> originalXWGTUP(); 
     const int idx_Q2_downdown = 1009;
-    eve->weight_q2_downdown_ = LHEEventProductHandle -> weights()[idx_Q2_downdown].wgt / LHEEventProductHandle -> originalXWGTUP(); 
+    //    eve->weight_q2_downdown_ = LHEEventProductHandle -> weights()[idx_Q2_downdown].wgt / LHEEventProductHandle -> originalXWGTUP(); 
 
 
     auto pdfInfos = GenEventInfoHandle -> pdf();
@@ -980,8 +996,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	  const reco::Candidate * cand =  & (*mcparticles)[i] ; 
 	  cand = miniAODhelper.GetObjectJustBeforeDecay ( cand );
 	  if ( ! checkIfRegisterd( cand , idx_Z ) ){
-
-	    std::cout <<"Z candidate" << std::endl ; 
 
 	    const reco::Candidate * cand_afterbirth = TraceBackToJustAfterBirth( & (*mcparticles)[i] ) ;
 	    bool isZbosonFromHiggs = false ;
@@ -1443,7 +1457,29 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_genId.push_back(genId);
     lepton_genParentId.push_back(genParentId);
     lepton_genGrandParentId.push_back(genGrandParentId);
-    lepton_pt.push_back(iMu->pt());
+
+
+    {
+      double _mu_pt = iMu->pt() ;
+      double sf = 1.0 ; 
+      if( isMC ){
+	TRandom3 rnd ;
+        rnd.SetSeed((uint32_t)( iMu -> userInt("deterministicSeed")));
+	if( (iMu->genLepton()) ){// todo
+	  sf = muon_roc->kScaleFromGenMC ( trkCharge , _mu_pt, iMu->eta(), iMu->phi(), trackerLayersWithMeasurement, iMu->genLepton()->pt() , rnd.Rndm() ) ;
+	}else{
+	  sf = muon_roc->kScaleAndSmearMC( trkCharge , _mu_pt, iMu->eta(), iMu->phi() , trackerLayersWithMeasurement, rnd.Rndm(), rnd.Rndm() ) ;
+	}
+	
+      }else{
+	// = data.
+	sf = muon_roc->kScaleDT( trkCharge , _mu_pt, iMu->eta(), iMu->phi());
+      }
+      
+      lepton_pt.push_back(iMu->pt() * sf  );
+    }
+
+
     lepton_eta.push_back(iMu->eta());
     lepton_phi.push_back(iMu->phi());
     lepton_e.push_back(iMu->energy());
@@ -1755,7 +1791,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     case 33 : iSysType =  sysType::JESRelativeJERHFup; break ;
     case 34 : iSysType =  sysType::JESRelativeFSRup; break ;
     case 35 : iSysType =  sysType::JESRelativeStatFSRup; break ;
-      //    case 36 : iSysType =  sysType::JESRelativeStatEC2up; break ;
+      //    case 36 : iSysType =  sysType::JESRelativeStatEC2up; break ; ) RelativeStatEC2 is not supported._
     case 37 : iSysType =  sysType::JESRelativeStatECup; break ;
     case 38 : iSysType =  sysType::JESRelativeStatHFup; break ;
     case 39 : iSysType =  sysType::JESRelativePtBBup; break ;
@@ -1783,7 +1819,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     case 60 : iSysType =  sysType::JESRelativeJERHFdown; break ;
     case 61 : iSysType =  sysType::JESRelativeFSRdown; break ;
     case 62 : iSysType =  sysType::JESRelativeStatFSRdown; break ;
-      //    case 63 : iSysType =  sysType::JESRelativeStatEC2down; break ;
+      //    case 63 : iSysType =  sysType::JESRelativeStatEC2down; break ; (  RelativeStatEC2 is not supported. )
     case 64 : iSysType =  sysType::JESRelativeStatECdown; break ;
     case 65 : iSysType =  sysType::JESRelativeStatHFdown; break ;
     case 66 : iSysType =  sysType::JESRelativePtBBdown; break ;
@@ -1930,6 +1966,8 @@ n_fatjets++;
     vdouble jet_AssociatedGenJet_phi;
     vdouble jet_AssociatedGenJet_m;
 
+    vdouble jet_precore_phi ; 
+    vdouble jet_precore_pt ; 
 
     vint jet_genId_vect;
     vint jet_partonflavour_vect;
@@ -1938,12 +1976,17 @@ n_fatjets++;
     vint jet_genGrandParentId_vect;
 
     // Loop over selected jets
-    for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_uncleaned.begin(); iJet != selectedJets_uncleaned.end(); iJet++ ){ 
 
+    int ijet = 0 ;
+    for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_unsorted.begin(); iJet != selectedJets_unsorted.end(); iJet++ ){ 
       jet_pt  .push_back( iJet -> pt()  );
       jet_phi .push_back( iJet -> phi() );
       jet_eta .push_back( iJet -> eta() );
       jet_m   .push_back( iJet -> mass()   );
+
+
+      jet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
+      jet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );
    
       const reco::GenJet* ref = iJet -> genJet();
       if (ref) {
@@ -2007,8 +2050,8 @@ n_fatjets++;
 
     
     // MET
-    eve->MET_[iSys]      = correctedMET.pt();
-    eve->MET_phi_[iSys]  = correctedMET.phi();
+    eve->MET_[iSys]      = correctedMET.corPt(pat::MET::Type1);
+    eve->MET_phi_[iSys]  = correctedMET.corPhi(pat::MET::Type1);
 
     eve->PUPPIMET_[iSys]      = correctedPUPPIMET.pt();
     eve->PUPPIMET_phi_[iSys]  = correctedPUPPIMET.phi();
@@ -2045,6 +2088,9 @@ n_fatjets++;
     eve->jet_eta_ [iSys]= jet_eta ;
     eve->jet_m_   [iSys]= jet_m   ;
 
+    eve->jet_precorr_pt_  [iSys]= jet_precore_pt  ;
+    eve->jet_precorr_phi_ [iSys]= jet_precore_phi ;
+
     eve->jet_AssociatedGenJet_pt_[iSys] = jet_AssociatedGenJet_pt;
     eve->jet_AssociatedGenJet_eta_[iSys]= jet_AssociatedGenJet_eta;
     eve->jet_AssociatedGenJet_phi_[iSys]= jet_AssociatedGenJet_phi;
@@ -2065,7 +2111,7 @@ n_fatjets++;
   //
   worldTree->Fill();
 
-  if( false ){
+  if( false  ){
 
     selection . EnableInfoDumpForDebug();
 
@@ -2099,6 +2145,8 @@ n_fatjets++;
 
     selection . SetGoodVtx( & ( eve->GoodFirstPV_ ) );
 
+    selection . SetLepTrigDR( & eve->lepton_dRSingleLepTrig_ );
+
     selection . SetLeptons( & eve->lepton_pt_, 
 			    & eve->lepton_eta_, 
 			    & eve->lepton_scEta_, 
@@ -2115,6 +2163,9 @@ n_fatjets++;
 			 & eve->jet_m_   [0] , 
 			 & eve->jet_combinedInclusiveSecondaryVertexV2BJetTags_[0]  ,
 			 & eve->jet_flavour_[0]  );
+
+    selection . SetJetsPTBeforRecorrection( & eve->jet_precorr_pt_  [0] , 
+					    & eve->jet_precorr_phi_ [0] ); 
 
     selection . SetMet( & ( eve->MET_[ 0 ] ) , &( eve->MET_phi_[ 0 ] ) );
 
@@ -2216,8 +2267,8 @@ n_fatjets++;
       std::cout << JECdown << "," ;
     }
     
-    std::cout<< std::setprecision(4) << eve->MET_[ 0 ] << "," ;
-    std::cout<< std::setprecision(4) << eve->MET_phi_[ 0 ] << "," ;
+    std::cout<< std::setprecision(4) << selection . metAbs() << "," ;
+    std::cout<< std::setprecision(4) << selection . metPhi() << "," ;
 
     if( isMC ){
     std::cout << eve->additionalJetEventId_ <<",";

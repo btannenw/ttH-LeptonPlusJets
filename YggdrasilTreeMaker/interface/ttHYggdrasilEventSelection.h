@@ -47,6 +47,9 @@ class ttHYggdrasilEventSelection{
 		const std::vector<double> * bDiscriminant ,
 		const std::vector<int> * flav );
 
+
+  void SetJetsPTBeforRecorrection( const std::vector<double> * pt ,  const std::vector<double> * phi );
+
   void SetMet( const float * _met_pt, const float * _met_phi );
 
   void EnableInfoDumpForDebug();
@@ -143,6 +146,7 @@ class ttHYggdrasilEventSelection{
   bool _OverlapWithLooseLeptons( double eta, double phi);
   double _calcDR2( double eta1, double eta2, double phi1, double phi2 );
 
+  void _MetCorrection();
 
   std::vector< const int * > ElTrig ; 
   std::vector< const int * > MuTrig ; 
@@ -193,7 +197,10 @@ class ttHYggdrasilEventSelection{
   const std::vector<double> * jet_bDiscriminant ;
   const std::vector<int>    * jet_flav; 
 
-  const float * met_pt , *met_phi ;
+  const std::vector<double> * jet_pt_beforeRecorrection; 
+  const std::vector<double> * jet_phi_beforeRecorrection; 
+
+  const float * met_preRecorrection_pt , *met_preRecorrection_phi ;
   const bool * goodvtx;
 
   std::vector<const TLorentzVector*> selected_tightLeptons;
@@ -211,11 +218,14 @@ class ttHYggdrasilEventSelection{
   std::vector<const TLorentzVector*> selected_jets;
   std::vector<double>                selected_jetsBdiscriminant;
   std::vector<int>                selected_jetsFlav;
+  std::vector<double>                selected_jetPt_preRecorrection;
+  std::vector<double>                selected_jetPhi_preRecorrection;
 
   std::vector<const TLorentzVector*> selected_bjets;
   std::vector<double>                selected_bjetsBdiscriminant;
   std::vector<int>                selected_bjetsFlav;
 
+  float met_pt , met_phi ;
 
   // ** for DiLepton channel Study **
   std::vector<const TLorentzVector*> DLselected_tightLeptons;

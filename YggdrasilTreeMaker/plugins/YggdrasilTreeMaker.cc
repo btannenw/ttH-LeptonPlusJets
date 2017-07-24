@@ -324,7 +324,12 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   }
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
-  metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","MAOD") );
+
+  if( isMC ){
+    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","MAOD") );
+  }else{
+    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsMuEGClean","","") );
+  }
 
   puppimetToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsPuppi","","") );
 
@@ -1961,6 +1966,8 @@ n_fatjets++;
     vdouble jet_AssociatedGenJet_phi;
     vdouble jet_AssociatedGenJet_m;
 
+    vdouble jet_precore_phi ; 
+    vdouble jet_precore_pt ; 
 
     vint jet_genId_vect;
     vint jet_partonflavour_vect;
@@ -1969,12 +1976,17 @@ n_fatjets++;
     vint jet_genGrandParentId_vect;
 
     // Loop over selected jets
-    for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_uncleaned.begin(); iJet != selectedJets_uncleaned.end(); iJet++ ){ 
 
+    int ijet = 0 ;
+    for( std::vector<pat::Jet>::const_iterator iJet = selectedJets_unsorted.begin(); iJet != selectedJets_unsorted.end(); iJet++ ){ 
       jet_pt  .push_back( iJet -> pt()  );
       jet_phi .push_back( iJet -> phi() );
       jet_eta .push_back( iJet -> eta() );
       jet_m   .push_back( iJet -> mass()   );
+
+
+      jet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
+      jet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );
    
       const reco::GenJet* ref = iJet -> genJet();
       if (ref) {
@@ -2038,8 +2050,8 @@ n_fatjets++;
 
     
     // MET
-    eve->MET_[iSys]      = correctedMET.pt();
-    eve->MET_phi_[iSys]  = correctedMET.phi();
+    eve->MET_[iSys]      = correctedMET.corPt(pat::MET::Type1);
+    eve->MET_phi_[iSys]  = correctedMET.corPhi(pat::MET::Type1);
 
     eve->PUPPIMET_[iSys]      = correctedPUPPIMET.pt();
     eve->PUPPIMET_phi_[iSys]  = correctedPUPPIMET.phi();
@@ -2076,6 +2088,9 @@ n_fatjets++;
     eve->jet_eta_ [iSys]= jet_eta ;
     eve->jet_m_   [iSys]= jet_m   ;
 
+    eve->jet_precorr_pt_  [iSys]= jet_precore_pt  ;
+    eve->jet_precorr_phi_ [iSys]= jet_precore_phi ;
+
     eve->jet_AssociatedGenJet_pt_[iSys] = jet_AssociatedGenJet_pt;
     eve->jet_AssociatedGenJet_eta_[iSys]= jet_AssociatedGenJet_eta;
     eve->jet_AssociatedGenJet_phi_[iSys]= jet_AssociatedGenJet_phi;
@@ -2096,7 +2111,7 @@ n_fatjets++;
   //
   worldTree->Fill();
 
-  if( false ){
+  if( false  ){
 
     selection . EnableInfoDumpForDebug();
 
@@ -2148,6 +2163,9 @@ n_fatjets++;
 			 & eve->jet_m_   [0] , 
 			 & eve->jet_combinedInclusiveSecondaryVertexV2BJetTags_[0]  ,
 			 & eve->jet_flavour_[0]  );
+
+    selection . SetJetsPTBeforRecorrection( & eve->jet_precorr_pt_  [0] , 
+					    & eve->jet_precorr_phi_ [0] ); 
 
     selection . SetMet( & ( eve->MET_[ 0 ] ) , &( eve->MET_phi_[ 0 ] ) );
 
@@ -2249,8 +2267,8 @@ n_fatjets++;
       std::cout << JECdown << "," ;
     }
     
-    std::cout<< std::setprecision(4) << eve->MET_[ 0 ] << "," ;
-    std::cout<< std::setprecision(4) << eve->MET_phi_[ 0 ] << "," ;
+    std::cout<< std::setprecision(4) << selection . metAbs() << "," ;
+    std::cout<< std::setprecision(4) << selection . metPhi() << "," ;
 
     if( isMC ){
     std::cout << eve->additionalJetEventId_ <<",";

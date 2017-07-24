@@ -18,12 +18,13 @@ cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=False|isMC=True|g" | sed "s|isTTBAR
 diff yggdrasil_treeMaker_cfg.py __yggdrasil_treeMaker_MCTTBAR_cfg.py
 
 
-cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodBCD=False|isPeriodBCD=True|g"> __yggdrasil_treeMaker_DATA_BCD_cfg.py 
-cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodEF1=False|isPeriodEF1=True|g"> __yggdrasil_treeMaker_DATA_EF1_cfg.py 
-cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodF2G=False|isPeriodF2G=True|g"> __yggdrasil_treeMaker_DATA_F2G_cfg.py 
-cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|isPeriodH=False|isPeriodH=True|g"    > __yggdrasil_treeMaker_DATA_H_cfg.py 
+for P in B C D E F1 F2 G H2 H3
+do
+cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|XXXPERIODXXX|2016${P}|g"> __yggdrasil_treeMaker_DATA_${P}_cfg.py 
+done
 
-nickname="Satoshi_Moriond17_Yggdra_20170709_TopHadIDAdded3"
+
+nickname="Satoshi_Moriond17_Yggdra_20170721_UpdatedSejection"
 
 JobIndexList=""
 
@@ -52,15 +53,15 @@ name[7]=DataElG
 name[8]=DataElHv2
 name[9]=DataElHv3
 
-ismc[1]=DATA_BCD
-ismc[2]=DATA_BCD
-ismc[3]=DATA_BCD
-ismc[4]=DATA_EF1
-ismc[5]=DATA_EF1
-ismc[6]=DATA_F2G
-ismc[7]=DATA_F2G
-ismc[8]=DATA_H
-ismc[9]=DATA_H
+ismc[1]=DATA_B
+ismc[2]=DATA_C
+ismc[3]=DATA_D
+ismc[4]=DATA_E
+ismc[5]=DATA_F1
+ismc[6]=DATA_F2
+ismc[7]=DATA_G
+ismc[8]=DATA_H2
+ismc[9]=DATA_H3
 
 JobIndexList=${JobIndexList}" 1 2 3 4 5 6 7 8 9 "
 
@@ -87,15 +88,16 @@ name[17]=DataMuG
 name[18]=DataMuHv2
 name[19]=DataMuHv3
 
-ismc[11]=DATA_BCD
-ismc[12]=DATA_BCD
-ismc[13]=DATA_BCD
-ismc[14]=DATA_EF1
-ismc[15]=DATA_EF1
-ismc[16]=DATA_F2G
-ismc[17]=DATA_F2G
-ismc[18]=DATA_H
-ismc[19]=DATA_H
+
+ismc[11]=DATA_B
+ismc[12]=DATA_C
+ismc[13]=DATA_D
+ismc[14]=DATA_E
+ismc[15]=DATA_F1
+ismc[16]=DATA_F2
+ismc[17]=DATA_G
+ismc[18]=DATA_H2
+ismc[19]=DATA_H3
 
 JobIndexList=${JobIndexList}" 11 12 13 14 15 16 17 18 19"
 

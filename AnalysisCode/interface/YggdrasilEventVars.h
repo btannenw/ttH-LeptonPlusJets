@@ -29,7 +29,7 @@ typedef std::vector< TLorentzVector > vecTLorentzVector;
 // Utility Class for Handling Event Variables
 //
 
-const Int_t rNumSys = 25 ; // + 27 * 2 ;
+const Int_t rNumSys = 25 + 27 * 2 ;
 // 25     : As of 2016 HC analysis.
 // 27 * 2 : JES decomposed. (up/down)
 
@@ -171,6 +171,10 @@ struct yggdrasilEventVars{
   vdouble jet_eta_[rNumSys];
   vdouble jet_phi_[rNumSys];
   vdouble jet_m_[rNumSys];
+
+
+  vdouble  jet_precorr_pt_  [rNumSys];
+  vdouble  jet_precorr_phi_  [rNumSys];
 
   vdouble jet_AssociatedGenJet_pt_[rNumSys];
   vdouble jet_AssociatedGenJet_eta_[rNumSys];
@@ -346,6 +350,9 @@ void yggdrasilEventVars::initialize(){
     jet_phi_[iSys].clear();
     jet_eta_[iSys].clear();
     jet_m_  [iSys].clear();
+
+    jet_precorr_pt_  [iSys].clear();
+    jet_precorr_phi_  [iSys].clear();
 
     jet_AssociatedGenJet_pt_[iSys].clear();
     jet_AssociatedGenJet_eta_[iSys].clear();

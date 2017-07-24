@@ -49,9 +49,8 @@ void ttHYggdrasilScaleFactors::init_all(){
 void ttHYggdrasilScaleFactors::init_TrigElSF(){
 
   {
-    std::string input = SFfileDir +"/" + "trig/ElTriggerPerformance_Jan30.root";
-    h_EleSF_Trig_SF    = (TH2F*) getTH2HistogramFromFile( input , std::string ("electrontrig_sf_eta_pt") );
-    h_EleSF_TrigEff_MC = (TH2F*) getTH2HistogramFromFile( input , std::string ("electrontrig_eff_mc_eta_pt") );
+    std::string input = SFfileDir +"/" + "trig/TriggerSF_Run2016All_v1.root";
+    h_EleSF_Trig_SF    = (TH2D*) getTH2HistogramFromFile( input , std::string ("Ele27_WPTight_Gsf") );
   }
 
 }
@@ -154,15 +153,15 @@ TH2* ttHYggdrasilScaleFactors::getTH2HistogramFromFile( std::string input , std:
 }
 
 
-double ttHYggdrasilScaleFactors::GetBinValueFromXYValues( TH2 * h , double xVal , double yVal ){
+double ttHYggdrasilScaleFactors::GetBinValueFromXYValues( TH2 * h , double xVal , double yVal , bool useOveflowBinForX , bool useOveflowBinForY ){
 
   int bin_x = h->GetXaxis()->FindBin( xVal );
-  if( bin_x < 0 ){ bin_x = 1 ;}
-  if( bin_x > h->GetXaxis()->GetNbins() ){ bin_x = h->GetXaxis()->GetNbins() ;}
+  if( ! useOveflowBinForX && bin_x < 0 ){ bin_x = 1 ;}
+  if( ! useOveflowBinForX && bin_x > h->GetXaxis()->GetNbins() ){ bin_x = h->GetXaxis()->GetNbins() ;}
 
   int bin_y = h->GetYaxis()->FindBin( yVal );
-  if( bin_y < 0 ){ bin_x = 1 ;}
-  if( bin_y > h->GetYaxis()->GetNbins() ){ bin_y = h->GetYaxis()->GetNbins() ;}
+  if(! useOveflowBinForY && bin_y < 0 ){ bin_x = 1 ;}
+  if(! useOveflowBinForY && bin_y > h->GetYaxis()->GetNbins() ){ bin_y = h->GetYaxis()->GetNbins() ;}
 
   return h->GetBinContent( bin_x , bin_y );
 
@@ -598,18 +597,15 @@ double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * even
     const double sc_eta =  event->leptonsSCEta().at(i); 
     const double pt     =  event->leptons().at( i )->Pt() ; 
     
-    const double trigdr = event->getLeptonDR( i );
-    const bool isTriggered = trigdr < 0.1 ;
+    //    const double trigdr = event->getLeptonDR( i );
+    //    const bool isTriggered = trigdr < 0.1 ;
 
-    const double sf = GetBinValueFromXYValues( h_EleSF_Trig_SF  , sc_eta , pt );
+    const bool UseOverflowBinForHighPT = true ; 
 
-    if( isTriggered ){
-      weight *= sf;
-    }else{
-      const double mc_eff = GetBinValueFromXYValues( h_EleSF_TrigEff_MC , sc_eta , pt );
-      weight *= ( 1.0 - sf * mc_eff )/( 1.0 - mc_eff );
-    }
-    
+    const double sf = GetBinValueFromXYValues( h_EleSF_Trig_SF  , pt , sc_eta , UseOverflowBinForHighPT );
+
+    weight *= sf; // This is not right calculation for the envets with 2 or more electrons. Just for single electron analysis.
+
   }
   return weight ;
 

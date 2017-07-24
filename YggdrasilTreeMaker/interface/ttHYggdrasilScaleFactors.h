@@ -69,7 +69,8 @@ class ttHYggdrasilScaleFactors{
   void init_TrigMuSF();
   void init_TrigElSF();
   TH2 * getTH2HistogramFromFile( std::string input , std::string histoname );
-  double GetBinValueFromXYValues( TH2 * h , double xVal , double yVal );
+  double GetBinValueFromXYValues( TH2 * h , double xVal , double yVal 
+				  , bool useOveflowBinForX = false , bool useOveflowBinForY = false ) ;
 
   // CSV reweighting
   TH1D* h_csv_wgt_hf[9][5];
@@ -94,8 +95,8 @@ class ttHYggdrasilScaleFactors{
   // Trif SF
   TH2D * h_MuSF_Trig_SF;
   TH2D * h_MuSF_TrigEff_MC;
-  TH2F * h_EleSF_Trig_SF;
-  TH2F * h_EleSF_TrigEff_MC;
+  TH2D * h_EleSF_Trig_SF;
+  //  TH2F * h_EleSF_TrigEff_MC;
 
   // Trig Efficiency
   TH2D * h_MUEff_SingleMuonTrig;

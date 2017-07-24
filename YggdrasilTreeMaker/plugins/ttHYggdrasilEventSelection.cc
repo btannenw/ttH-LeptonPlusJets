@@ -269,7 +269,7 @@ void ttHYggdrasilEventSelection::doEventSelection(){
 
 void ttHYggdrasilEventSelection::_MetCorrection(){
 
-#ifdef TEMPORALLY_OFF
+#ifndef TEMPORALLY_OFF
   float x = (*met_preRecorrection_pt) * cos( *met_preRecorrection_phi );
   float y = (*met_preRecorrection_pt) * sin( *met_preRecorrection_phi );
 
@@ -665,7 +665,7 @@ void ttHYggdrasilEventSelection::_JetSelection(){
     selected_jetsBdiscriminant.push_back( jet_bDiscriminant ->at(idx) );
     selected_jetsFlav         .push_back( jet_flav ->at(idx) );
 
-#ifdef TEMPORALLY_OFF
+#ifndef TEMPORALLY_OFF
     selected_jetPt_preRecorrection  . push_back(  jet_pt_beforeRecorrection -> at(idx)  );
     selected_jetPhi_preRecorrection . push_back(  jet_phi_beforeRecorrection -> at(idx) );
 #endif

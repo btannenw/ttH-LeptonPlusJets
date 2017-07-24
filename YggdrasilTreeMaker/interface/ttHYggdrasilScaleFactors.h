@@ -9,6 +9,8 @@
 #include <TH2D.h>
 #include <TH2F.h>
 
+#include <TGraphAsymmErrors.h>
+
 #ifdef STANDALONECOMPILE
 #include "ttHYggdrasilEventSelection.h"
 #else
@@ -72,6 +74,10 @@ class ttHYggdrasilScaleFactors{
   double GetBinValueFromXYValues( TH2 * h , double xVal , double yVal 
 				  , bool useOveflowBinForX = false , bool useOveflowBinForY = false ) ;
 
+  TGraphAsymmErrors* getTGraphFromFile( std::string input , std::string histoname );
+
+  TH2D * ConvertIlldefinedTGraphToTH2D( TGraphAsymmErrors * g );
+
   // CSV reweighting
   TH1D* h_csv_wgt_hf[9][5];
   TH1D* c_csv_wgt_hf[9][5];
@@ -94,12 +100,14 @@ class ttHYggdrasilScaleFactors{
 
   // Trif SF
   TH2D * h_MuSF_Trig_SF;
-  TH2D * h_MuSF_TrigEff_MC;
+  //  TH2D * h_MuSF_TrigEff_MC;
   TH2D * h_EleSF_Trig_SF;
   //  TH2F * h_EleSF_TrigEff_MC;
 
   // Trig Efficiency
-  TH2D * h_MUEff_SingleMuonTrig;
+  // TH2D * h_MUEff_SingleMuonTrig;
+
+  std::vector < TH2D * > h_muTrack ; 
 
 };
 

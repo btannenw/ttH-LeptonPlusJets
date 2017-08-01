@@ -117,11 +117,13 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
     std::string input = SFfileDir +"/" + "muon/track/bf/fits.root";
     TGraphAsymmErrors * e_bf = getTGraphFromFile( input , std::string( "ratio_eff_aeta_dr030e030_corr" ) );
     h_muTrack . push_back( ConvertIlldefinedTGraphToTH2D( e_bf ) ) ;
+    h_muTrack_down . push_back( ConvertIlldefinedTGraphToTH2D( e_bf , -1 ) ) ;
   }
   {
     std::string input_gh = SFfileDir +"/" + "muon/track/gh/fits.root";
     TGraphAsymmErrors * e_gh = getTGraphFromFile( input_gh , std::string( "ratio_eff_aeta_dr030e030_corr" ) );
     h_muTrack . push_back( ConvertIlldefinedTGraphToTH2D( e_gh ) ) ;
+    h_muTrack_down . push_back( ConvertIlldefinedTGraphToTH2D( e_gh , -1 ) ) ;
   }
 
   
@@ -145,7 +147,7 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
 
 
 
-TH2D * ttHYggdrasilScaleFactors::ConvertIlldefinedTGraphToTH2D( TGraphAsymmErrors * g ){
+TH2D * ttHYggdrasilScaleFactors::ConvertIlldefinedTGraphToTH2D( TGraphAsymmErrors * g , int syst ){
 
   const long nBins = g->GetN();
 
@@ -162,6 +164,13 @@ TH2D * ttHYggdrasilScaleFactors::ConvertIlldefinedTGraphToTH2D( TGraphAsymmError
   
   for(  int i = 1 ; i <= nBins ;i++ ){
     h->SetBinContent( i , 1 ,   g->GetY()[i-1] );
+
+    if( syst < 0 ){
+      h->SetBinError( i , 1 ,   g->GetEYlow()[i-1] );
+    }else{
+      h->SetBinError( i , 1 ,   g->GetEYhigh()[i-1] );
+    }
+
   }
 
   return h ; 
@@ -216,7 +225,7 @@ TH2* ttHYggdrasilScaleFactors::getTH2HistogramFromFile( std::string input , std:
 }
 
 
-double ttHYggdrasilScaleFactors::GetBinValueFromXYValues( TH2 * h , double xVal , double yVal , bool useOveflowBinForX , bool useOveflowBinForY ){
+double ttHYggdrasilScaleFactors::GetBinValueFromXYValues( TH2 * h , double xVal , double yVal , int syst , bool useOveflowBinForX , bool useOveflowBinForY ){
 
   int bin_x = h->GetXaxis()->FindBin( xVal );
   if( ! useOveflowBinForX && bin_x < 0 ){ bin_x = 1 ;}
@@ -226,8 +235,16 @@ double ttHYggdrasilScaleFactors::GetBinValueFromXYValues( TH2 * h , double xVal 
   if(! useOveflowBinForY && bin_y < 0 ){ bin_x = 1 ;}
   if(! useOveflowBinForY && bin_y > h->GetYaxis()->GetNbins() ){ bin_y = h->GetYaxis()->GetNbins() ;}
 
-  return h->GetBinContent( bin_x , bin_y );
+  const double center_val = h->GetBinContent( bin_x , bin_y );
+  if( syst == 0 ){
+    return center_val ;
+  }
 
+  const double systematic = h->GetBinError( bin_x , bin_y );
+  if( syst > 0 ){
+    return  center_val +  systematic ;
+  }
+  return  center_val -  systematic ;
 }
 
 double ttHYggdrasilScaleFactors::getTightMuonSF( ttHYggdrasilEventSelection * event ){
@@ -237,7 +254,7 @@ double ttHYggdrasilScaleFactors::getTightMuonSF( ttHYggdrasilEventSelection * ev
 }
 
 
-double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection * event , int syst ){
 
   double weight = 1 ; 
 
@@ -251,12 +268,14 @@ double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection *
     double wgt_for_this_mu_tracking = 0 ; 
     for( unsigned int iSF = 0 ; iSF < h_MuSF_ID.size() ; iSF ++ ){
       wgt_fot_this_mu +=
-	GetBinValueFromXYValues( h_MuSF_ID[iSF] , abs_eta , pt )
+	GetBinValueFromXYValues( h_MuSF_ID[iSF] , abs_eta , pt , syst )
 	*
 	( h_MuSF_ID_Lumi[iSF] / h_MuSF_ID_LumiTotal ) ; //<- Weight based on the int_lumi in the period.
 
+      
       wgt_for_this_mu_tracking +=
-	GetBinValueFromXYValues( h_muTrack[iSF] , abs_eta , 10.0 )// the second value is a dummpy.
+	GetBinValueFromXYValues( ( syst >= 0 ? h_muTrack[iSF] : h_muTrack_down[iSF] ) 
+				 , abs_eta , 10.0 , syst )// the second value is a dummpy.
 	*
 	( h_MuSF_ID_Lumi[iSF] / h_MuSF_ID_LumiTotal ) ; //<- Weight based on the int_lumi in the period.
     }
@@ -268,7 +287,7 @@ double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection *
 
 }
 
-double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection * event , int syst ){
 
   double weight = 1 ; 
 
@@ -281,7 +300,7 @@ double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection 
     double wgt_fot_this_mu = 0 ;
     for( unsigned int iSF = 0 ; iSF < h_MuSF_Iso.size() ; iSF ++ ){
       wgt_fot_this_mu +=
-	GetBinValueFromXYValues( h_MuSF_Iso[iSF] , abs_eta , pt )
+	GetBinValueFromXYValues( h_MuSF_Iso[iSF] , abs_eta , pt , syst )
 	*
 	( h_MuSF_Iso_Lumi[iSF] / h_MuSF_Iso_LumiTotal ) ; //<- Weight based on the int_lumi in the period.
     }
@@ -293,7 +312,7 @@ double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection 
 }
 
 
-double ttHYggdrasilScaleFactors::getTightElectron_IDSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::getTightElectron_IDSF( ttHYggdrasilEventSelection * event , int syst ){
 
   double weight = 1 ; 
 
@@ -303,13 +322,13 @@ double ttHYggdrasilScaleFactors::getTightElectron_IDSF( ttHYggdrasilEventSelecti
     const double sc_eta =  event->leptonsSCEta().at(i); 
     const double pt     =  event->leptons().at( i )->Pt() ; 
     
-    weight *= GetBinValueFromXYValues( h_EleSF_ID , sc_eta , pt );
+    weight *= GetBinValueFromXYValues( h_EleSF_ID , sc_eta , pt , syst );
   }
   return weight ;
 
 }
 
-double ttHYggdrasilScaleFactors::getTightElectron_RecoSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::getTightElectron_RecoSF( ttHYggdrasilEventSelection * event , int syst ){
 
   double weight = 1 ; 
 
@@ -319,7 +338,7 @@ double ttHYggdrasilScaleFactors::getTightElectron_RecoSF( ttHYggdrasilEventSelec
     const double sc_eta =  event->leptonsSCEta().at(i); 
     const double pt     =  event->leptons().at( i )->Pt() ; 
     
-    weight *= GetBinValueFromXYValues( h_EleSF_Reco  , sc_eta , pt );
+    weight *= GetBinValueFromXYValues( h_EleSF_Reco  , sc_eta , pt , syst );
     
   }
   return weight ;
@@ -634,7 +653,7 @@ double ttHYggdrasilScaleFactors::get_TrigElEfficiency( ttHYggdrasilEventSelectio
 
 
 
-double ttHYggdrasilScaleFactors::get_TrigMuSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::get_TrigMuSF( ttHYggdrasilEventSelection * event , int syst ){
 
  double weight = 1 ; 
 
@@ -647,7 +666,7 @@ double ttHYggdrasilScaleFactors::get_TrigMuSF( ttHYggdrasilEventSelection * even
     //    const double trigdr = event->getLeptonDR( i );
     //    const bool isTriggered = trigdr < 0.1 ;
 
-    const double sf = GetBinValueFromXYValues( h_MuSF_Trig_SF  , pt,  abs_eta  );
+    const double sf = GetBinValueFromXYValues( h_MuSF_Trig_SF  , pt,  abs_eta , syst );
 
     weight *= sf; // This is not right calculation for the envets with 2 or more electrons. Just for single electron analysis.
 
@@ -656,7 +675,7 @@ double ttHYggdrasilScaleFactors::get_TrigMuSF( ttHYggdrasilEventSelection * even
 }
 
 
-double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * event , int syst ){
 
  double weight = 1 ; 
 
@@ -671,7 +690,7 @@ double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * even
 
     const bool UseOverflowBinForHighPT = true ; 
 
-    const double sf = GetBinValueFromXYValues( h_EleSF_Trig_SF  , pt , sc_eta , UseOverflowBinForHighPT );
+    const double sf = GetBinValueFromXYValues( h_EleSF_Trig_SF  , pt , sc_eta , syst, UseOverflowBinForHighPT );
 
     weight *= sf; // This is not right calculation for the envets with 2 or more electrons. Just for single electron analysis.
 

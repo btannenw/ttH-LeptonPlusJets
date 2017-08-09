@@ -9,6 +9,8 @@
 #include <TH2D.h>
 #include <TH2F.h>
 
+#include <TGraphAsymmErrors.h>
+
 #ifdef STANDALONECOMPILE
 #include "ttHYggdrasilEventSelection.h"
 #else
@@ -37,16 +39,16 @@ class ttHYggdrasilScaleFactors{
   double getTightMuonSF( ttHYggdrasilEventSelection * event );
   double getTightElectronSF( ttHYggdrasilEventSelection * event );
 
-  double getTightMuon_IDSF( ttHYggdrasilEventSelection * event );
-  double getTightElectron_IDSF( ttHYggdrasilEventSelection * event );
+  double getTightMuon_IDSF( ttHYggdrasilEventSelection * event , int syst = 0 );
+  double getTightElectron_IDSF( ttHYggdrasilEventSelection * event , int syst = 0 );
 
-  double getTightMuon_IsoSF( ttHYggdrasilEventSelection * event );
-  double getTightElectron_RecoSF( ttHYggdrasilEventSelection * event );
+  double getTightMuon_IsoSF( ttHYggdrasilEventSelection * event , int syst = 0 );
+  double getTightElectron_RecoSF( ttHYggdrasilEventSelection * event , int syst = 0 );
 
   // - - -
 
-  double get_TrigMuSF( ttHYggdrasilEventSelection * event );
-  double get_TrigElSF( ttHYggdrasilEventSelection * event );
+  double get_TrigMuSF( ttHYggdrasilEventSelection * event , int syst = 0 );
+  double get_TrigElSF( ttHYggdrasilEventSelection * event , int syst = 0 );
 
   double get_TrigElEfficiency( ttHYggdrasilEventSelection * event );
   double get_TrigMuEfficiency( ttHYggdrasilEventSelection * event );
@@ -69,7 +71,12 @@ class ttHYggdrasilScaleFactors{
   void init_TrigMuSF();
   void init_TrigElSF();
   TH2 * getTH2HistogramFromFile( std::string input , std::string histoname );
-  double GetBinValueFromXYValues( TH2 * h , double xVal , double yVal );
+  double GetBinValueFromXYValues( TH2 * h , double xVal , double yVal , int syst = 0
+				  , bool useOveflowBinForX = false , bool useOveflowBinForY = false ) ;
+
+  TGraphAsymmErrors* getTGraphFromFile( std::string input , std::string histoname );
+
+  TH2D * ConvertIlldefinedTGraphToTH2D( TGraphAsymmErrors * g , int syst = 0 );
 
   // CSV reweighting
   TH1D* h_csv_wgt_hf[9][5];
@@ -93,12 +100,15 @@ class ttHYggdrasilScaleFactors{
 
   // Trif SF
   TH2D * h_MuSF_Trig_SF;
-  TH2D * h_MuSF_TrigEff_MC;
-  TH2F * h_EleSF_Trig_SF;
-  TH2F * h_EleSF_TrigEff_MC;
+  //  TH2D * h_MuSF_TrigEff_MC;
+  TH2D * h_EleSF_Trig_SF;
+  //  TH2F * h_EleSF_TrigEff_MC;
 
   // Trig Efficiency
-  TH2D * h_MUEff_SingleMuonTrig;
+  // TH2D * h_MUEff_SingleMuonTrig;
+
+  std::vector < TH2D * > h_muTrack ; 
+  std::vector < TH2D * > h_muTrack_down ; 
 
 };
 

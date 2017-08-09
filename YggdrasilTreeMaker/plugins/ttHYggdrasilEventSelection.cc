@@ -8,6 +8,9 @@
 #include <iostream>
 #include <stdarg.h>
 
+
+#define TEMPORALLY_OFF
+
 ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
 
  lep_trigDR = 0 ;
@@ -266,6 +269,7 @@ void ttHYggdrasilEventSelection::doEventSelection(){
 
 void ttHYggdrasilEventSelection::_MetCorrection(){
 
+#ifndef TEMPORALLY_OFF
   float x = (*met_preRecorrection_pt) * cos( *met_preRecorrection_phi );
   float y = (*met_preRecorrection_pt) * sin( *met_preRecorrection_phi );
 
@@ -289,9 +293,14 @@ void ttHYggdrasilEventSelection::_MetCorrection(){
     y -= delta_y ;
     
   }
-  
+
   met_pt  = sqrt( x*x +y*y );
   met_phi = atan2( y , x );
+#else 
+  met_pt  = (*met_preRecorrection_pt);
+  met_phi = ( *met_preRecorrection_phi );
+#endif
+
   
 }
 
@@ -656,9 +665,10 @@ void ttHYggdrasilEventSelection::_JetSelection(){
     selected_jetsBdiscriminant.push_back( jet_bDiscriminant ->at(idx) );
     selected_jetsFlav         .push_back( jet_flav ->at(idx) );
 
+#ifndef TEMPORALLY_OFF
     selected_jetPt_preRecorrection  . push_back(  jet_pt_beforeRecorrection -> at(idx)  );
     selected_jetPhi_preRecorrection . push_back(  jet_phi_beforeRecorrection -> at(idx) );
-
+#endif
 
     if( jet_bDiscriminant ->at(idx) < Thre_Jet_Btag ) continue ;
 

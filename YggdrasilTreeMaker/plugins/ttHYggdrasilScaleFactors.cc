@@ -49,37 +49,42 @@ void ttHYggdrasilScaleFactors::init_all(){
 void ttHYggdrasilScaleFactors::init_TrigElSF(){
 
   {
-    std::string input = SFfileDir +"/" + "trig/ElTriggerPerformance_Jan30.root";
-    h_EleSF_Trig_SF    = (TH2F*) getTH2HistogramFromFile( input , std::string ("electrontrig_sf_eta_pt") );
-    h_EleSF_TrigEff_MC = (TH2F*) getTH2HistogramFromFile( input , std::string ("electrontrig_eff_mc_eta_pt") );
+    std::string input = SFfileDir +"/" + "trig/TriggerSF_Run2016All_v1.root";
+    h_EleSF_Trig_SF    = (TH2D*) getTH2HistogramFromFile( input , std::string ("Ele27_WPTight_Gsf") );
   }
 
 }
 void ttHYggdrasilScaleFactors::init_TrigMuSF(){
 
   {
-    std::string input = SFfileDir +"/" + "trig/MuonTriggerPerformance_Jan30.root";
-    h_MuSF_Trig_SF    = (TH2D*) getTH2HistogramFromFile( input , std::string ("muontrig_sf_abseta_pt") );
-    h_MuSF_TrigEff_MC = (TH2D*) getTH2HistogramFromFile( input , std::string ("muontrig_eff_mc_abseta_pt") );
+
+    std::string input = SFfileDir +"/" + "trig/EfficienciesAndSF_RunBtoF.root";
+    TH2D  h_BF (* (TH2D*) getTH2HistogramFromFile( input , std::string ("IsoMu24_OR_IsoTkMu24_PtEtaBins/pt_abseta_ratio") ) ) ;
+
+    std::string input_2 = SFfileDir +"/" + "trig/EfficienciesAndSF_Period4.root";
+    TH2D h_GH (* (TH2D*) getTH2HistogramFromFile( input_2 , std::string ("IsoMu24_OR_IsoTkMu24_PtEtaBins/pt_abseta_ratio") ) ) ;
+
+
+    const double lumi_bf = 19255482132.199 ; 
+    const double lumi_gh = 16290016931.807 ;
+    const double lumi_total = lumi_bf + lumi_gh ; 
+
+    h_BF . Scale( lumi_bf / lumi_total );
+    h_GH . Scale( lumi_gh / lumi_total ) ;
+    h_MuSF_Trig_SF  = new TH2D(  h_BF + h_GH );
   }
 
-  // Root file taken from https://twiki.cern.ch/twiki/bin/view/CMS/MuonWorkInProgressAndPagResults?rev=15
-  {
-    
-    std::string input = SFfileDir +"/" + "SingleMuonTrigger_Z_RunBCD_prompt80X_7p65.root";
-    h_MUEff_SingleMuonTrig = (TH2D*) getTH2HistogramFromFile( input , std::string ("IsoMu22_OR_IsoTkMu22_PtEtaBins_Run274094_to_276097/efficienciesDATA/abseta_pt_DATA") );
-  }
 
 }
 
 void ttHYggdrasilScaleFactors::init_ElectronSF(){
   
   {
-    std::string input = SFfileDir +"/" + "el/gsf_trackingEff/egammaEffi.txt_SF2D.root" ;
+    std::string input = SFfileDir +"/" + "el/gsf_trackingEff/egammaEffi.txt_EGM2D.root" ;
     h_EleSF_ID = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
   }
   { 
-    std::string input = SFfileDir +"/" + "el/CutBase76xMedium__SFfor80x/egammaEffi.txt_SF2D.root";
+    std::string input = SFfileDir +"/" + "el/CutBase76xMedium__SFfor80x/egammaEffi.txt_EGM2D.root";
     h_EleSF_Reco = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
   }
 
@@ -94,16 +99,31 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
   {
     std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_BCDEF.root"; 
     h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) );
-    h_MuSF_ID_Lumi . push_back( 20236179680.471 ); // amount of data in the period
+    h_MuSF_ID_Lumi . push_back( 19255482132.199 ); // amount of data in the period
   }
   {
     std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_GH.root";
     h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) );
-    h_MuSF_ID_Lumi . push_back( 16578401309.707 ); // amount of data in the period
+    h_MuSF_ID_Lumi . push_back( 16290016931.807 ); // amount of data in the period
   }
   h_MuSF_ID_LumiTotal = 0 ;
   for( unsigned int i = 0 ; i < h_MuSF_ID_Lumi.size() ; i++ ){
     h_MuSF_ID_LumiTotal += h_MuSF_ID_Lumi[i];
+  }
+
+  // Muon track 
+  {
+    // abs eta 
+    std::string input = SFfileDir +"/" + "muon/track/bf/fits.root";
+    TGraphAsymmErrors * e_bf = getTGraphFromFile( input , std::string( "ratio_eff_aeta_dr030e030_corr" ) );
+    h_muTrack . push_back( ConvertIlldefinedTGraphToTH2D( e_bf ) ) ;
+    h_muTrack_down . push_back( ConvertIlldefinedTGraphToTH2D( e_bf , -1 ) ) ;
+  }
+  {
+    std::string input_gh = SFfileDir +"/" + "muon/track/gh/fits.root";
+    TGraphAsymmErrors * e_gh = getTGraphFromFile( input_gh , std::string( "ratio_eff_aeta_dr030e030_corr" ) );
+    h_muTrack . push_back( ConvertIlldefinedTGraphToTH2D( e_gh ) ) ;
+    h_muTrack_down . push_back( ConvertIlldefinedTGraphToTH2D( e_gh , -1 ) ) ;
   }
 
   
@@ -111,18 +131,69 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
   { 
     std::string input = SFfileDir +"/" + "muon/ISO/EfficienciesAndSF_BCDEF.root";
     h_MuSF_Iso .push_back(  (TH2D*) getTH2HistogramFromFile( input , std::string ("TightISO_TightID_pt_eta/abseta_pt_ratio") ) );
-    h_MuSF_Iso_Lumi . push_back( 20236179680.471 );
+    h_MuSF_Iso_Lumi . push_back( 19255482132.199 );
   }
   {
     std::string input = SFfileDir +"/" + "muon/ISO/EfficienciesAndSF_GH.root";
     h_MuSF_Iso .push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("TightISO_TightID_pt_eta/abseta_pt_ratio") ) ) ;
-    h_MuSF_Iso_Lumi . push_back( 16578401309.707 );
+    h_MuSF_Iso_Lumi . push_back( 16290016931.807 );
   }
   h_MuSF_Iso_LumiTotal = 0 ;
   for( unsigned int i = 0 ; i < h_MuSF_Iso_Lumi.size() ; i++ ){
     h_MuSF_Iso_LumiTotal += h_MuSF_Iso_Lumi[i];
   }
 
+}
+
+
+
+TH2D * ttHYggdrasilScaleFactors::ConvertIlldefinedTGraphToTH2D( TGraphAsymmErrors * g , int syst ){
+
+  const long nBins = g->GetN();
+
+  double x[ nBins + 1  ];
+
+
+  x[ 0 ] = g->GetX()[0] - ( g -> GetErrorXlow(0) ) ;
+  for( int i = 1 ; i <= nBins ;i++ ){
+    x[ i ] = g->GetX()[i-1] + ( g -> GetErrorXhigh(i-1) ) ;
+  }
+  
+  double y[2]={0,100000000};
+  TH2D * h = new TH2D( "","",nBins , x , 1, y );
+  
+  for(  int i = 1 ; i <= nBins ;i++ ){
+    h->SetBinContent( i , 1 ,   g->GetY()[i-1] );
+
+    if( syst < 0 ){
+      h->SetBinError( i , 1 ,   g->GetEYlow()[i-1] );
+    }else{
+      h->SetBinError( i , 1 ,   g->GetEYhigh()[i-1] );
+    }
+
+  }
+
+  return h ; 
+
+}
+
+
+TGraphAsymmErrors* ttHYggdrasilScaleFactors::getTGraphFromFile( std::string input , std::string histoname ){
+
+  TDirectory * main_directory = gDirectory;
+  TFile * f = TFile::Open( input.c_str() );
+  main_directory->cd();
+
+  TGraphAsymmErrors * h_2d_tmp = 0 ;
+  f-> GetObject ( histoname.c_str(), h_2d_tmp );
+  if( h_2d_tmp != 0 ){
+    TGraphAsymmErrors * h_2d = new TGraphAsymmErrors(*h_2d_tmp) ;
+    f->Close();
+    return h_2d ; 
+  }
+  std::cout <<"Failed to obtain histogarm named " << histoname<< " from file " << input << std::endl ; 
+  assert( false );
+  return 0 ; 
 
 }
 
@@ -154,18 +225,26 @@ TH2* ttHYggdrasilScaleFactors::getTH2HistogramFromFile( std::string input , std:
 }
 
 
-double ttHYggdrasilScaleFactors::GetBinValueFromXYValues( TH2 * h , double xVal , double yVal ){
+double ttHYggdrasilScaleFactors::GetBinValueFromXYValues( TH2 * h , double xVal , double yVal , int syst , bool useOveflowBinForX , bool useOveflowBinForY ){
 
   int bin_x = h->GetXaxis()->FindBin( xVal );
-  if( bin_x < 0 ){ bin_x = 1 ;}
-  if( bin_x > h->GetXaxis()->GetNbins() ){ bin_x = h->GetXaxis()->GetNbins() ;}
+  if( ! useOveflowBinForX && bin_x < 0 ){ bin_x = 1 ;}
+  if( ! useOveflowBinForX && bin_x > h->GetXaxis()->GetNbins() ){ bin_x = h->GetXaxis()->GetNbins() ;}
 
   int bin_y = h->GetYaxis()->FindBin( yVal );
-  if( bin_y < 0 ){ bin_x = 1 ;}
-  if( bin_y > h->GetYaxis()->GetNbins() ){ bin_y = h->GetYaxis()->GetNbins() ;}
+  if(! useOveflowBinForY && bin_y < 0 ){ bin_x = 1 ;}
+  if(! useOveflowBinForY && bin_y > h->GetYaxis()->GetNbins() ){ bin_y = h->GetYaxis()->GetNbins() ;}
 
-  return h->GetBinContent( bin_x , bin_y );
+  const double center_val = h->GetBinContent( bin_x , bin_y );
+  if( syst == 0 ){
+    return center_val ;
+  }
 
+  const double systematic = h->GetBinError( bin_x , bin_y );
+  if( syst > 0 ){
+    return  center_val +  systematic ;
+  }
+  return  center_val -  systematic ;
 }
 
 double ttHYggdrasilScaleFactors::getTightMuonSF( ttHYggdrasilEventSelection * event ){
@@ -175,7 +254,7 @@ double ttHYggdrasilScaleFactors::getTightMuonSF( ttHYggdrasilEventSelection * ev
 }
 
 
-double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection * event , int syst ){
 
   double weight = 1 ; 
 
@@ -186,20 +265,29 @@ double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection *
     const double pt      =            event->leptons().at( i )->Pt()  ; 
 
     double wgt_fot_this_mu = 0 ;
+    double wgt_for_this_mu_tracking = 0 ; 
     for( unsigned int iSF = 0 ; iSF < h_MuSF_ID.size() ; iSF ++ ){
       wgt_fot_this_mu +=
-	GetBinValueFromXYValues( h_MuSF_ID[iSF] , abs_eta , pt )
+	GetBinValueFromXYValues( h_MuSF_ID[iSF] , abs_eta , pt , syst )
+	*
+	( h_MuSF_ID_Lumi[iSF] / h_MuSF_ID_LumiTotal ) ; //<- Weight based on the int_lumi in the period.
+
+      
+      wgt_for_this_mu_tracking +=
+	GetBinValueFromXYValues( ( syst >= 0 ? h_muTrack[iSF] : h_muTrack_down[iSF] ) 
+				 , abs_eta , 10.0 , syst )// the second value is a dummpy.
 	*
 	( h_MuSF_ID_Lumi[iSF] / h_MuSF_ID_LumiTotal ) ; //<- Weight based on the int_lumi in the period.
     }
-    weight *= wgt_fot_this_mu ;
+
+    weight *= wgt_fot_this_mu * wgt_for_this_mu_tracking ;
     
   }
   return weight ;
 
 }
 
-double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection * event , int syst ){
 
   double weight = 1 ; 
 
@@ -212,7 +300,7 @@ double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection 
     double wgt_fot_this_mu = 0 ;
     for( unsigned int iSF = 0 ; iSF < h_MuSF_Iso.size() ; iSF ++ ){
       wgt_fot_this_mu +=
-	GetBinValueFromXYValues( h_MuSF_Iso[iSF] , abs_eta , pt )
+	GetBinValueFromXYValues( h_MuSF_Iso[iSF] , abs_eta , pt , syst )
 	*
 	( h_MuSF_Iso_Lumi[iSF] / h_MuSF_Iso_LumiTotal ) ; //<- Weight based on the int_lumi in the period.
     }
@@ -224,7 +312,7 @@ double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection 
 }
 
 
-double ttHYggdrasilScaleFactors::getTightElectron_IDSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::getTightElectron_IDSF( ttHYggdrasilEventSelection * event , int syst ){
 
   double weight = 1 ; 
 
@@ -234,13 +322,13 @@ double ttHYggdrasilScaleFactors::getTightElectron_IDSF( ttHYggdrasilEventSelecti
     const double sc_eta =  event->leptonsSCEta().at(i); 
     const double pt     =  event->leptons().at( i )->Pt() ; 
     
-    weight *= GetBinValueFromXYValues( h_EleSF_ID , sc_eta , pt );
+    weight *= GetBinValueFromXYValues( h_EleSF_ID , sc_eta , pt , syst );
   }
   return weight ;
 
 }
 
-double ttHYggdrasilScaleFactors::getTightElectron_RecoSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::getTightElectron_RecoSF( ttHYggdrasilEventSelection * event , int syst ){
 
   double weight = 1 ; 
 
@@ -250,7 +338,7 @@ double ttHYggdrasilScaleFactors::getTightElectron_RecoSF( ttHYggdrasilEventSelec
     const double sc_eta =  event->leptonsSCEta().at(i); 
     const double pt     =  event->leptons().at( i )->Pt() ; 
     
-    weight *= GetBinValueFromXYValues( h_EleSF_Reco  , sc_eta , pt );
+    weight *= GetBinValueFromXYValues( h_EleSF_Reco  , sc_eta , pt , syst );
     
   }
   return weight ;
@@ -267,8 +355,8 @@ double ttHYggdrasilScaleFactors::getTightElectronSF( ttHYggdrasilEventSelection 
 void ttHYggdrasilScaleFactors::init_btagSF(){
 
 
-  std::string inputFileHF = SFfileDir +"/" + "csv_rwt_fit_hf_v2_final_2017_1_10test.root";
-  std::string inputFileLF = SFfileDir +"/" + "csv_rwt_fit_lf_v2_final_2017_1_10test.root";
+  std::string inputFileHF = SFfileDir +"/" + "csv_rwt_fit_hf_v2_final_2017_3_29test.root";
+  std::string inputFileLF = SFfileDir +"/" + "csv_rwt_fit_lf_v2_final_2017_3_29test.root";
 
   TFile* fileHF = new TFile ( inputFileHF .c_str());
   TFile* fileLF = new TFile ( inputFileLF .c_str());
@@ -538,20 +626,22 @@ double ttHYggdrasilScaleFactors::get_pu_wgt( int mc_pu ){
 
 double ttHYggdrasilScaleFactors::get_TrigMuEfficiency( ttHYggdrasilEventSelection * event ){
 
-  double totalInefficiency = 1 ; 
+//  double totalInefficiency = 1 ; 
+//
+//  for( unsigned int i = 0 ; i < event->leptonsIsMuon().size() ; i++ ){
+//    if( event->leptonsIsMuon().at( i ) != 1 ) continue ; 
+//    
+//    const double abs_eta = std::fabs( event->leptons().at( i )->Eta() ) ; 
+//    const double pt      =  event->leptons().at( i )->Pt() ; 
+//
+//    double in_efficiency  = 1.0 - GetBinValueFromXYValues( h_MUEff_SingleMuonTrig , abs_eta , pt );
+//
+//    totalInefficiency *= in_efficiency ;
+//  }
+//
+//  return 1.0 - totalInefficiency ;
 
-  for( unsigned int i = 0 ; i < event->leptonsIsMuon().size() ; i++ ){
-    if( event->leptonsIsMuon().at( i ) != 1 ) continue ; 
-    
-    const double abs_eta = std::fabs( event->leptons().at( i )->Eta() ) ; 
-    const double pt      =  event->leptons().at( i )->Pt() ; 
-
-    double in_efficiency  = 1.0 - GetBinValueFromXYValues( h_MUEff_SingleMuonTrig , abs_eta , pt );
-
-    totalInefficiency *= in_efficiency ;
-  }
-
-  return 1.0 - totalInefficiency ;
+  return 1 ; 
 
 }
 
@@ -563,7 +653,7 @@ double ttHYggdrasilScaleFactors::get_TrigElEfficiency( ttHYggdrasilEventSelectio
 
 
 
-double ttHYggdrasilScaleFactors::get_TrigMuSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::get_TrigMuSF( ttHYggdrasilEventSelection * event , int syst ){
 
  double weight = 1 ; 
 
@@ -573,22 +663,19 @@ double ttHYggdrasilScaleFactors::get_TrigMuSF( ttHYggdrasilEventSelection * even
     const double abs_eta = std::fabs( event->leptons().at( i )->Eta() ) ; 
     const double pt      =  event->leptons().at( i )->Pt() ; 
     
-    const double trigdr = event->getLeptonDR( i );
-    const bool isTriggered = trigdr < 0.1 ;
+    //    const double trigdr = event->getLeptonDR( i );
+    //    const bool isTriggered = trigdr < 0.1 ;
 
-    const double sf = GetBinValueFromXYValues( h_MuSF_Trig_SF  , abs_eta , pt );
-    if( isTriggered ){
-      weight *= sf;
-    }else{
-      const double mc_eff = GetBinValueFromXYValues( h_MuSF_TrigEff_MC , abs_eta , pt );
-      weight *= ( 1.0 - sf * mc_eff )/( 1.0 - mc_eff );
-    }
+    const double sf = GetBinValueFromXYValues( h_MuSF_Trig_SF  , pt,  abs_eta , syst );
+
+    weight *= sf; // This is not right calculation for the envets with 2 or more electrons. Just for single electron analysis.
+
   }
   return weight ;
 }
 
 
-double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * event ){
+double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * event , int syst ){
 
  double weight = 1 ; 
 
@@ -598,18 +685,15 @@ double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * even
     const double sc_eta =  event->leptonsSCEta().at(i); 
     const double pt     =  event->leptons().at( i )->Pt() ; 
     
-    const double trigdr = event->getLeptonDR( i );
-    const bool isTriggered = trigdr < 0.1 ;
+    //    const double trigdr = event->getLeptonDR( i );
+    //    const bool isTriggered = trigdr < 0.1 ;
 
-    const double sf = GetBinValueFromXYValues( h_EleSF_Trig_SF  , sc_eta , pt );
+    const bool UseOverflowBinForHighPT = true ; 
 
-    if( isTriggered ){
-      weight *= sf;
-    }else{
-      const double mc_eff = GetBinValueFromXYValues( h_EleSF_TrigEff_MC , sc_eta , pt );
-      weight *= ( 1.0 - sf * mc_eff )/( 1.0 - mc_eff );
-    }
-    
+    const double sf = GetBinValueFromXYValues( h_EleSF_Trig_SF  , pt , sc_eta , syst, UseOverflowBinForHighPT );
+
+    weight *= sf; // This is not right calculation for the envets with 2 or more electrons. Just for single electron analysis.
+
   }
   return weight ;
 

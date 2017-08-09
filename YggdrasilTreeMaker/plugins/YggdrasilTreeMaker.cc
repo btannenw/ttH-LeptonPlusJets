@@ -1845,8 +1845,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     ///
     ////////
 
-    std::vector<pat::Jet> correctedJets = ( ! sysType::isJECUncertainty( iSysType ) ) ? correctedJets_noSys : miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType);
-    std::vector<pat::Jet> selectedJets_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_noSys_unsorted : miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 , jetID::none, '-' );
+    std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType );
+    std::vector<pat::Jet> selectedJets_unsorted =  miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 , jetID::none, '-' );
 
 
     // Get CSVM tagged jet collection

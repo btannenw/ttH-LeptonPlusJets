@@ -30,8 +30,11 @@ ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
  Thre_TightEl_Eta = 2.1;
  Thre_LooseEl_Eta = 2.4;
 
- Thre_TightEl_Iso = 0.15;
- Thre_LooseEl_Iso = 0.15;
+ Thre_TightEl_Iso[0] = 0.0588 ; 
+ Thre_TightEl_Iso[1] = 0.0571 ; 
+ Thre_LooseEl_Iso[0] = 0.0588 ; 
+ Thre_LooseEl_Iso[1] = 0.0571 ; 
+
 
  Thre_Jet_PT      = 30.0;
  Thre_Jet_Eta     =  2.4;
@@ -467,7 +470,9 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
     if(     lep_POGTight -> at(idx)  != 1  ) continue ;
     if(        lep_pt    -> at(idx)   < Thre_LooseEl_PT  ) continue ;
     if( fabs( lep_eta    -> at(idx) ) > Thre_LooseEl_Eta ) continue ;
-    if(       lep_relIso -> at(idx)   > Thre_LooseEl_Iso ) continue ;
+
+    if( fabs( lep_scEta -> at(idx) ) <= 1.479 && fabs( lep_relIso -> at(idx) ) > Thre_LooseEl_Iso[0] )  continue ; 
+    if( fabs( lep_scEta -> at(idx) )  > 1.479 && fabs( lep_relIso -> at(idx) ) > Thre_LooseEl_Iso[1] )  continue ; 
 
     TLorentzVector * vec = new TLorentzVector;
     vec->SetPtEtaPhiE( lep_pt  -> at(idx),
@@ -493,12 +498,19 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
     if(        lep_pt    -> at(idx)   < Thre_TightEl_PT  ) continue ;
     if( fabs( lep_eta    -> at(idx) ) > Thre_TightEl_Eta ) continue ;
 
-    if(     lep_POGLoose -> at(idx)  != 1  ) continue ;
+    if(     lep_POGTight -> at(idx)  != 1  ) continue ;
     nNonIsolatedElectron ++ ;
 
-    if( ! b_FakeEstimation  &&  ( lep_POGTight -> at(idx)  != 1  ||  fabs( lep_relIso -> at(idx) ) > Thre_TightEl_Iso ) ) continue ;
-    if(   b_FakeEstimation  &&    lep_POGTight -> at(idx)  == 1  ) continue ;
-    // Note : electron ID requires relIso in ID, and no need to check iso after requiring tight!=1.
+    if( ! b_FakeEstimation  ) {
+      // Selects isolated electron
+      if( fabs( lep_scEta -> at(idx) ) <= 1.479 && fabs( lep_relIso -> at(idx) ) > Thre_TightEl_Iso[0] )  continue ; 
+      if( fabs( lep_scEta -> at(idx) )  > 1.479 && fabs( lep_relIso -> at(idx) ) > Thre_TightEl_Iso[1] )  continue ; 
+    }else{
+      // Selects non-isolated electron
+      if( fabs( lep_scEta -> at(idx) ) <= 1.479 && fabs( lep_relIso -> at(idx) ) < Thre_TightEl_Iso[0] )  continue ; 
+      if( fabs( lep_scEta -> at(idx) )  > 1.479 && fabs( lep_relIso -> at(idx) ) < Thre_TightEl_Iso[1] )  continue ; 
+    }
+
 	  
     TLorentzVector * vec = new TLorentzVector;
     vec->SetPtEtaPhiE( lep_pt  -> at(idx),
@@ -531,7 +543,9 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
     if(     lep_POGTight -> at(idx)  != 1     ) continue ;
     if(        lep_pt    -> at(idx)   < 25.0  ) continue ;
     if( fabs( lep_eta    -> at(idx) ) >  2.4  ) continue ;
-    if(       lep_relIso -> at(idx)   >  0.15 ) continue ;
+
+    if( fabs( lep_scEta -> at(idx) ) <= 1.479 && fabs( lep_relIso -> at(idx) ) > Thre_TightEl_Iso[0] )  continue ; 
+    if( fabs( lep_scEta -> at(idx) )  > 1.479 && fabs( lep_relIso -> at(idx) ) > Thre_TightEl_Iso[1] )  continue ; 
 
     TLorentzVector * vec = new TLorentzVector;
     vec->SetPtEtaPhiE( lep_pt  -> at(idx),

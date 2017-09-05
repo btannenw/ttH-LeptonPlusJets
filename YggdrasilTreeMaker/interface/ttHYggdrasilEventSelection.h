@@ -166,11 +166,11 @@ class ttHYggdrasilEventSelection{
 
   double Thre_TightEl_PT ;
   double Thre_TightEl_Eta ;
-  double Thre_TightEl_Iso ;
+  double Thre_TightEl_Iso[2] ;
 
   double Thre_LooseEl_PT ;
   double Thre_LooseEl_Eta ;
-  double Thre_LooseEl_Iso ;
+  double Thre_LooseEl_Iso[2] ;
 
   double Thre_Jet_PT ;
   double Thre_Jet_Eta ;

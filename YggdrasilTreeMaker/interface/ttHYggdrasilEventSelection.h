@@ -123,6 +123,8 @@ class ttHYggdrasilEventSelection{
   void SetTightMuonRelIsoCut( double cut );
   void SetLooseMuonRelIsoCut( double cut );
 
+  void SetIncludeNonIsolationLepton();
+
   double MinDRLepJet();
 
 
@@ -255,6 +257,9 @@ class ttHYggdrasilEventSelection{
 
   int nNonIsolatedElectron ;
   int nNonIsolatedMuon ;
+
+
+  bool b_IncludeNonIsoLeptonAsTight ;
 
 };
 

@@ -460,6 +460,8 @@ void ttHYggdrasilEventSelection::_InitInternalVariables(){
   met_pt  = 0 ; 
   met_phi = 0 ;
 
+  NTightButNonIsoLep = 0 ; 
+
 }
 
 void ttHYggdrasilEventSelection::_ElectronSelection(){
@@ -522,6 +524,9 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
     if( ! b_IncludeNonIsoLeptonAsTight && ! passIsolation ){
       continue ; 
     }
+    if( b_IncludeNonIsoLeptonAsTight && ! passIsolation ){
+      NTightButNonIsoLep ++ ; 
+    }
 
     TLorentzVector * vec = new TLorentzVector;
     vec->SetPtEtaPhiE( lep_pt  -> at(idx),
@@ -535,7 +540,7 @@ void ttHYggdrasilEventSelection::_ElectronSelection(){
     selected_tightLeptonsIsMuon.push_back( 0 );
     selected_tightLeptonsCharge.push_back( lep_charge -> at(idx) );
 
-    if( b_FakeEstimation && ! ( registeredAsLoose.at(idx) ) ){
+    if( ( b_FakeEstimation || b_IncludeNonIsoLeptonAsTight ) && ! ( registeredAsLoose.at(idx) ) ){
       selected_looseLeptons.push_back( vec );
       selected_looseLeptonsRelIso.push_back( lep_relIso -> at(idx) );
       selected_looseLeptonsScEta.push_back( lep_scEta -> at(idx) );
@@ -625,6 +630,9 @@ void ttHYggdrasilEventSelection::_MuonSelection(){
     if( ! b_IncludeNonIsoLeptonAsTight && ! passIsolation ){
       continue ; 
     }
+    if( b_IncludeNonIsoLeptonAsTight && ! passIsolation ){
+      NTightButNonIsoLep ++ ; 
+    }
 
     TLorentzVector * vec = new TLorentzVector;
     vec->SetPtEtaPhiE( lep_pt  -> at(idx),
@@ -638,7 +646,7 @@ void ttHYggdrasilEventSelection::_MuonSelection(){
     selected_tightLeptonsIsMuon.push_back( 1 );
     selected_tightLeptonsCharge.push_back( lep_charge -> at(idx) );
 
-    if( b_FakeEstimation && ! ( registeredAsLoose.at(idx) ) ){
+    if( ( b_FakeEstimation || b_IncludeNonIsoLeptonAsTight ) && ! ( registeredAsLoose.at(idx) ) ){
       selected_looseLeptons.push_back( vec );
       selected_looseLeptonsRelIso.push_back( lep_relIso -> at(idx) );
       selected_looseLeptonsScEta.push_back( lep_scEta -> at(idx) );
@@ -1136,4 +1144,8 @@ double ttHYggdrasilEventSelection::MinDRLepJet(){
 
 void ttHYggdrasilEventSelection::SetIncludeNonIsolationLepton(){
   b_IncludeNonIsoLeptonAsTight = true ; 
+}
+
+int ttHYggdrasilEventSelection::GetNTightButNonIsoLep(){
+  return NTightButNonIsoLep;
 }

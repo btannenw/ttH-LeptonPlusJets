@@ -127,6 +127,8 @@ class ttHYggdrasilEventSelection{
 
   double MinDRLepJet();
 
+  int GetNTightButNonIsoLep();
+
 
  private :
 
@@ -258,6 +260,7 @@ class ttHYggdrasilEventSelection{
   int nNonIsolatedElectron ;
   int nNonIsolatedMuon ;
 
+  int NTightButNonIsoLep ; 
 
   bool b_IncludeNonIsoLeptonAsTight ;
 

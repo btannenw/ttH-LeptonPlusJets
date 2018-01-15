@@ -165,11 +165,16 @@ process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-# ttH
-#         'file:///uscms/home/satoshi/temporal_strage/44949CF4-96C6-E611-B9A0-0025905A6122.root'
 
-# data 
- 'file:///uscms/home/satoshi/temporal_strage/00B336D6-6AEC-E611-8581-E0071B7AC7B0.root'
+# xrdcp root://cms-xrd-global.cern.ch//store/data/Run2017E/SingleMuon/MINIAOD/17Nov2017-v1/50000/000DCB8B-2ADD-E711-9100-008CFAF35AC0.root ~/temporal_strage/Run2017E_SingleMuon_MINIAOD.root 
+# 
+# xrdcp root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAOD/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/0044D634-7FED-E711-B0EF-0242AC130002.root ~/temporal_strage/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8_MINIAODSIM.root
+
+
+# 2017-data analysis
+#'file:///uscmst1b_scratch/lpc1/3DayLifetime/satoshi/Run2017E_SingleMuon_MINIAOD.root'
+ 'file:///uscmst1b_scratch/lpc1/3DayLifetime/satoshi/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8_MINIAODSIM.root'
+
             )
 )
 

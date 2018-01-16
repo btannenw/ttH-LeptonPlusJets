@@ -285,7 +285,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   filterResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), filterTag));
 
   TriggerObjectStandAloneToken = consumes <pat::TriggerObjectStandAloneCollection>
-    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "PAT") )) ; // <- ( Re-miniAOD 2017.)
+    ( edm::InputTag( std::string ( "slimmedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "PAT") )) ;
   //    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
 
   if( isMC ){
@@ -299,10 +299,10 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   // EDMeleMVAcategoriesToken       = consumes<edm::ValueMap<int> >(edm::InputTag("electronMVAValueMapProducer",  "ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories",""));
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
-  electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("calibratedPatElectrons")));
+  electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
 
-  //(Normal Muon from Miniaod)  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
-  muonToken = consumes <pat::MuonCollection> (edm::InputTag("deterministicSeeds", "muonsWithSeed",""));
+  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
+  //muonToken = consumes <pat::MuonCollection> (edm::InputTag("deterministicSeeds", "muonsWithSeed",""));
 
   muonview_Token = consumes < edm::View<pat::Muon> > (edm::InputTag(std::string("slimmedMuons")));
   token_PuppuMuIso_Combined =  consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiCombined" ,"") ) ; 
@@ -318,17 +318,18 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   if( usePUPPI ){
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
   }else{
-    // (Normal jet->) jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
 
-    jetToken = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds","jetsWithSeed","" ));  // Jet with random seed.
+    jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+    // jetToken = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds","jetsWithSeed","" ));  // Jet with random seed.
   }
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
 
   if( isMC ){
-    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","MAOD") );
+    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
   }else{
-    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsMuEGClean","","") );
+    //    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsMuEGClean","","") );
+    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
   }
 
   puppimetToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsPuppi","","") );
@@ -846,9 +847,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   //todotodo  const JetCorrector* corrector = JetCorrector::getJetCorrector( "ak4PFchsL1L2L3", iSetup );   //Get the jet corrector from the event setup
   //  edm::Handle<reco::JetCorrector> corrector ;
   edm::Handle<reco::JetCorrector> corrector ; 
-  iEvent.getByToken(jetCorrectorToken_, corrector );
-  miniAODhelper.SetJetCorrector( &(*corrector) );
-  
+
+  if( false ){ // <-- temporally, I do not set jet corrector tool to MiniAODHelper.
+    iEvent.getByToken(jetCorrectorToken_, corrector );
+    miniAODhelper.SetJetCorrector( &(*corrector) );
+  }
   int mHdecay = -1;
   mHdecay = isMC ? miniAODhelper.GetHiggsDecay(mcparticles) : -1 ;
   eve->higgsDecayType_=mHdecay;
@@ -1463,13 +1466,13 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       double _mu_pt = iMu->pt() ;
       double sf = 1.0 ; 
       if( isMC ){
-	TRandom3 rnd ;
-        rnd.SetSeed((uint32_t)( iMu -> userInt("deterministicSeed")));
-	if( (iMu->genLepton()) ){// todo
-	  sf = muon_roc->kScaleFromGenMC ( trkCharge , _mu_pt, iMu->eta(), iMu->phi(), trackerLayersWithMeasurement, iMu->genLepton()->pt() , rnd.Rndm() ) ;
-	}else{
-	  sf = muon_roc->kScaleAndSmearMC( trkCharge , _mu_pt, iMu->eta(), iMu->phi() , trackerLayersWithMeasurement, rnd.Rndm(), rnd.Rndm() ) ;
-	}
+//	TRandom3 rnd ;
+//        rnd.SetSeed((uint32_t)( iMu -> userInt("deterministicSeed")));
+//	if( (iMu->genLepton()) ){// todo
+//	  sf = muon_roc->kScaleFromGenMC ( trkCharge , _mu_pt, iMu->eta(), iMu->phi(), trackerLayersWithMeasurement, iMu->genLepton()->pt() , rnd.Rndm() ) ;
+//	}else{
+//	  sf = muon_roc->kScaleAndSmearMC( trkCharge , _mu_pt, iMu->eta(), iMu->phi() , trackerLayersWithMeasurement, rnd.Rndm(), rnd.Rndm() ) ;
+//	}
 	
       }else{
 	// = data.

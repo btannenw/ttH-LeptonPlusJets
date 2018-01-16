@@ -16,7 +16,7 @@ isGridJob=False
 
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
 
-enableJECFromLocalDB=True
+enableJECFromLocalDB=False
 
 # - - - - - - - - - - - - - - - - - - - - 
 # Special option for Morind17 analysis
@@ -51,9 +51,9 @@ process.load("Configuration.StandardSequences.GeometryDB_cff")
 
 # Update global tag based on : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions?rev=568
 if isMC:
-    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
+    process.GlobalTag.globaltag = '94X_mc2017_realistic_v10'
 else :
-    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
+    process.GlobalTag.globaltag = '94X_dataRun2_ReReco_EOY17_v2'
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )

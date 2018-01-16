@@ -848,10 +848,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   //  edm::Handle<reco::JetCorrector> corrector ;
   edm::Handle<reco::JetCorrector> corrector ; 
 
-  if( false ){ // <-- temporally, I do not set jet corrector tool to MiniAODHelper.
-    iEvent.getByToken(jetCorrectorToken_, corrector );
-    miniAODhelper.SetJetCorrector( &(*corrector) );
-  }
+  iEvent.getByToken(jetCorrectorToken_, corrector );
+  miniAODhelper.SetJetCorrector( &(*corrector) );
+
   int mHdecay = -1;
   mHdecay = isMC ? miniAODhelper.GetHiggsDecay(mcparticles) : -1 ;
   eve->higgsDecayType_=mHdecay;

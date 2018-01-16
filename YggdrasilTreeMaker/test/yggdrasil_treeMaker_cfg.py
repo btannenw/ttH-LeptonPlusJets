@@ -358,8 +358,10 @@ if isMC :
         process.matchGenCHadron *
         process.matchGenBHadron * 
         process.categorizeGenTtbar *
+        process.ak4PFCHSL1FastL2L3CorrectorChain *
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 else :
     process.p = cms.Path(
+        process.ak4PFCHSL1FastL2L3ResidualCorrectorChain *
         process.PUPPIMuonRelIso * process.ttHTreeMaker)

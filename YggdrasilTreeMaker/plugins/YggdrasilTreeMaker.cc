@@ -1476,7 +1476,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	
       }else{
 	// = data.
-	sf = muon_roc->kScaleDT( trkCharge , _mu_pt, iMu->eta(), iMu->phi());
+	// sf = muon_roc->kScaleDT( trkCharge , _mu_pt, iMu->eta(), iMu->phi());
       }
       
       lepton_pt.push_back(iMu->pt() * sf  );

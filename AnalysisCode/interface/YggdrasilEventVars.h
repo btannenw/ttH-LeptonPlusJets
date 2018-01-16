@@ -84,6 +84,26 @@ struct yggdrasilEventVars{
   int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_;
   int passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_;
 
+  int passHLT_Ele28_eta2p1_WPTight_Gsf_HT150_v_                      ;
+  int passHLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned_v_  ;
+  int passHLT_Ele32_WPTight_Gsf_L1DoubleEG_v_                  	    ;
+  int passHLT_Ele32_WPTight_Gsf_v_                                   ;  
+  int passHLT_Ele35_WPTight_Gsf_v_                                   ;  
+  int passHLT_Ele38_WPTight_Gsf_v_                                   ;  
+  int passHLT_Ele40_WPTight_Gsf_v_                                   ;  
+  int passHLT_IsoMu24_2p1_v_                                   	    ;
+  int passHLT_IsoMu27_v_                                             ;  
+  int passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_         ;
+  int passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_      ;
+  int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_               ;  
+  int passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_             ;  
+  int passHLT_PFHT380_SixJet32_DoubleBTagCSV_p075_v_           	    ;
+  int passHLT_PFHT380_SixPFJet32_DoublePFBTagCSV_2p2_v_              ;  
+  int passHLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2_v_          ;  
+  int passHLT_PFHT430_SixJet40_BTagCSV_p080_v_                       ;  
+  int passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v_                    ;  
+
+
   int run_;
   int lumi_;
   long evt_;

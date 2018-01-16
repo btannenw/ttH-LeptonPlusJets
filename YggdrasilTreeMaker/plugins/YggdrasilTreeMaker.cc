@@ -285,7 +285,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   filterResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), filterTag));
 
   TriggerObjectStandAloneToken = consumes <pat::TriggerObjectStandAloneCollection>
-    ( edm::InputTag( std::string ( "slimmedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "PAT") )) ;
+    ( edm::InputTag( std::string ( "slimmedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
   //    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
 
   if( isMC ){
@@ -329,7 +329,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
     metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
   }else{
     //    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsMuEGClean","","") );
-    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
+    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","RECO") );
   }
 
   puppimetToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsPuppi","","") );

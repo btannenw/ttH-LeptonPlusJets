@@ -7,7 +7,7 @@ echo "# - - - - - - - "
 echo remove large files from directory to submit jobs.
 rm -rf ../../AnalysisCode/data/*
 echo " Removing large file is done..."
-echO " Removing files ${CMSSW_BASE}/lib/slc6_amd64_gcc530/proclib/*openloop*so because they are too large."
+echo " Removing files ${CMSSW_BASE}/lib/slc6_amd64_gcc530/proclib/*openloop*so because they are too large."
 rm -rf ${CMSSW_BASE}/lib/slc6_amd64_gcc530/proclib/*openloop*so
 echo "# - - - - - - "
 

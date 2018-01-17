@@ -362,7 +362,7 @@ else
 
 # Data : 
 
-JsonFile=Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
+JsonFile=Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt
 
 
 

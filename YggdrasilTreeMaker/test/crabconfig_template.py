@@ -44,5 +44,10 @@ config.Data.publication = True
 #PPPPP#
 
 
+
+# If you want to submit jobs with nonValid sample, 
+# config.Data.allowNonValidInputDataset = True
+
+
 config.Site.storageSite = 'T3_US_FNALLPC'
 

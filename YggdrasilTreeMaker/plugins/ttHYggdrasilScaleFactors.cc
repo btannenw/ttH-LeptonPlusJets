@@ -619,6 +619,12 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
 
 double ttHYggdrasilScaleFactors::get_pu_wgt( int mc_pu ){
 
+
+  if( mc_pu >  70 ) mc_pu = 70 ;
+  if( mc_pu <   0 ){
+    std::cout <<"Anormal Truth PU value : " << mc_pu << ". Set it to zero."<<std::endl ; 
+    mc_pu =   0 ;
+  }
   return PU_weight[ mc_pu ];
   
 }

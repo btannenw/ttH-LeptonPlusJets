@@ -20,7 +20,7 @@ ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors(){
   SFfileDir =
     (std::string(getenv("CMSSW_BASE")) + "/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/" );
 #endif
-  PileupHistogram . assign( "PileupHistogram_Moriond17.root" );
+  PileupHistogram . assign( "PileupHistogram_2017data.root" );
 
   init_all();
 

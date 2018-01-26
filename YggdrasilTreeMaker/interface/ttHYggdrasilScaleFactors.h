@@ -11,6 +11,9 @@
 
 #include <TGraphAsymmErrors.h>
 
+#define NBINS_PU_REWEIGHTING 99
+
+
 #ifdef STANDALONECOMPILE
 #include "ttHYggdrasilEventSelection.h"
 #else
@@ -84,7 +87,7 @@ class ttHYggdrasilScaleFactors{
   TH1D* h_csv_wgt_lf[9][4][3];
 
   // PU weighting
-  double PU_weight[75];
+  double PU_weight[ NBINS_PU_REWEIGHTING ];
 
 
   // Lepton SF

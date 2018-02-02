@@ -60,6 +60,8 @@ class ttHYggdrasilScaleFactors{
   // Can replace PU file if you want.
   void SetupDataPileupFile( std::string filename ); // just filename. the file should be in the common data directory.
 
+  void SetMCPileupChannel( std::string name );
+
   void init_Pileup();
 
  private :
@@ -112,6 +114,22 @@ class ttHYggdrasilScaleFactors{
 
   std::vector < TH2D * > h_muTrack ; 
   std::vector < TH2D * > h_muTrack_down ; 
+
+  enum _MC_PU_DIST_CH_NAME{
+    MC_PU_DEFAULT  = 0
+    , MC_PU_TT_2L    = 1
+    , MC_PU_TT_1L    = 2
+    , MC_PU_Z        = 3
+    , MC_PU_ZLOWMASS = 4
+    , MC_PU_W        = 5
+    , MC_PU_WW       = 6
+    , MC_PU_WZ       = 7
+    , MC_PU_ZZ       = 8
+  };
+
+  _MC_PU_DIST_CH_NAME   MC_PU_DISTRIBUTION_CHANNEL;
+
+  std::string get_MCPUDistributionFileName( _MC_PU_DIST_CH_NAME ch );
 
 };
 

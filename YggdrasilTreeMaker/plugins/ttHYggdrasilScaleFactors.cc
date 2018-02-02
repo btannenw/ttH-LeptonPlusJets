@@ -39,6 +39,8 @@ ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors( char * sf_file_directory ){
 
 void ttHYggdrasilScaleFactors::init_all(){
 
+  MC_PU_DISTRIBUTION_CHANNEL = MC_PU_DEFAULT ;
+
   init_btagSF();
   init_Pileup();
   init_ElectronSF();
@@ -666,7 +668,30 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
     1.70121486128e-08,
     1.02159894812e-08 } ; 
 
-    { 
+
+  // Overwrite the PU distribution by the information form the actual PU distribution
+  if( MC_PU_DISTRIBUTION_CHANNEL != MC_PU_DEFAULT ){
+
+
+    std::string path = SFfileDir + "/2017_MC_PU/" + get_MCPUDistributionFileName( MC_PU_DISTRIBUTION_CHANNEL ) +".root" ;
+    std::cout << "MC PU distribution overwriting takes the histogram from file : " << path << std::endl ;
+    
+    TFile * f = TFile::Open( path . c_str() ) ; 
+			    
+    TH1D * h ; 
+    f->GetObject("h_pileup_noWeight" , h ); 
+
+    
+    for( int i = 0 ; i < NBINS_PU_REWEIGHTING ; i ++ ){
+      PU_MC[i] = h->GetBinContent( i + 3 );
+    }
+    std::cout <<"MC PU distribution overwriting : done." << std::endl; 
+
+    f->Close();
+    
+  }
+  
+  { 
       double total = 0 ;
       for( int i = 0 ; i < NBINS_PU_REWEIGHTING ; i ++ ){
 	total += PU_MC[ i ];
@@ -806,4 +831,39 @@ double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * even
 
 void ttHYggdrasilScaleFactors::SetupDataPileupFile( std::string filename ){
   PileupHistogram = filename ; 
+}
+
+
+
+std::string ttHYggdrasilScaleFactors::get_MCPUDistributionFileName( _MC_PU_DIST_CH_NAME ch ){
+
+  
+  if( ch == MC_PU_TT_2L   ){ return std::string( "ttto2l2nu"  ); } 
+  if( ch == MC_PU_TT_1L   ){ return std::string( "tttosemilep"); } 
+  if( ch == MC_PU_Z       ){ return std::string( "zjetsincl"  ); } 
+  if( ch == MC_PU_ZLOWMASS){ return std::string( "ZjetLowMass"); } 
+  if( ch == MC_PU_W       ){ return std::string( "wjetsincl"  ); } 
+  if( ch == MC_PU_WW      ){ return std::string( "ww"         ); } 
+  if( ch == MC_PU_WZ      ){ return std::string( "wz"         ); } 
+  if( ch == MC_PU_ZZ      ){ return std::string( "zz"         ); } 
+
+
+  std::cout <<"[FATAL] ttHYggdrasilScaleFactors::get_MCPUDistributionFileName : MC name for the given channel name is not defined." << std::endl ;
+  assert ( false );
+
+  return std::string("CAN_NOT_REACH_HERE");
+
+}
+
+void ttHYggdrasilScaleFactors::SetMCPileupChannel( std::string name ){
+
+  if(name == "ttto2l2nu"   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_TT_2L   ; }
+  if(name == "tttosemilep" ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_TT_1L   ; }
+  if(name == "zjetsincl"   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_Z       ; }
+  if(name == "ZjetLowMass" ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_ZLOWMASS; }
+  if(name == "wjetsincl"   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_W       ; }
+  if(name == "ww"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_WW      ; }
+  if(name == "wz"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_WZ      ; }
+  if(name == "zz"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_ZZ      ; }
+
 }

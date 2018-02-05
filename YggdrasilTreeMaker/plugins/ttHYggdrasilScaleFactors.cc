@@ -11,6 +11,7 @@
 
 #include <TFile.h>
 
+
 ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors(){
 
 #ifdef STANDALONECOMPILE
@@ -37,6 +38,8 @@ ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors( char * sf_file_directory ){
 
 
 void ttHYggdrasilScaleFactors::init_all(){
+
+  MC_PU_DISTRIBUTION_CHANNEL = MC_PU_DEFAULT ;
 
   init_btagSF();
   init_Pileup();
@@ -561,23 +564,144 @@ double ttHYggdrasilScaleFactors::get_csv_wgt( ttHYggdrasilEventSelection * event
 void ttHYggdrasilScaleFactors::init_Pileup(){
 
   // Setting numbers here is just a temporal workaround.
-  double PU_MC[75] = {
-    // values from https://github.com/cms-sw/cmssw/blob/7c04e20a023bb47d86f417f6e13bc41dee6890ee/SimGeneral/MixingModule/python/mix_2016_25ns_Moriond17MC_PoissonOOTPU_cfi.py#L25
-    1.78653e-05 ,2.56602e-05 ,5.27857e-05 ,8.88954e-05 ,0.000109362 ,0.000140973 ,0.000240998 ,0.00071209 ,0.00130121 ,0.00245255 ,0.00502589 ,0.00919534 ,0.0146697 ,0.0204126 ,0.0267586 ,0.0337697 ,0.0401478 ,0.0450159 ,0.0490577 ,0.0524855 ,0.0548159 ,0.0559937 ,0.0554468 ,0.0537687 ,0.0512055 ,0.0476713 ,0.0435312 ,0.0393107 ,0.0349812 ,0.0307413 ,0.0272425 ,0.0237115 ,0.0208329 ,0.0182459 ,0.0160712 ,0.0142498 ,0.012804 ,0.011571 ,0.010547 ,0.00959489 ,0.00891718 ,0.00829292 ,0.0076195 ,0.0069806 ,0.0062025 ,0.00546581 ,0.00484127 ,0.00407168 ,0.00337681 ,0.00269893 ,0.00212473 ,0.00160208 ,0.00117884 ,0.000859662 ,0.000569085 ,0.000365431 ,0.000243565 ,0.00015688 ,9.88128e-05 ,6.53783e-05 ,3.73924e-05 ,2.61382e-05 ,2.0307e-05 ,1.73032e-05 ,1.435e-05 ,1.36486e-05 ,1.35555e-05 ,1.37491e-05 ,1.34255e-05 ,1.33987e-05 ,1.34061e-05 ,1.34211e-05 ,1.34177e-05 ,1.32959e-05 ,1.33287e-05
-  };
+  double PU_MC[ NBINS_PU_REWEIGHTING ] = {
+    // RunIIFall17MiniAOD-94X :
+    // taken from https://raw.githubusercontent.com/cms-sw/cmssw/master/SimGeneral/MixingModule/python/mix_2017_25ns_WinterMC_PUScenarioV1_PoissonOOTPU_cfi.py
+    // From 0 to 98 
+    3.39597497605e-05,
+    6.63688402133e-06,
+    1.39533611284e-05,
+    3.64963078209e-05,
+    6.00872171664e-05,
+    9.33932578027e-05,
+    0.000120591524486,
+    0.000128694546198,
+    0.000361697233219,
+    0.000361796847553,
+    0.000702474896113,
+    0.00133766053707,
+    0.00237817050805,
+    0.00389825605651,
+    0.00594546732588,
+    0.00856825906255,
+    0.0116627396044,
+    0.0148793350787,
+    0.0179897368379,
+    0.0208723871946,
+    0.0232564170641,
+    0.0249826433945,
+    0.0262245860346,
+    0.0272704617569,
+    0.0283301107549,
+    0.0294006137386,
+    0.0303026836965,
+    0.0309692426278,
+    0.0308818046328,
+    0.0310566806228,
+    0.0309692426278,
+    0.0310566806228,
+    0.0310566806228,
+    0.0310566806228,
+    0.0307696426944,
+    0.0300103336052,
+    0.0288355370103,
+    0.0273233309106,
+    0.0264343533951,
+    0.0255453758796,
+    0.0235877272306,
+    0.0215627588047,
+    0.0195825559393,
+    0.0177296309658,
+    0.0160560731931,
+    0.0146022004183,
+    0.0134080690078,
+    0.0129586991411,
+    0.0125093292745,
+    0.0124360740539,
+    0.0123547104433,
+    0.0123953922486,
+    0.0124360740539,
+    0.0124360740539,
+    0.0123547104433,
+    0.0124360740539,
+    0.0123387597772,
+    0.0122414455005,
+    0.011705203844,
+    0.0108187105305,
+    0.00963985508986,
+    0.00827210065136,
+    0.00683770076341,
+    0.00545237697118,
+    0.00420456901556,
+    0.00367513566191,
+    0.00314570230825,
+    0.0022917978982,
+    0.00163221454973,
+    0.00114065309494,
+    0.000784838366118,
+    0.000533204105387,
+    0.000358474034915,
+    0.000238881117601,
+    0.0001984254989,
+    0.000157969880198,
+    0.00010375646169,
+    6.77366175538e-05,
+    4.39850477645e-05,
+    2.84298066026e-05,
+    1.83041729561e-05,
+    1.17473542058e-05,
+    7.51982735129e-06,
+    6.16160108867e-06,
+    4.80337482605e-06,
+    3.06235473369e-06,
+    1.94863396999e-06,
+    1.23726800704e-06,
+    7.83538083774e-07,
+    4.94602064224e-07,
+    3.10989480331e-07,
+    1.94628487765e-07,
+    1.57888581037e-07,
+    1.2114867431e-07,
+    7.49518929908e-08,
+    4.6060444984e-08,
+    2.81008884326e-08,
+    1.70121486128e-08,
+    1.02159894812e-08 } ; 
 
 
-    { 
+  // Overwrite the PU distribution by the information form the actual PU distribution
+  if( MC_PU_DISTRIBUTION_CHANNEL != MC_PU_DEFAULT ){
+
+
+    std::string path = SFfileDir + "/2017_MC_PU/" + get_MCPUDistributionFileName( MC_PU_DISTRIBUTION_CHANNEL ) +".root" ;
+    std::cout << "MC PU distribution overwriting takes the histogram from file : " << path << std::endl ;
+    
+    TFile * f = TFile::Open( path . c_str() ) ; 
+			    
+    TH1D * h ; 
+    f->GetObject("h_pileup_noWeight" , h ); 
+
+    
+    for( int i = 0 ; i < NBINS_PU_REWEIGHTING ; i ++ ){
+      PU_MC[i] = h->GetBinContent( i + 3 );
+    }
+    std::cout <<"MC PU distribution overwriting : done." << std::endl; 
+
+    f->Close();
+    
+  }
+  
+  { 
       double total = 0 ;
-      for( int i = 0 ; i < 75 ; i ++ ){
+      for( int i = 0 ; i < NBINS_PU_REWEIGHTING ; i ++ ){
 	total += PU_MC[ i ];
       }
-      for( int i = 0 ; i < 75 ; i ++ ){
+      for( int i = 0 ; i < NBINS_PU_REWEIGHTING ; i ++ ){
 	PU_MC[ i ] /= total;
       }
     }
 
-    double PU_DATA[75] ;
+    double PU_DATA[ NBINS_PU_REWEIGHTING ] ;
     {
       TH1D * h;
       TFile * f = TFile::Open( (SFfileDir + "/" + PileupHistogram ).c_str() );
@@ -586,7 +710,7 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
       //  pileupCalc.py -i ./../data/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt  --inputLumiJSON /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/PileUp/pileup_latest.txt --calcMode true --minBiasXsec 71300 --maxPileupBin 1000 --numPileupBins 1000    MyDataPileupHistogram.root
       
       f -> GetObject( "pileup" , h ) ;
-      for( int i = 0 ; i < 75 ; i++ ){
+      for( int i = 0 ; i < NBINS_PU_REWEIGHTING ; i++ ){
 	PU_DATA[i] = h->GetBinContent( i + 1 );
       }
       f -> Close();
@@ -596,17 +720,17 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
 
     { 
       double total = 0 ;
-      for( int i = 0 ; i < 75 ; i ++ ){
+      for( int i = 0 ; i < NBINS_PU_REWEIGHTING ; i ++ ){
 	total += PU_DATA[ i ];
       }
       // normalization.
-      for( int i = 0 ; i < 75 ; i ++ ){
+      for( int i = 0 ; i < NBINS_PU_REWEIGHTING ; i ++ ){
 	PU_DATA[ i ] /= total;
       }
     }
 
     
-    for(int i = 0 ; i < 75 ; i ++){
+    for(int i = 0 ; i < NBINS_PU_REWEIGHTING ; i ++){
       if( PU_MC[i] == 0 ){
 	PU_weight[ i ] = 0 ; 
       }else{
@@ -620,9 +744,8 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
 double ttHYggdrasilScaleFactors::get_pu_wgt( int mc_pu ){
 
 
-  if( mc_pu >  70 ) mc_pu = 70 ;
+  if( mc_pu >= NBINS_PU_REWEIGHTING ){ mc_pu = NBINS_PU_REWEIGHTING -1 ; }
   if( mc_pu <   0 ){
-    std::cout <<"Anormal Truth PU value : " << mc_pu << ". Set it to zero."<<std::endl ; 
     mc_pu =   0 ;
   }
   return PU_weight[ mc_pu ];
@@ -708,4 +831,39 @@ double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * even
 
 void ttHYggdrasilScaleFactors::SetupDataPileupFile( std::string filename ){
   PileupHistogram = filename ; 
+}
+
+
+
+std::string ttHYggdrasilScaleFactors::get_MCPUDistributionFileName( _MC_PU_DIST_CH_NAME ch ){
+
+  
+  if( ch == MC_PU_TT_2L   ){ return std::string( "ttto2l2nu"  ); } 
+  if( ch == MC_PU_TT_1L   ){ return std::string( "tttosemilep"); } 
+  if( ch == MC_PU_Z       ){ return std::string( "zjetsincl"  ); } 
+  if( ch == MC_PU_ZLOWMASS){ return std::string( "ZjetLowMass"); } 
+  if( ch == MC_PU_W       ){ return std::string( "wjetsincl"  ); } 
+  if( ch == MC_PU_WW      ){ return std::string( "ww"         ); } 
+  if( ch == MC_PU_WZ      ){ return std::string( "wz"         ); } 
+  if( ch == MC_PU_ZZ      ){ return std::string( "zz"         ); } 
+
+
+  std::cout <<"[FATAL] ttHYggdrasilScaleFactors::get_MCPUDistributionFileName : MC name for the given channel name is not defined." << std::endl ;
+  assert ( false );
+
+  return std::string("CAN_NOT_REACH_HERE");
+
+}
+
+void ttHYggdrasilScaleFactors::SetMCPileupChannel( std::string name ){
+
+  if(name == "ttto2l2nu"   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_TT_2L   ; }
+  if(name == "tttosemilep" ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_TT_1L   ; }
+  if(name == "zjetsincl"   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_Z       ; }
+  if(name == "ZjetLowMass" ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_ZLOWMASS; }
+  if(name == "wjetsincl"   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_W       ; }
+  if(name == "ww"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_WW      ; }
+  if(name == "wz"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_WZ      ; }
+  if(name == "zz"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_ZZ      ; }
+
 }

@@ -24,12 +24,12 @@ cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|XXXPERI
 done
 
 
-nickname="Satoshi_Moriond17_Yggdra_20170721_UpdatedSejection"
+nickname="Satoshi_jobsubmit_mkdir_2018_01_22__test3"
 
 JobIndexList=""
 
 ds[1]=/SingleElectron/Run2017B-17Nov2017-v1/MINIAOD
-
+ds[1]=/SingleElectron/Run2017C-17Nov2017-v1/MINIAOD
 ds[3]=/SingleElectron/Run2017D-17Nov2017-v1/MINIAOD
 ds[4]=/SingleElectron/Run2017E-17Nov2017-v1/MINIAOD
 ds[5]=/SingleElectron/Run2017F-17Nov2017-v1/MINIAOD
@@ -48,7 +48,7 @@ ismc[3]=DATA_D
 ismc[4]=DATA_E
 ismc[5]=DATA_F
 
-JobIndexList=${JobIndexList}" 1 2 3     5  "
+JobIndexList=${JobIndexList}" 1 2 3  4   5  "
 
 
 
@@ -111,7 +111,7 @@ ismc[30]=MC
 
 JobIndexList=${JobIndexList}" 30 "
 
-ds[40]=/TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[40]=/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
 name[40]=WjetIncl
 ismc[40]=MC
 
@@ -152,14 +152,13 @@ ismc[50]=MC
 # 
 
 
-
-# ds[59]=/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
-# name[59]=ZjetLowMass
-# ismc[59]=MC
+ds[59]=/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v2/MINIAODSIM
+name[59]=ZjetLowMass
+ismc[59]=MC
 
 
 #JobIndexList=${JobIndexList}" 50 51 52 53 54 55 56 57 58 "
-JobIndexList=${JobIndexList}" 50 "
+JobIndexList=${JobIndexList}" 50 59 "
 
 
 
@@ -244,7 +243,16 @@ JobIndexList=${JobIndexList}" 70 71 72 73 74  "
 ds[100]=/ttHJetTobb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
 name[100]=tthbb
 ismc[100]=MC
-JobIndexList=${JobIndexList}" 100 " 
+
+ds[101]=/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+name[101]=tthnonbb
+ismc[101]=MC
+
+JobIndexList=${JobIndexList}" 100 101" 
+
+ds[109]=/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+name[109]=tttofullhad
+ismc[109]=MC
 
 
 ds[110]=/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v2/MINIAODSIM
@@ -256,8 +264,7 @@ name[111]=tttosemilep
 ismc[111]=MC
 
 
-
-JobIndexList=${JobIndexList}" 110 111 "
+JobIndexList=${JobIndexList}" 109 110 111 "
 
 
 # ismc[112]=MC
@@ -348,7 +355,7 @@ echo ${name[${idx}]}
 if [ ${ismc[$idx]} == "MC" ]
 then
 
-if [ ` echo ${name[$idx]} | grep ttbar ` ] 
+if [ ` echo ${name[$idx]} | grep 'ttbar\|ttto' ` ] 
 then
 cat crabconfig_template.py | sed "s|XXXXX|${name[${idx}]}|g" | sed "s|YYYYY|${nickname}|g" | sed "s|ZZZZZ|${ds[$idx]}|g" | \
                              sed "s|QQQQQ|MCTTBAR|g"> __CRABCONFIG__${name[${idx}]}.py

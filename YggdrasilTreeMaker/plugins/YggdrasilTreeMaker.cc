@@ -1335,7 +1335,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   const edm::TriggerNames &names = iEvent.triggerNames(*triggerResults);
   for (unsigned int i = 0; i < triggerResults->size(); ++i) {
        
-    unsigned long location1  = names.triggerName(i).find( "HLT_IsoMu27_vv" ,0);
+    unsigned long location1  = names.triggerName(i).find( "HLT_IsoMu27_v" ,0);
     unsigned long location3  = names.triggerName(i).find( "HLT_Ele35_WPTight_Gsf_v" ,0);
     
     if( ( location1 == 0 || location3 == 0 ) && triggerResults->accept(i) ){

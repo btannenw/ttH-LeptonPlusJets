@@ -15,7 +15,7 @@ ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
 
  lep_trigDR = 0 ;
 
- Thre_TightMu_PT  = 26.0 ;
+ Thre_TightMu_PT  = 30.0 ;
  Thre_LooseMu_PT  = 15.0;
 
  Thre_TightMu_Eta = 2.1 ;
@@ -24,7 +24,7 @@ ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
  Thre_TightMu_Iso = 0.15 ;
  Thre_LooseMu_Iso = 0.25 ;
 
- Thre_TightEl_PT  = 30;
+ Thre_TightEl_PT  = 38;
  Thre_LooseEl_PT  = 15;
 
  Thre_TightEl_Eta = 2.1;

@@ -29,7 +29,7 @@ nickname="Satoshi_jobsubmit_mkdir_2018_01_22__test3"
 JobIndexList=""
 
 ds[1]=/SingleElectron/Run2017B-17Nov2017-v1/MINIAOD
-ds[1]=/SingleElectron/Run2017C-17Nov2017-v1/MINIAOD
+ds[2]=/SingleElectron/Run2017C-17Nov2017-v1/MINIAOD
 ds[3]=/SingleElectron/Run2017D-17Nov2017-v1/MINIAOD
 ds[4]=/SingleElectron/Run2017E-17Nov2017-v1/MINIAOD
 ds[5]=/SingleElectron/Run2017F-17Nov2017-v1/MINIAOD

@@ -18,6 +18,10 @@ genjetInputTag = cms.InputTag("slimmedGenJets","","")
 
 enableJECFromLocalDB=False
 
+if isMC :
+    enableJECFromLocalDB = True 
+
+
 # - - - - - - - - - - - - - - - - - - - - 
 # Special option for Morind17 analysis
 #  This is a flag used to apply dedicated JEC for each data set.
@@ -71,7 +75,7 @@ JecLocalDataBaseName = \
     'Summer16_23Sep2016BCDV4_DATA' if period in ("2016B" , "2016C", "2016D") else \
     'Summer16_23Sep2016EFV4_DATA'  if period in ("2016E" , "2016F1") else \
     'Summer16_23Sep2016GV4_DATA'   if period in ("2016F2", "2016G" ) else \
-    'Summer16_23Sep2016HV4_DATA'   if period in ("2016H1", "2016H2") else 'Summer16_23Sep2016V4_MC'
+    'Summer16_23Sep2016HV4_DATA'   if period in ("2016H1", "2016H2") else 'Fall17_17Nov2017_V4_MC'
 
 JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
 # This switch is needed because the variable CMSSW_BASE remains the same as local job (directory where you do "cmsenv") when the job runs on the grid.

@@ -1629,9 +1629,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       scEta = iEle->superCluster()->position().eta();
     }
 
-    int isPOGTight = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedT ) ? 1 : 0  ;
-    int isPOGLoose = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedV ) ? 1 : 0  ;
-    int isPOGLooseAlt = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron80XCutBasedL ) ? 1 : 0  ;
+    int isPOGTight = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron94XCutBasedT ) ? 1 : 0  ;
+    int isPOGLoose = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron94XCutBasedV ) ? 1 : 0  ;
+    int isPOGLooseAlt = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron94XCutBasedL ) ? 1 : 0  ;
 
 
     // our pre-selections 
@@ -1705,8 +1705,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_eta.push_back(iEle->eta());
     lepton_phi.push_back(iEle->phi());
     lepton_e.push_back(iEle->energy());
-    lepton_relIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::spring16) );
-    lepton_puppirelIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::spring16) );
+    lepton_relIso.push_back(     miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::fall17) );
+    lepton_puppirelIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::fall17) );
     lepton_puppiIsoWithLep_CH   .push_back(0);
     lepton_puppiIsoWithLep_NH   .push_back(0);
     lepton_puppiIsoWithLep_PH   .push_back(0);

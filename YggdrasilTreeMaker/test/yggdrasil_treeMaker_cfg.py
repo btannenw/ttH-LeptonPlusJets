@@ -11,8 +11,8 @@ isMC=True
 # 
 isTTBARMC=False
 
-isGridJob=False
-# isGridJob=True
+# isGridJob=False
+isGridJob=True
 
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
 

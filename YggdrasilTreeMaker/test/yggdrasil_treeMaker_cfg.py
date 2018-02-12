@@ -106,9 +106,9 @@ if enableJECFromLocalDB :
     #  line for PUPPI for temporal.
     process.GlobalTag.toGet.append(
         cms.PSet(
-            connect = cms.string( JecDBPathPrefix +'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/' + 'Summer16_25nsV5_MC'+'.db' ),
+            connect = cms.string( JecDBPathPrefix +'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/' + JecLocalDataBaseName +'.db' ),
             record = cms.string('JetCorrectionsRecord'),
-            tag    = cms.string('JetCorrectorParametersCollection_'+'Summer16_25nsV5_MC'+'_AK4PFPuppi'),
+            tag    = cms.string('JetCorrectorParametersCollection_'+ JecLocalDataBaseName +'_AK4PFPuppi'),
             label  = cms.untracked.string('AK4PFPuppi')
             )
         )

@@ -39,7 +39,7 @@ ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
  Thre_Jet_PT      = 30.0;
  Thre_Jet_Eta     =  2.4;
 
- Thre_Jet_Btag    =  0.8484;
+ Thre_Jet_Btag    =  0.8838 ;
 
  b_InfoDumpForDebug = false ;
 

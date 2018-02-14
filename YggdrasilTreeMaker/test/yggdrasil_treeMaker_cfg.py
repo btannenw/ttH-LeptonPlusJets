@@ -55,7 +55,7 @@ process.load("Configuration.StandardSequences.GeometryDB_cff")
 
 # Update global tag based on : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions?rev=568
 if isMC:
-    process.GlobalTag.globaltag = '94X_mc2017_realistic_v10'
+    process.GlobalTag.globaltag = '94X_mc2017_realistic_v12'
 else :
     process.GlobalTag.globaltag = '94X_dataRun2_ReReco_EOY17_v2'
 

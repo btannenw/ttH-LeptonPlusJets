@@ -1905,7 +1905,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     std::vector<pat::Jet> selectedJets_tag_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 2.4, jetID::none, 'M' );
 
     // Get nontagged jet collection
-    std::vector<pat::Jet> selectedJets_untag_unsorted = selectedJets_tag_unsorted;//miniAODhelper.GetSelectedJets( correctedJets, 20., 2.4, jetID::none, 'M' ); 
+    std::vector<pat::Jet> selectedJets_untag_unsorted = selectedJets_tag_unsorted;
 
   
     // Sort jet collections by pT

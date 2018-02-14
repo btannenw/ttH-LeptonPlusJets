@@ -1251,17 +1251,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   
 
-  // Do jets stuff
-  std::vector<pat::Jet> pfJets_ID = miniAODhelper.GetSelectedJets(*pfjets,0.,999,
-								  ( usePUPPI  ?
-								    jetID::none
-								    :
-								    jetID::jetTight ) , // For 2017, no LooseID, only tight.
-								    '-');
 
-  std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( pfJets_ID );
- // std::vector<pat::Jet> jetsNoMu = miniAODhelper.RemoveOverlaps(selectedMuons_loose, rawJets_ID);
- // std::vector<pat::Jet> jetsNoEle = miniAODhelper.RemoveOverlaps(selectedElectrons_loose, jetsNoMu);
+  std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( *pfjets );
   std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection);
   std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 5.0, jetID::none, '-' );
   std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 30., 2.4, jetID::none, 'M' );
@@ -1898,21 +1889,27 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     ////////
 
     std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType );
-    std::vector<pat::Jet> selectedJets_unsorted =  miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 , jetID::none, '-' );
+    std::vector<pat::Jet> selectedJets_unsorted =  miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 ,
+										 ( usePUPPI  ?
+										   jetID::none
+										   :
+										   jetID::jetTight ) // <- For 2017, no LooseID, only tight.
+										 , '-' );
 
 
-    // Get CSVM tagged jet collection
-    std::vector<pat::Jet> selectedJets_tag_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 2.4, jetID::none, 'M' );
+    double JecUpdatePropagationToMET_x = 0 ;
+    double JecUpdatePropagationToMET_y = 0 ;
+    for( unsigned int i = 0 ; i < pfjets -> size() ; i++ ){
 
-    // Get nontagged jet collection
-    std::vector<pat::Jet> selectedJets_untag_unsorted = selectedJets_tag_unsorted;
+//      if(iSys == 0 ){
+//	std::cout <<" JEC diff " << i << " " << pfjets->at(i).px() - correctedJets.at(i).px() << " " << pfjets->at(i).py() - correctedJets.at(i).py()  << std::endl ; 
+//	std::cout <<" JEC  orig " << i <<" "<< pfjets->at(i).px() << " " <<  pfjets->at(i).py() << std::endl ; 
+//      }
 
-  
-    // Sort jet collections by pT
-    std::vector<pat::Jet> selectedJets_uncleaned       = miniAODhelper.GetSortedByPt( selectedJets_unsorted );
-    std::vector<pat::Jet> selectedJets_tag_uncleaned   = miniAODhelper.GetSortedByPt( selectedJets_tag_unsorted );
-    std::vector<pat::Jet> selectedJets_untag_uncleaned = miniAODhelper.GetSortedByPt( selectedJets_untag_unsorted );
-    
+      JecUpdatePropagationToMET_x +=  pfjets->at(i).px() - correctedJets.at(i).px() ; 
+      JecUpdatePropagationToMET_y +=  pfjets->at(i).py() - correctedJets.at(i).py() ; 
+    }
+
 
   ///// HEP top tagged jet
   int numTopTags = 0;
@@ -1983,7 +1980,6 @@ n_fatjets++;
          
     pat::MET correctedMET = pfmet->at(0); 
     pat::MET correctedPUPPIMET = puppimet->at(0); 
-    TLorentzVector metV(correctedMET.px(),correctedMET.py(),0.0,correctedMET.pt());
 
     std::vector<double> csvV;
     std::vector<double> jet_combinedMVABJetTags;
@@ -2101,17 +2097,36 @@ n_fatjets++;
     std::vector<pat::Jet> selectedJets_loose_tag_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_loose_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, 'M' );
 
     
-    // MET
-    eve->MET_[iSys]      = correctedMET.corPt(pat::MET::Type1);
-    eve->MET_phi_[iSys]  = correctedMET.corPhi(pat::MET::Type1);
+
+
+
+
+
+    // - - - - MET works - - - - - 
+
+    {
+      double met_x = correctedMET.corPx(pat::MET::Type1) + JecUpdatePropagationToMET_x ; 
+      double met_y = correctedMET.corPy(pat::MET::Type1) + JecUpdatePropagationToMET_y ; 
+      
+      eve->MET_[iSys]      = sqrt( met_x * met_x + met_y * met_y );
+      eve->MET_phi_[iSys]  = atan2( met_y , met_x   );
+    }
 
     eve->PUPPIMET_[iSys]      = correctedPUPPIMET.pt();
     eve->PUPPIMET_phi_[iSys]  = correctedPUPPIMET.phi();
 
-    eve->MET_Type1xy_[iSys]      = correctedMET.corPt(pat::MET::Type1XY);
-    eve->MET_Type1xy_phi_[iSys]  = correctedMET.corPhi(pat::MET::Type1XY);
+    {
+
+      double met_x = correctedMET.corPx(pat::MET::Type1XY) + JecUpdatePropagationToMET_x ; 
+      double met_y = correctedMET.corPy(pat::MET::Type1XY) + JecUpdatePropagationToMET_y ; 
+
+      eve->MET_Type1xy_[iSys]      = sqrt( met_x * met_x + met_y * met_y );
+      eve->MET_Type1xy_phi_[iSys]  = atan2( met_y , met_x   );		   
+
+    }
     eve->PUPPIMET_Type1xy_[iSys]      = correctedPUPPIMET.corPt(pat::MET::Type1XY);
     eve->PUPPIMET_Type1xy_phi_[iSys]  = correctedPUPPIMET.corPhi(pat::MET::Type1XY);
+
 
     if( false ){ // For test of met correction type : 
       //  std::cout <<"Test satoshi_et: " << correctedMET.pt() << " " << correctedMET.corPt() << " " << correctedMET.corPt(pat::MET::Type1) << " " << correctedMET.corPt(pat::MET::Type1XY) << std::endl ; 

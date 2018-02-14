@@ -24,7 +24,7 @@ cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|XXXPERI
 done
 
 
-nickname="Satoshi_jobsubmit_mkdir_2018_01_22__test3"
+nickname="Satoshi_jobsubmit_2018_02_11_ElectronID_MCV5"
 
 JobIndexList=""
 
@@ -345,6 +345,61 @@ JobIndexList=${JobIndexList}" 150 152 153 156 "
 
 
 
+
+ds[200]=/QCD_Pt-15to20_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[201]=/QCD_Pt-20to30_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[202]=/QCD_Pt-30to50_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[203]=/QCD_Pt-50to80_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[204]=/QCD_Pt-80to120_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[205]=/QCD_Pt-120to170_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[206]=/QCD_Pt-170to300_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[207]=/QCD_Pt-300to470_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[208]=/QCD_Pt-470to600_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[209]=/QCD_Pt-600to800_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[210]=/QCD_Pt-800to1000_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[211]=/QCD_Pt-1000toInf_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+
+name[200]=MuEnrichQCDPt15to20
+name[201]=MuEnrichQCDPt20to30
+name[202]=MuEnrichQCDPt30to50
+name[203]=MuEnrichQCDPt50to80
+name[204]=MuEnrichQCDPt80to120
+name[205]=MuEnrichQCDPt120to170
+name[206]=MuEnrichQCDPt170to300
+name[207]=MuEnrichQCDPt300to470
+name[208]=MuEnrichQCDPt470to600
+name[209]=MuEnrichQCDPt600to800
+name[210]=MuEnrichQCDPt800to1000
+name[211]=MuEnrichQCDPt1000toInf
+
+ismc[200]=MC
+ismc[201]=MC
+ismc[202]=MC
+ismc[203]=MC
+ismc[204]=MC
+ismc[205]=MC
+ismc[206]=MC
+ismc[207]=MC
+ismc[208]=MC
+ismc[209]=MC
+ismc[210]=MC
+ismc[211]=MC
+
+
+JobIndexList=${JobIndexList}" \
+200 \
+201 \
+202 \
+203 \
+204 \
+205 \
+206 \
+207 \
+208 \
+209 \
+210 \
+211 \
+"
 
 for idx in ` echo $JobIndexList `
 do

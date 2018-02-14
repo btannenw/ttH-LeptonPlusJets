@@ -1625,13 +1625,15 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     bool inCrack = false;
     double scEta = -99;
     if( iEle->superCluster().isAvailable() ){
-      inCrack = ( fabs(iEle->superCluster()->position().eta())>1.4442 && fabs(iEle->superCluster()->position().eta())<1.5660 );
+      inCrack = ( fabs(iEle->superCluster()->position().eta())>1.4442 
+		  && 
+		  fabs(iEle->superCluster()->position().eta())<1.5660 );
       scEta = iEle->superCluster()->position().eta();
     }
 
-    int isPOGTight = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron94XCutBasedT ) ? 1 : 0  ;
-    int isPOGLoose = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron94XCutBasedV ) ? 1 : 0  ;
-    int isPOGLooseAlt = inCrack || miniAODhelper.PassElectron80XId(*iEle ,electronID::electron94XCutBasedL ) ? 1 : 0  ;
+    int isPOGTight = ! inCrack && miniAODhelper.PassElectron94XId(*iEle ,electronID::electron94XCutBasedT ) ? 1 : 0  ;
+    int isPOGLoose = ! inCrack && miniAODhelper.PassElectron94XId(*iEle ,electronID::electron94XCutBasedV ) ? 1 : 0  ;
+    int isPOGLooseAlt = ! inCrack && miniAODhelper.PassElectron94XId(*iEle ,electronID::electron94XCutBasedL ) ? 1 : 0  ;
 
 
     // our pre-selections 

@@ -1256,8 +1256,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 								  ( usePUPPI  ?
 								    jetID::none
 								    :
-								    jetID::jetLoose ),
-								  '-');
+								    jetID::jetTight ) , // For 2017, no LooseID, only tight.
+								    '-');
 
   std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( pfJets_ID );
  // std::vector<pat::Jet> jetsNoMu = miniAODhelper.RemoveOverlaps(selectedMuons_loose, rawJets_ID);

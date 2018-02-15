@@ -1396,16 +1396,16 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   vdouble lepton_e;
   vdouble lepton_relIso;
   vdouble lepton_puppirelIso;
+  vdouble lepton_dbiso_CH ;
+  vdouble lepton_dbiso_NH ;
+  vdouble lepton_dbiso_PH ;
+  vdouble lepton_dbiso_PU ;
   vdouble lepton_puppiIsoWithLep_CH   ;
   vdouble lepton_puppiIsoWithLep_NH   ;
   vdouble lepton_puppiIsoWithLep_PH   ;
   vdouble lepton_puppiIsoWithoutLep_CH;
   vdouble lepton_puppiIsoWithoutLep_NH;
   vdouble lepton_puppiIsoWithoutLep_PH;
-  vdouble lepton_iso_sumChargedHadronPt;
-  vdouble lepton_iso_sumNeutralHadronEt;
-  vdouble lepton_iso_sumPhotonEt;
-  vdouble lepton_iso_sumPUPt;
   vdouble lepton_mvaTrigValue;
   vint    lepton_numMissingHits;
   vdouble lepton_scSigmaIEtaIEta;
@@ -1526,18 +1526,16 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_e.push_back(iMu->energy());
     lepton_relIso.push_back( miniAODhelper.GetMuonRelIso(*iMu, coneSize::R04, corrType::deltaBeta) ) ;
     lepton_puppirelIso.push_back( (*iso_PuppiCombined)[ muons_view->ptrAt(  iMu - muons->begin()  ) ] ) ;
-
+    lepton_dbiso_CH . push_back( iMu -> pfIsolationR04().sumChargedHadronPt );
+    lepton_dbiso_NH . push_back( iMu -> pfIsolationR04().sumNeutralHadronEt );
+    lepton_dbiso_PH . push_back( iMu -> pfIsolationR04().sumPhotonEt );
+    lepton_dbiso_PU . push_back( iMu -> pfIsolationR04().sumPUPt );
     lepton_puppiIsoWithLep_CH    . push_back( (* iso_PuppiWithLep_CH    )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
     lepton_puppiIsoWithLep_NH    . push_back( (* iso_PuppiWithLep_NH    )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
     lepton_puppiIsoWithLep_PH    . push_back( (* iso_PuppiWithLep_PH    )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
     lepton_puppiIsoWithoutLep_CH . push_back( (* iso_PuppiWithoutLep_CH )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
     lepton_puppiIsoWithoutLep_NH . push_back( (* iso_PuppiWithoutLep_NH )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
     lepton_puppiIsoWithoutLep_PH . push_back( (* iso_PuppiWithoutLep_PH )[ muons_view->ptrAt(  iMu - muons->begin()  )] );
-
-    lepton_iso_sumChargedHadronPt.push_back(iMu->pfIsolationR03().sumChargedHadronPt);
-    lepton_iso_sumNeutralHadronEt.push_back(iMu->pfIsolationR03().sumNeutralHadronEt);
-    lepton_iso_sumPhotonEt.push_back(iMu->pfIsolationR03().sumPhotonEt);
-    lepton_iso_sumPUPt.push_back(iMu->pfIsolationR03().sumPUPt);
     lepton_mvaTrigValue.push_back(-99);
     lepton_scSigmaIEtaIEta.push_back(-99);
     lepton_full5x5_scSigmaIEtaIEta.push_back(-99);
@@ -1700,16 +1698,16 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_e.push_back(iEle->energy());
     lepton_relIso.push_back(     miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::fall17) );
     lepton_puppirelIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::fall17) );
+    lepton_dbiso_CH . push_back(0);
+    lepton_dbiso_NH . push_back(0);
+    lepton_dbiso_PH . push_back(0);
+    lepton_dbiso_PH . push_back(0);
     lepton_puppiIsoWithLep_CH   .push_back(0);
     lepton_puppiIsoWithLep_NH   .push_back(0);
     lepton_puppiIsoWithLep_PH   .push_back(0);
     lepton_puppiIsoWithoutLep_CH.push_back(0);
     lepton_puppiIsoWithoutLep_NH.push_back(0);
     lepton_puppiIsoWithoutLep_PH.push_back(0);
-    lepton_iso_sumChargedHadronPt.push_back(iEle->pfIsolationVariables().sumChargedHadronPt);
-    lepton_iso_sumNeutralHadronEt.push_back(iEle->pfIsolationVariables().sumNeutralHadronEt);
-    lepton_iso_sumPhotonEt.push_back(iEle->pfIsolationVariables().sumPhotonEt);
-    lepton_iso_sumPUPt.push_back(iEle->pfIsolationVariables().sumPUPt);
     lepton_mvaTrigValue.push_back(mvaTrigValue);
     lepton_scSigmaIEtaIEta.push_back(iEle->scSigmaIEtaIEta());
     lepton_full5x5_scSigmaIEtaIEta.push_back(iEle->full5x5_sigmaIetaIeta());
@@ -1780,6 +1778,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->lepton_e_              = lepton_e;
   eve->lepton_relIso_           = lepton_relIso;
   eve->lepton_puppirelIso_           = lepton_puppirelIso;
+
+  eve -> lepton_dbiso_CH_    = lepton_dbiso_CH    ;
+  eve -> lepton_dbiso_NH_    = lepton_dbiso_NH    ;
+  eve -> lepton_dbiso_PH_    = lepton_dbiso_PH    ;
+  eve -> lepton_dbiso_PU_    = lepton_dbiso_PU    ;
 
   eve -> lepton_puppiIsoWithLep_CH_    = lepton_puppiIsoWithLep_CH    ;
   eve -> lepton_puppiIsoWithLep_NH_    = lepton_puppiIsoWithLep_NH    ;

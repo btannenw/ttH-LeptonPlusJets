@@ -1701,7 +1701,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_dbiso_CH . push_back(0);
     lepton_dbiso_NH . push_back(0);
     lepton_dbiso_PH . push_back(0);
-    lepton_dbiso_PH . push_back(0);
+    lepton_dbiso_PU . push_back(0);
     lepton_puppiIsoWithLep_CH   .push_back(0);
     lepton_puppiIsoWithLep_NH   .push_back(0);
     lepton_puppiIsoWithLep_PH   .push_back(0);

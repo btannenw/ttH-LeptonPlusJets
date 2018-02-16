@@ -417,6 +417,10 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   // 			EGammaMvaEleEstimatorCSA14::kTrig,
   // 			true,
   // 			myManualCatWeigthsTrig);
+
+
+  scalefactors.init_all();
+
 }
 
 

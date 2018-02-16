@@ -56,7 +56,8 @@ class ttHYggdrasilScaleFactors{
   double get_TrigElEfficiency( ttHYggdrasilEventSelection * event );
   double get_TrigMuEfficiency( ttHYggdrasilEventSelection * event );
 
-
+  double get_ElectronZVertexSF();
+  
   // Can replace PU file if you want.
   void SetupDataPileupFile( std::string filename ); // just filename. the file should be in the common data directory.
 

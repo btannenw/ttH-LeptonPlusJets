@@ -71,8 +71,19 @@ void ttHYggdrasilScaleFactors::init_TrigMuSF(){
 void ttHYggdrasilScaleFactors::init_ElectronSF(){
   
   {
-    std::string input = SFfileDir +"/" + "el/gsf_trackingEff/egammaEffi.txt_EGM2D.root" ;
+    std::string input ;
+
+    if(      period = period_B  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runB_passingRECO.root" ;}
+    else if( period = period_C  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runC_passingRECO.root" ;} 
+    else if( period = period_D  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runD_passingRECO.root" ;} 
+    else if( period = period_E  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runE_passingRECO.root" ;} 
+    else if( period = period_F  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runF_passingRECO.root" ;} 
+    else{                           input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root" ; }    
+
+    std::cout << __FILE__ << " Electron tracking SF file : " << input << std::endl ; 
     h_EleSF_ID = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
+    // x : Super cluster eta : -2.5 to 2.5
+    // y : ET.
   }
   { 
     std::string input = SFfileDir +"/" + "el/CutBase76xMedium__SFfor80x/egammaEffi.txt_EGM2D.root";
@@ -883,5 +894,30 @@ void setAnalysisPeriod( analysis_period p ){
 
   period = p ; 
 
+
+}
+
+
+double ttHYggdrasilScaleFactors::get_ElectronZVertexSF(){
+
+  assert( initialized ) ;
+
+
+  // Values https://twiki.cern.ch/twiki/bin/view/CMS/Egamma2017DataRecommendations . r12
+  if( period == period_B ){ return 0.934 ; }
+  // error    0.005
+
+  if( period == period_C ){return 0.992 ; }
+  // error   0.001
+
+  if( period == period_D
+      ||
+      period == period_E
+      ||
+      period == period_F ) { return 1 ; } // no error is assigned
+
+  // for whole period, 
+  return 0.991; 
+  // error : 0.001
 
 }

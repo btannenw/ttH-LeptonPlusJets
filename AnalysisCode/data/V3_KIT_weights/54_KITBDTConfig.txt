@@ -1,2 +1,0 @@
-variables= ['BDTOhio_v2_input_avg_dr_tagged_jets', 'BDTOhio_v2_input_HT', 'BDTOhio_v2_input_M3', 'BDTOhio_v2_input_fifth_highest_CSV', 'BDTOhio_v2_input_fourth_highest_btag', 'Evt_Deta_JetsAverage', 'BDTOhio_v2_input_avg_btag_disc_btags']
-BDTOptions=!H:!V:NTrees=748:BoostType=Grad:Shrinkage=0.00794028861077:UseBaggedBoost:GradBaggingFraction=0.488868228163:nCuts=40:MaxDepth=2:NegWeightTreatment=IgnoreNegWeightsInTraining

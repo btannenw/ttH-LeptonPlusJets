@@ -1,3 +1,0 @@
-variables= ['BDTOhio_v2_input_h1', 'BDTOhio_v2_input_avg_dr_tagged_jets', 'BDTOhio_v2_input_sphericity', 'BDTOhio_v2_input_third_highest_btag', 'BDTOhio_v2_input_h3', 'BDTOhio_v2_input_HT', 'BDTOhio_v2_input_dev_from_avg_disc_btags', 'BDTOhio_v2_input_fourth_highest_btag']
-BDTOptions=!H:!V:NTrees=924:BoostType=Grad:Shrinkage=0.0388686437252:UseBaggedBoost:GradBaggingFraction=0.405365925007:nCuts=59:MaxDepth=2:NegWeightTreatment=IgnoreNegWeightsInTraining
-

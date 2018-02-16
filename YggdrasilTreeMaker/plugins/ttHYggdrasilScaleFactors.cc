@@ -14,6 +14,7 @@
 
 ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors() :
   initialized( false )
+  , period ( period_all )
 {
 
 #ifdef STANDALONECOMPILE
@@ -872,5 +873,15 @@ void ttHYggdrasilScaleFactors::SetMCPileupChannel( std::string name ){
   if(name == "ww"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_WW      ; }
   if(name == "wz"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_WZ      ; }
   if(name == "zz"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_ZZ      ; }
+
+}
+
+
+void setAnalysisPeriod( analysis_period p ){
+
+  assert( ! initialized );
+
+  period = p ; 
+
 
 }

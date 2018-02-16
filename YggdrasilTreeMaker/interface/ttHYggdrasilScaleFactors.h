@@ -64,9 +64,21 @@ class ttHYggdrasilScaleFactors{
 
   void init_all();
 
+  enum analysis_period {
+    period_all ,
+    period_B ,
+    period_C ,
+    period_D ,
+    period_E ,
+    period_F  
+  };
+  void setAnalysisPeriod( analysis_period p ); // If you use this, use before init_all();
+  
  private :
 
   bool initialized ;
+
+  analysis_period period ;
   
   std::string SFfileDir ;
   std::string PileupHistogram;

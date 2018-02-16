@@ -59,25 +59,10 @@ void ttHYggdrasilScaleFactors::init_TrigElSF(){
 }
 void ttHYggdrasilScaleFactors::init_TrigMuSF(){
 
-  {
-
-    std::string input = SFfileDir +"/" + "trig/EfficienciesAndSF_RunBtoF.root";
-    TH2D  h_BF (* (TH2D*) getTH2HistogramFromFile( input , std::string ("IsoMu24_OR_IsoTkMu24_PtEtaBins/pt_abseta_ratio") ) ) ;
-
-    std::string input_2 = SFfileDir +"/" + "trig/EfficienciesAndSF_Period4.root";
-    TH2D h_GH (* (TH2D*) getTH2HistogramFromFile( input_2 , std::string ("IsoMu24_OR_IsoTkMu24_PtEtaBins/pt_abseta_ratio") ) ) ;
-
-
-    const double lumi_bf = 19255482132.199 ; 
-    const double lumi_gh = 16290016931.807 ;
-    const double lumi_total = lumi_bf + lumi_gh ; 
-
-    h_BF . Scale( lumi_bf / lumi_total );
-    h_GH . Scale( lumi_gh / lumi_total ) ;
-    h_MuSF_Trig_SF  = new TH2D(  h_BF + h_GH );
-  }
-
-
+  std::string input = SFfileDir +"/" + "trig/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root";
+  TH2D  h_ (* (TH2D*) getTH2HistogramFromFile( input , std::string ("IsoMu27_PtEtaBins/pt_abseta_ratio") ) ) ;
+  h_MuSF_Trig_SF  = new TH2D( h_ );
+  
 }
 
 void ttHYggdrasilScaleFactors::init_ElectronSF(){

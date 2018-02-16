@@ -73,11 +73,11 @@ void ttHYggdrasilScaleFactors::init_ElectronSF(){
   {
     std::string input ;
 
-    if(      period = period_B  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runB_passingRECO.root" ;}
-    else if( period = period_C  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runC_passingRECO.root" ;} 
-    else if( period = period_D  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runD_passingRECO.root" ;} 
-    else if( period = period_E  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runE_passingRECO.root" ;} 
-    else if( period = period_F  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runF_passingRECO.root" ;} 
+    if(      period == period_B  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runB_passingRECO.root" ;}
+    else if( period == period_C  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runC_passingRECO.root" ;} 
+    else if( period == period_D  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runD_passingRECO.root" ;} 
+    else if( period == period_E  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runE_passingRECO.root" ;} 
+    else if( period == period_F  ){  input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runF_passingRECO.root" ;} 
     else{                           input  = SFfileDir +"/RecoSF2017/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root" ; }    
 
     std::cout << __FILE__ << " Electron tracking SF file : " << input << std::endl ; 
@@ -888,7 +888,7 @@ void ttHYggdrasilScaleFactors::SetMCPileupChannel( std::string name ){
 }
 
 
-void setAnalysisPeriod( analysis_period p ){
+void ttHYggdrasilScaleFactors::setAnalysisPeriod( analysis_period p ){
 
   assert( ! initialized );
 

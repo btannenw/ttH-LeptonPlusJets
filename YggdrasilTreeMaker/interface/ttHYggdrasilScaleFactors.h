@@ -62,14 +62,16 @@ class ttHYggdrasilScaleFactors{
 
   void SetMCPileupChannel( std::string name );
 
-  void init_Pileup();
+  void init_all();
 
  private :
 
+  bool initialized ;
+  
   std::string SFfileDir ;
   std::string PileupHistogram;
 
-  void init_all();
+  void init_Pileup();
   void init_btagSF();
   void init_ElectronSF();
   void init_MuonSF();

@@ -12,7 +12,9 @@
 #include <TFile.h>
 
 
-ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors(){
+ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors() :
+  initialized( false )
+{
 
 #ifdef STANDALONECOMPILE
   SFfileDir =
@@ -21,24 +23,24 @@ ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors(){
   SFfileDir =
     (std::string(getenv("CMSSW_BASE")) + "/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/" );
 #endif
-  PileupHistogram . assign( "PileupHistogram_2017data.root" );
 
-  init_all();
+  PileupHistogram . assign( "PileupHistogram_2017data.root" );
 
 }
 
-ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors( char * sf_file_directory ){
+ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors( char * sf_file_directory )
+  : ttHYggdrasilScaleFactors()
+{
 
   SFfileDir .assign( sf_file_directory );
-  PileupHistogram . assign( "PileupHistogram_Moriond17.root" );
-
-  init_all();
 
 }
 
 
 void ttHYggdrasilScaleFactors::init_all(){
 
+  initialized = true ; 
+  
   MC_PU_DISTRIBUTION_CHANNEL = MC_PU_DEFAULT ;
 
   init_btagSF();
@@ -237,6 +239,7 @@ double ttHYggdrasilScaleFactors::GetBinValueFromXYValues( TH2 * h , double xVal 
 
 double ttHYggdrasilScaleFactors::getTightMuonSF( ttHYggdrasilEventSelection * event ){
 
+  assert( initialized );
   return getTightMuon_IDSF(event ) * getTightMuon_IsoSF(event );
 
 }
@@ -244,6 +247,8 @@ double ttHYggdrasilScaleFactors::getTightMuonSF( ttHYggdrasilEventSelection * ev
 
 double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection * event , int syst ){
 
+  assert( initialized );
+  
   double weight = 1 ; 
 
   for( unsigned int i = 0 ; i < event->leptonsIsMuon().size() ; i++ ){
@@ -277,6 +282,8 @@ double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection *
 
 double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection * event , int syst ){
 
+  assert( initialized );
+  
   double weight = 1 ; 
 
   for( unsigned int i = 0 ; i < event->leptonsIsMuon().size() ; i++ ){
@@ -302,6 +309,8 @@ double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection 
 
 double ttHYggdrasilScaleFactors::getTightElectron_IDSF( ttHYggdrasilEventSelection * event , int syst ){
 
+  assert( initialized );
+  
   double weight = 1 ; 
 
   for( unsigned int i = 0 ; i < event->leptonsIsMuon().size() ; i++ ){
@@ -317,6 +326,8 @@ double ttHYggdrasilScaleFactors::getTightElectron_IDSF( ttHYggdrasilEventSelecti
 }
 
 double ttHYggdrasilScaleFactors::getTightElectron_RecoSF( ttHYggdrasilEventSelection * event , int syst ){
+
+  assert( initialized );
 
   double weight = 1 ; 
 
@@ -335,6 +346,8 @@ double ttHYggdrasilScaleFactors::getTightElectron_RecoSF( ttHYggdrasilEventSelec
 
 double ttHYggdrasilScaleFactors::getTightElectronSF( ttHYggdrasilEventSelection * event ){
 
+  assert( initialized );
+    
   return getTightElectron_IDSF( event ) * getTightElectron_RecoSF( event );
 
 }
@@ -433,6 +446,8 @@ ttHYggdrasilScaleFactors::~ttHYggdrasilScaleFactors(){
 double ttHYggdrasilScaleFactors::get_csv_wgt( std::vector<double> jetPts, std::vector<double> jetEtas, std::vector<double> jetCSVs, std::vector<int> jetFlavors, 
 					      int iSys, double &csvWgtHF, double &csvWgtLF, double &csvWgtCF ){
 
+  assert( initialized );
+  
   int iSysHF = 0;
   switch(iSys){
   case 7:  iSysHF=1; break; //JESUp
@@ -526,6 +541,8 @@ double ttHYggdrasilScaleFactors::get_csv_wgt( std::vector<double> jetPts, std::v
 double ttHYggdrasilScaleFactors::get_csv_wgt( ttHYggdrasilEventSelection * event,
 					      int iSys, double &csvWgtHF, double &csvWgtLF, double &csvWgtCF ){
 
+  assert( initialized );
+  
   std::vector<double> pt, eta  ; 
   for( unsigned int i = 0 ; i < event->jets().size() ; i++ ){
     pt  .push_back( event -> jets().at(i) -> Pt()  );
@@ -728,6 +745,7 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
 
 double ttHYggdrasilScaleFactors::get_pu_wgt( int mc_pu ){
 
+  ssert( initialized );
 
   if( mc_pu >= NBINS_PU_REWEIGHTING ){ mc_pu = NBINS_PU_REWEIGHTING -1 ; }
   if( mc_pu <   0 ){
@@ -762,6 +780,7 @@ double ttHYggdrasilScaleFactors::get_TrigMuEfficiency( ttHYggdrasilEventSelectio
 
 double ttHYggdrasilScaleFactors::get_TrigElEfficiency( ttHYggdrasilEventSelection * event ){
 
+  assert( initialized );
   return 1 ;
 }
 
@@ -769,6 +788,8 @@ double ttHYggdrasilScaleFactors::get_TrigElEfficiency( ttHYggdrasilEventSelectio
 
 double ttHYggdrasilScaleFactors::get_TrigMuSF( ttHYggdrasilEventSelection * event , int syst ){
 
+  assert( initialized );
+  
  double weight = 1 ; 
 
   for( unsigned int i = 0 ; i < event->leptonsIsMuon().size() ; i++ ){
@@ -791,6 +812,7 @@ double ttHYggdrasilScaleFactors::get_TrigMuSF( ttHYggdrasilEventSelection * even
 
 double ttHYggdrasilScaleFactors::get_TrigElSF( ttHYggdrasilEventSelection * event , int syst ){
 
+  assert( initialized );
  double weight = 1 ; 
 
   for( unsigned int i = 0 ; i < event->leptonsIsMuon().size() ; i++ ){

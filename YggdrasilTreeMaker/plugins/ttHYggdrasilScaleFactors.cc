@@ -745,7 +745,7 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
 
 double ttHYggdrasilScaleFactors::get_pu_wgt( int mc_pu ){
 
-  ssert( initialized );
+  assert( initialized );
 
   if( mc_pu >= NBINS_PU_REWEIGHTING ){ mc_pu = NBINS_PU_REWEIGHTING -1 ; }
   if( mc_pu <   0 ){

@@ -905,6 +905,12 @@ void ttHYggdrasilScaleFactors::setAnalysisPeriod( analysis_period p ){
 
   period = p ; 
 
+  if( period == period_B ){ PileupHistogram . assign( "PileupHistogram_2017data_PeriodB.root" ) ; }
+  if( period == period_C ){ PileupHistogram . assign( "PileupHistogram_2017data_PeriodC.root" ) ; }
+  if( period == period_D ){ PileupHistogram . assign( "PileupHistogram_2017data_PeriodD.root" ) ; }
+  if( period == period_E ){ PileupHistogram . assign( "PileupHistogram_2017data_PeriodE.root" ) ; }
+  if( period == period_F ){ PileupHistogram . assign( "PileupHistogram_2017data_PeriodF.root" ) ; }
+
 
 }
 

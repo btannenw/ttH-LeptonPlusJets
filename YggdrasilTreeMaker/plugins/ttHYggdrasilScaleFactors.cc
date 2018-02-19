@@ -86,8 +86,19 @@ void ttHYggdrasilScaleFactors::init_ElectronSF(){
     // y : ET.
   }
   { 
-    std::string input = SFfileDir +"/" + "el/CutBase76xMedium__SFfor80x/egammaEffi.txt_EGM2D.root";
+
+    std::string input ;
+    if(      period == period_B  ){  input  = SFfileDir +"/el/2017CutBaseTight_SF/egammaEffi.txt_EGM2D_runB_passingTight94X.root" ;}
+    else if( period == period_C  ){  input  = SFfileDir +"/el/2017CutBaseTight_SF/egammaEffi.txt_EGM2D_runC_passingTight94X.root" ;} 
+    else if( period == period_D  ){  input  = SFfileDir +"/el/2017CutBaseTight_SF/egammaEffi.txt_EGM2D_runD_passingTight94X.root" ;} 
+    else if( period == period_E  ){  input  = SFfileDir +"/el/2017CutBaseTight_SF/egammaEffi.txt_EGM2D_runE_passingTight94X.root" ;} 
+    else if( period == period_F  ){  input  = SFfileDir +"/el/2017CutBaseTight_SF/egammaEffi.txt_EGM2D_runF_passingTight94X.root" ;} 
+    else{                            input  = SFfileDir +"/el/2017CutBaseTight_SF/egammaEffi.txt_EGM2D_runBCDEF_passingTight94X.root" ; }    
+
+    std::cout << __FILE__ << " Electron Reco SF file : " << input << std::endl ; 
     h_EleSF_Reco = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
+    // x : super cluster -2.5 to 2.5
+    // y : PT
   }
 
 }

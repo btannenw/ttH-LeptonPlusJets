@@ -185,6 +185,10 @@ struct yggdrasilEventVars{
   vdouble jet_combinedInclusiveSecondaryVertexV2BJetTags_[rNumSys];
   vdouble jet_combinedMVABJetTags_HIP_[rNumSys];
   vdouble jet_combinedInclusiveSecondaryVertexV2BJetTags_HIP_[rNumSys];
+
+  vdouble jet_DeepCSV_b_ [rNumSys];
+  vdouble jet_DeepCSV_bb_[rNumSys];
+
   vdouble jet_vtxMass_[rNumSys];
   vdouble jet_vtxNtracks_[rNumSys];
   vdouble jet_vtx3DVal_[rNumSys];

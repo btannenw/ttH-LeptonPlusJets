@@ -1993,6 +1993,10 @@ n_fatjets++;
     std::vector<double> jet_combinedInclusiveSecondaryVertexV2BJetTags;
     std::vector<double> jet_combinedMVABJetTags_HIP;
     std::vector<double> jet_combinedInclusiveSecondaryVertexV2BJetTags_HIP;
+
+    std::vector<double> jet_DeepCSV_b;
+    std::vector<double> jet_DeepCSV_bb;
+
     std::vector<double> jet_vtxMass;
     std::vector<double> jet_vtxNtracks;
     std::vector<double> jet_vtx3DVal;
@@ -2090,6 +2094,9 @@ n_fatjets++;
       jet_combinedMVABJetTags.push_back( iJet->bDiscriminator("pfCombinedMVAV2BJetTags") );
       jet_combinedInclusiveSecondaryVertexV2BJetTags.push_back( iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") );
 
+      jet_DeepCSV_b .push_back( iJet->bDiscriminator("pfDeepCSVJetTags:probb") );
+      jet_DeepCSV_bb.push_back( iJet->bDiscriminator("pfDeepCSVJetTags:probbb") );
+
       jet_combinedMVABJetTags_HIP.push_back( iJet->bDiscriminator("newpfCombinedMVAV2BJetTags") );
       jet_combinedInclusiveSecondaryVertexV2BJetTags_HIP.push_back( iJet->bDiscriminator("newpfCombinedInclusiveSecondaryVertexV2BJetTags") );
 
@@ -2146,6 +2153,9 @@ n_fatjets++;
 
     eve->jet_combinedMVABJetTags_HIP_[iSys] = jet_combinedMVABJetTags_HIP;
     eve->jet_combinedInclusiveSecondaryVertexV2BJetTags_HIP_[iSys] = jet_combinedInclusiveSecondaryVertexV2BJetTags_HIP;
+
+    eve->jet_DeepCSV_b_  [iSys] = jet_DeepCSV_b;
+    eve->jet_DeepCSV_bb_ [iSys] = jet_DeepCSV_bb;
 
     eve->jet_vtxMass_[iSys]    = jet_vtxMass;
     eve->jet_vtxNtracks_[iSys] = jet_vtxNtracks;

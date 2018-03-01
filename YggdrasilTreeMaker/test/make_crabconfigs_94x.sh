@@ -20,7 +20,7 @@ diff yggdrasil_treeMaker_cfg.py __yggdrasil_treeMaker_MCTTBAR_cfg.py
 
 for P in B C D E F
 do
-cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|XXXPERIODXXX|2016${P}|g"> __yggdrasil_treeMaker_DATA_${P}_cfg.py 
+cat yggdrasil_treeMaker_cfg.py | sed "s|isMC=True|isMC=False|g" | sed "s|XXXPERIODXXX|2017${P}|g"> __yggdrasil_treeMaker_DATA_${P}_cfg.py 
 done
 
 

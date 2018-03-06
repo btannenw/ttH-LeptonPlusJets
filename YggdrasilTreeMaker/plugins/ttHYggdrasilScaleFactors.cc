@@ -379,8 +379,8 @@ double ttHYggdrasilScaleFactors::getTightElectronSF( ttHYggdrasilEventSelection 
 void ttHYggdrasilScaleFactors::init_btagSF(){
 
 
-  std::string inputFileHF = SFfileDir +"/" + "btag/csv_rwt_fit_hf_v0_final_2018_2_13.root";
-  std::string inputFileLF = SFfileDir +"/" + "btag/csv_rwt_fit_lf_v0_final_2018_2_13.root";
+  std::string inputFileHF = SFfileDir +"/" + "btag/Deepcsv_rwt_fit_hf_v2_final_2018_2_12test.root" ; 
+  std::string inputFileLF = SFfileDir +"/" + "btag/Deepcsv_rwt_fit_lf_v2_final_2018_2_12test.root" ; 
 
   TFile* fileHF = new TFile ( inputFileHF .c_str());
   TFile* fileLF = new TFile ( inputFileLF .c_str());

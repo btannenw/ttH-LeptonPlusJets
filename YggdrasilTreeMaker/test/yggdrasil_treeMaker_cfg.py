@@ -16,11 +16,10 @@ isGridJob=True
 
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
 
-enableJECFromLocalDB=False
 
-if isMC :
-    enableJECFromLocalDB = True 
 
+enableJECFromLocalDB = True 
+# 2017_V6 JECs for Data/MC are ready.
 
 # - - - - - - - - - - - - - - - - - - - - 
 # Special option for Morind17 analysis
@@ -28,11 +27,7 @@ if isMC :
 #  The placeholder will be replaced by crab job make script.
 
 period="XXXPERIODXXX"
-# "2016B" , "2016C", "2016D"
-# "2016E" , "2016F1"
-# "2016F2", "2016G" 
-# "2016H1", "2016H2"
-
+# e.g "2017B"
 
 # - - - - - - - - - - - - - - - - - - - -
 
@@ -72,10 +67,13 @@ import sys
 import os.path
 
 JecLocalDataBaseName = \
-    'Summer16_23Sep2016BCDV4_DATA' if period in ("2016B" , "2016C", "2016D") else \
-    'Summer16_23Sep2016EFV4_DATA'  if period in ("2016E" , "2016F1") else \
-    'Summer16_23Sep2016GV4_DATA'   if period in ("2016F2", "2016G" ) else \
-    'Summer16_23Sep2016HV4_DATA'   if period in ("2016H1", "2016H2") else 'Fall17_17Nov2017_V4_MC'
+    'Fall17_17Nov2017B_V6_DATA' if period in ("2017B") else \
+    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
+    'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
+    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
+    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
+    'Fall17_17Nov2017_V6_MC'
+
 
 JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
 # This switch is needed because the variable CMSSW_BASE remains the same as local job (directory where you do "cmsenv") when the job runs on the grid.

@@ -140,6 +140,12 @@ class ttHYggdrasilScaleFactors{
     , MC_PU_WW       = 6
     , MC_PU_WZ       = 7
     , MC_PU_ZZ       = 8
+    , MC_PU_SINGLETOP_SCH 
+    , MC_PU_SINGLETOP_TW     
+    , MC_PU_SINGLETOP_TBARW  
+    , MC_PU_SINGLETOP_TCH_TBAR
+    , MC_PU_SINGLETOP_TCA_T   
+    , MC_PU_TTH
   };
 
   _MC_PU_DIST_CH_NAME   MC_PU_DISTRIBUTION_CHANNEL;

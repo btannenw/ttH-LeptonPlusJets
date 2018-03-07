@@ -878,6 +878,13 @@ std::string ttHYggdrasilScaleFactors::get_MCPUDistributionFileName( _MC_PU_DIST_
   if( ch == MC_PU_WZ      ){ return std::string( "wz"         ); } 
   if( ch == MC_PU_ZZ      ){ return std::string( "zz"         ); } 
 
+  if( ch == MC_PU_SINGLETOP_SCH      ){ return std::string( "schan_both" ); } 
+  if( ch == MC_PU_SINGLETOP_TW       ){ return std::string( "tW"	 ); } 
+  if( ch == MC_PU_SINGLETOP_TBARW    ){ return std::string( "tbarW"      ); } 
+  if( ch == MC_PU_SINGLETOP_TCH_TBAR ){ return std::string( "tchan_tbar" ); } 
+  if( ch == MC_PU_SINGLETOP_TCA_T    ){ return std::string( "tchan_top"  ); } 
+  
+  if( ch == MC_PU_TTH ){ return std::string( "tth" ); } 
 
   std::cout <<"[FATAL] ttHYggdrasilScaleFactors::get_MCPUDistributionFileName : MC name for the given channel name is not defined." << std::endl ;
   assert ( false );
@@ -899,6 +906,14 @@ void ttHYggdrasilScaleFactors::SetMCPileupChannel( std::string name ){
   if(name == "wz"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_WZ      ; }
   if(name == "zz"          ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_ZZ      ; }
 
+  if(name == "schan_both"  ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_SINGLETOP_SCH      ; }
+  if(name == "tW"	   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_SINGLETOP_TW       ; }
+  if(name == "tbarW"       ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_SINGLETOP_TBARW    ; }
+  if(name == "tchan_tbar"  ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_SINGLETOP_TCH_TBAR ; }
+  if(name == "tchan_top"   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_SINGLETOP_TCA_T    ; }
+
+  if(name == "tth"	   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_TTH      ; }
+    
 }
 
 

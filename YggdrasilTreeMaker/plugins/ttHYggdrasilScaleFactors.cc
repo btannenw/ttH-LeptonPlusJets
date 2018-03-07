@@ -696,7 +696,9 @@ void ttHYggdrasilScaleFactors::init_Pileup(){
 
 
   // Overwrite the PU distribution by the information form the actual PU distribution
-  if( MC_PU_DISTRIBUTION_CHANNEL != MC_PU_DEFAULT ){
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_DEFAULT ){
+        std::cout << "MC PU distribution : Default valeus are ued." << std::endl ;
+  }else{
 
 
     std::string path = SFfileDir + "/2017_MC_PU/" + get_MCPUDistributionFileName( MC_PU_DISTRIBUTION_CHANNEL ) +".root" ;

@@ -15,6 +15,7 @@
 ttHYggdrasilScaleFactors::ttHYggdrasilScaleFactors() :
   initialized( false )
   , period ( period_all )
+  , MC_PU_DISTRIBUTION_CHANNEL ( MC_PU_DEFAULT )
 {
 
 #ifdef STANDALONECOMPILE
@@ -42,7 +43,7 @@ void ttHYggdrasilScaleFactors::init_all(){
 
   initialized = true ; 
   
-  MC_PU_DISTRIBUTION_CHANNEL = MC_PU_DEFAULT ;
+  //  MC_PU_DISTRIBUTION_CHANNEL = MC_PU_DEFAULT ;
 
   init_btagSF();
   init_Pileup();
@@ -887,6 +888,8 @@ std::string ttHYggdrasilScaleFactors::get_MCPUDistributionFileName( _MC_PU_DIST_
 
 void ttHYggdrasilScaleFactors::SetMCPileupChannel( std::string name ){
 
+  assert( ! initialized );
+  
   if(name == "ttto2l2nu"   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_TT_2L   ; }
   if(name == "tttosemilep" ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_TT_1L   ; }
   if(name == "zjetsincl"   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_Z       ; }

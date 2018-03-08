@@ -888,6 +888,19 @@ std::string ttHYggdrasilScaleFactors::get_MCPUDistributionFileName( _MC_PU_DIST_
   
   if( ch == MC_PU_TTH ){ return std::string( "tth" ); } 
 
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt1000toInf   ) { return std::string( "MuEnrichQCDPt1000toInf" ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt120to170    ) { return std::string( "MuEnrichQCDPt120to170"  ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt15to20      ) { return std::string( "MuEnrichQCDPt15to20"    ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt170to300    ) { return std::string( "MuEnrichQCDPt170to300"  ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt20to30      ) { return std::string( "MuEnrichQCDPt20to30"    ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt300to470    ) { return std::string( "MuEnrichQCDPt300to470"  ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt30to50      ) { return std::string( "MuEnrichQCDPt30to50"    ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt470to600    ) { return std::string( "MuEnrichQCDPt470to600"  ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt50to80      ) { return std::string( "MuEnrichQCDPt50to80"    ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt600to800    ) { return std::string( "MuEnrichQCDPt600to800"  ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt800to1000   ) { return std::string( "MuEnrichQCDPt800to1000" ) ; }
+  if( MC_PU_DISTRIBUTION_CHANNEL == MC_PU_MuEnrichQCDPt80to120     ) { return std::string( "MuEnrichQCDPt80to120"   ) ; }
+
   std::cout <<"[FATAL] ttHYggdrasilScaleFactors::get_MCPUDistributionFileName : MC name for the given channel name is not defined." << std::endl ;
   assert ( false );
 
@@ -915,7 +928,21 @@ void ttHYggdrasilScaleFactors::SetMCPileupChannel( std::string name ){
   if(name == "tchan_top"   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_SINGLETOP_TCA_T    ; }
 
   if(name == "tth"	   ){ MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_TTH      ; }
-    
+
+  if( name == "MuEnrichQCDPt1000toInf" ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt1000toInf    ; }
+  if( name == "MuEnrichQCDPt120to170"  ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt120to170     ; }
+  if( name == "MuEnrichQCDPt15to20"    ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt15to20       ; }
+  if( name == "MuEnrichQCDPt170to300"  ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt170to300     ; }
+  if( name == "MuEnrichQCDPt20to30"    ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt20to30       ; }
+  if( name == "MuEnrichQCDPt300to470"  ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt300to470     ; }
+  if( name == "MuEnrichQCDPt30to50"    ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt30to50       ; }
+  if( name == "MuEnrichQCDPt470to600"  ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt470to600     ; }
+  if( name == "MuEnrichQCDPt50to80"    ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt50to80       ; }
+  if( name == "MuEnrichQCDPt600to800"  ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt600to800     ; }
+  if( name == "MuEnrichQCDPt800to1000" ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt800to1000    ; }
+  if( name == "MuEnrichQCDPt80to120"   ) { MC_PU_DISTRIBUTION_CHANNEL =   MC_PU_MuEnrichQCDPt80to120      ; }
+
+
 }
 
 

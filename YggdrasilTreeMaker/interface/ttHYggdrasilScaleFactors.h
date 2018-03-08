@@ -146,6 +146,18 @@ class ttHYggdrasilScaleFactors{
     , MC_PU_SINGLETOP_TCH_TBAR
     , MC_PU_SINGLETOP_TCA_T   
     , MC_PU_TTH
+    , MC_PU_MuEnrichQCDPt1000toInf 
+    , MC_PU_MuEnrichQCDPt120to170  
+    , MC_PU_MuEnrichQCDPt15to20    
+    , MC_PU_MuEnrichQCDPt170to300  
+    , MC_PU_MuEnrichQCDPt20to30    
+    , MC_PU_MuEnrichQCDPt300to470  
+    , MC_PU_MuEnrichQCDPt30to50    
+    , MC_PU_MuEnrichQCDPt470to600  
+    , MC_PU_MuEnrichQCDPt50to80    
+    , MC_PU_MuEnrichQCDPt600to800  
+    , MC_PU_MuEnrichQCDPt800to1000 
+    , MC_PU_MuEnrichQCDPt80to120   
   };
 
   _MC_PU_DIST_CH_NAME   MC_PU_DISTRIBUTION_CHANNEL;

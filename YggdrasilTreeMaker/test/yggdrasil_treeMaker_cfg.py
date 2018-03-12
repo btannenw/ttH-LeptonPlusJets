@@ -113,7 +113,13 @@ if enableJECFromLocalDB :
 
 
 process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
-
+# where 
+#  -   ak4PFCHSL1FastL2L3CorrectorChain 
+#  - ak4PFPuppiL1FastL2L3CorrectorChain
+#  -   ak4PFCHSL1FastL2L3ResidualCorrectorChain
+#  - ak4PFPuppiL1FastL2L3ResidualCorrectorChain
+#  are defined.
+# https://github.com/cms-sw/cmssw/blob/CMSSW_9_4_X/JetMETCorrections/Configuration/python/JetCorrectors_cff.py
 
 
 process.source = cms.Source("PoolSource",
@@ -361,9 +367,11 @@ if isMC :
         process.matchGenBHadron * 
         process.categorizeGenTtbar *
         process.ak4PFCHSL1FastL2L3CorrectorChain *
+        process.ak4PFPuppiL1FastL2L3CorrectorChain *
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 else :
     process.p = cms.Path(
         process.ak4PFCHSL1FastL2L3ResidualCorrectorChain *
+        process.ak4PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.PUPPIMuonRelIso * process.ttHTreeMaker)

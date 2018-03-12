@@ -187,6 +187,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT< TtGenEvent >   TtGenEventToken ;
   
   edm::EDGetTokenT<reco::JetCorrector> jetCorrectorToken_;
+  edm::EDGetTokenT<reco::JetCorrector> puppijetCorrectorToken_;
 
   HLTConfigProvider hlt_config_;
 
@@ -216,6 +217,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   // EGammaMvaEleEstimatorCSA14* myMVATrig;
  
   MiniAODHelper miniAODhelper;
+  MiniAODHelper miniAODhelper_Puppi;
 
   RoccoR * muon_roc ;
 
@@ -292,6 +294,13 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   }else{
     jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFCHSL1FastL2L3ResidualCorrector","","")) ;
   }
+
+  if( isMC ){
+    puppijetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFPuppiL1FastL2L3Corrector","","")) ;
+  }else{
+    puppijetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFPuppiL1FastL2L3ResidualCorrector","","")) ;
+  }
+
   // // new MVAelectron
   // EDMElectronsToken = consumes< edm::View<pat::Electron> >(edm::InputTag("slimmedElectrons","",""));
   // EDMeleMVAvaluesToken           = consumes<edm::ValueMap<float> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values",""));
@@ -373,6 +382,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   analysisType::analysisType iAnalysisType = analysisType::LJ;
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, ! isMC );
+  miniAODhelper_Puppi.SetUp(era, insample_, iAnalysisType, ! isMC );
 
   muon_roc = new RoccoR ( std::string(  getenv("CMSSW_BASE") ) + "/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/rcdata.2016.v3" );
 
@@ -513,6 +523,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   ////------- set up rho for lepton effArea Isolation correction
   double rho_event = ( (rhoHandle.isValid()) ) ? *rhoHandle : -99;
   miniAODhelper.SetRho(rho_event);
+  miniAODhelper_Puppi.SetRho(rho_event);
 
   edm::Handle<std::vector< PileupSummaryInfo > > PupInfo;
   iEvent.getByToken(puInfoToken,PupInfo);
@@ -876,6 +887,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   iEvent.getByToken(jetCorrectorToken_, corrector );
   miniAODhelper.SetJetCorrector( &(*corrector) );
+
+  edm::Handle<reco::JetCorrector> puppi_corrector ; 
+  iEvent.getByToken(puppijetCorrectorToken_, puppi_corrector );
+  miniAODhelper_Puppi.SetJetCorrector( &(*puppi_corrector) );
 
   int mHdecay = -1;
   mHdecay = isMC ? miniAODhelper.GetHiggsDecay(mcparticles) : -1 ;
@@ -1897,11 +1912,13 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     }
 
 
-    std::vector<pat::Jet> puppirawJets = miniAODhelper.GetUncorrectedJets( *pfpuppijets );
-    std::vector<pat::Jet> puppicorrectedJets =  miniAODhelper.GetCorrectedJets(puppirawJets, iEvent, iSetup, genjetCollection , iSysType );
-    std::vector<pat::Jet> puppiselectedJets_unsorted =  miniAODhelper.GetSelectedJets(puppicorrectedJets, 20., 5.0 ,
+    std::vector<pat::Jet> puppirawJets = miniAODhelper_Puppi.GetUncorrectedJets( *pfpuppijets );
+    std::vector<pat::Jet> puppicorrectedJets =  miniAODhelper_Puppi.GetCorrectedJets(puppirawJets, iEvent, iSetup, genjetCollection , iSysType );
+    std::vector<pat::Jet> puppiselectedJets_unsorted =  miniAODhelper_Puppi.GetSelectedJets(puppicorrectedJets, 20., 5.0 ,
 										      ( jetID::none ) 
 										      , '-' );
+
+
 
     double PUPPIJecUpdatePropagationToMET_x = 0 ;
     double PUPPIJecUpdatePropagationToMET_y = 0 ;

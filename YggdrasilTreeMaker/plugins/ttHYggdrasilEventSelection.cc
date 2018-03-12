@@ -30,10 +30,10 @@ ttHYggdrasilEventSelection::ttHYggdrasilEventSelection(){
  Thre_TightEl_Eta = 2.1;
  Thre_LooseEl_Eta = 2.4;
 
- Thre_TightEl_Iso[0] = 0.0588 ; 
- Thre_TightEl_Iso[1] = 0.0571 ; 
- Thre_LooseEl_Iso[0] = 0.0588 ; 
- Thre_LooseEl_Iso[1] = 0.0571 ; 
+ Thre_TightEl_Iso[0] = 0.0361 ; 
+ Thre_TightEl_Iso[1] = 0.094 ; 
+ Thre_LooseEl_Iso[0] = 0.0361 ; 
+ Thre_LooseEl_Iso[1] = 0.094 ; 
 
 
  Thre_Jet_PT      = 30.0;

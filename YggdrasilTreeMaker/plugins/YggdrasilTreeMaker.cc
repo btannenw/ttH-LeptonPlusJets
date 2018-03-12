@@ -2029,6 +2029,8 @@ n_fatjets++;
     vdouble jet_phi;
     vdouble jet_m;
 
+    vint   jet_puid;
+
     vdouble jet_AssociatedGenJet_pt;
     vdouble jet_AssociatedGenJet_eta;
     vdouble jet_AssociatedGenJet_phi;
@@ -2047,6 +2049,7 @@ n_fatjets++;
     vdouble puppijet_phi ;
     vdouble puppijet_eta ;
     vdouble puppijet_m   ;
+    vint    puppijet_puid   ;
     vdouble puppijet_precore_pt  ;
     vdouble puppijet_precore_phi ;
     vdouble puppijet_AssociatedGenJet_pt;
@@ -2070,6 +2073,7 @@ n_fatjets++;
       jet_eta .push_back( iJet -> eta() );
       jet_m   .push_back( iJet -> mass()   );
 
+      jet_puid . push_back( iJet -> userInt("pileupJetId:fullId") ) ;
 
       jet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
       jet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );
@@ -2140,6 +2144,7 @@ n_fatjets++;
       puppijet_eta .push_back( iJet -> eta() );
       puppijet_m   .push_back( iJet -> mass()   );
 
+      puppijet_puid . push_back( iJet -> userInt("pileupJetId:fullId") ) ;
 
       puppijet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
       puppijet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );
@@ -2238,6 +2243,8 @@ n_fatjets++;
     eve->jet_eta_ [iSys]= jet_eta ;
     eve->jet_m_   [iSys]= jet_m   ;
 
+    eve->jet_puid_  [iSys]= jet_puid  ;
+
     eve->jet_precorr_pt_  [iSys]= jet_precore_pt  ;
     eve->jet_precorr_phi_ [iSys]= jet_precore_phi ;
 
@@ -2258,6 +2265,7 @@ n_fatjets++;
     eve->puppijet_phi_ [iSys]                = puppijet_phi ;
     eve->puppijet_eta_ [iSys]                = puppijet_eta ;
     eve->puppijet_m_   [iSys]                = puppijet_m   ;
+    eve->puppijet_puid_[iSys]                = puppijet_puid   ;
     eve->puppijet_precorr_pt_  [iSys]        = puppijet_precore_pt  ;
     eve->puppijet_precorr_phi_ [iSys]        = puppijet_precore_phi ;
     eve->puppijet_AssociatedGenJet_pt_[iSys] = puppijet_AssociatedGenJet_pt;

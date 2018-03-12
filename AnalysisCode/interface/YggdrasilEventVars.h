@@ -200,6 +200,8 @@ struct yggdrasilEventVars{
   vdouble jet_phi_[rNumSys];
   vdouble jet_m_[rNumSys];
 
+  vint    jet_puid_[rNumSys];
+
 
   vdouble  jet_precorr_pt_  [rNumSys];
   vdouble  jet_precorr_phi_  [rNumSys];
@@ -226,6 +228,7 @@ struct yggdrasilEventVars{
   vdouble puppijet_phi_ [rNumSys]                ;
   vdouble puppijet_eta_ [rNumSys]                ;
   vdouble puppijet_m_   [rNumSys]                ;
+  vint    puppijet_puid_[rNumSys]                ;
   vdouble puppijet_precorr_pt_  [rNumSys]        ;
   vdouble puppijet_precorr_phi_ [rNumSys]        ;
   vdouble puppijet_AssociatedGenJet_pt_[rNumSys] ;
@@ -402,6 +405,8 @@ void yggdrasilEventVars::initialize(){
     jet_eta_[iSys].clear();
     jet_m_  [iSys].clear();
 
+    jet_puid_ [iSys].clear();
+
     jet_precorr_pt_  [iSys].clear();
     jet_precorr_phi_  [iSys].clear();
 
@@ -426,6 +431,7 @@ void yggdrasilEventVars::initialize(){
     puppijet_phi_ [iSys]                .clear();
     puppijet_eta_ [iSys]                .clear();
     puppijet_m_   [iSys]                .clear();
+    puppijet_puid_[iSys]                .clear();
     puppijet_precorr_pt_  [iSys]        .clear();
     puppijet_precorr_phi_ [iSys]        .clear();
     puppijet_AssociatedGenJet_pt_[iSys] .clear();

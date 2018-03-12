@@ -221,6 +221,23 @@ struct yggdrasilEventVars{
   vdouble genjet_m_[rNumSys];
   vint    genjet_BhadronMatch_[rNumSys];
 
+
+  vdouble puppijet_pt_  [rNumSys]                ;
+  vdouble puppijet_phi_ [rNumSys]                ;
+  vdouble puppijet_eta_ [rNumSys]                ;
+  vdouble puppijet_m_   [rNumSys]                ;
+  vdouble puppijet_precorr_pt_  [rNumSys]        ;
+  vdouble puppijet_precorr_phi_ [rNumSys]        ;
+  vdouble puppijet_AssociatedGenJet_pt_[rNumSys] ;
+  vdouble puppijet_AssociatedGenJet_eta_[rNumSys];
+  vdouble puppijet_AssociatedGenJet_phi_[rNumSys];
+  vdouble puppijet_AssociatedGenJet_m_[rNumSys]  ;
+  vint    puppijet_partonflavour_[rNumSys]       ;
+  vint    puppijet_flavour_[rNumSys]             ;
+  vdouble puppijet_DeepCSV_b_  [rNumSys]         ;
+  vdouble puppijet_DeepCSV_bb_ [rNumSys]         ;
+
+
   ///boosted jets
   vvdouble topfatJet_vect_TLV_;
   vvdouble nonW_vect_TLV_;

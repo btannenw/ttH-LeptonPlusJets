@@ -163,6 +163,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT< edm::ValueMap<double> > token_PuppuMuIso_WithoutLep_PH ; 
 
   edm::EDGetTokenT <pat::JetCollection> jetToken;
+  edm::EDGetTokenT <pat::JetCollection> puppijetToken;
   edm::EDGetTokenT <pat::METCollection> metToken;
   edm::EDGetTokenT <pat::METCollection> puppimetToken;
 
@@ -313,13 +314,10 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   token_PuppuMuIso_WithoutLep_PH = consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiWithoutLeptonPH","") ) ;
 
 
-  if( usePUPPI ){
-  jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
-  }else{
+  jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+  puppijetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
 
-    jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
-    // jetToken = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds","jetsWithSeed","" ));  // Jet with random seed.
-  }
+
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
 
@@ -486,6 +484,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   edm::Handle<pat::JetCollection> pfjets;
   iEvent.getByToken(jetToken,pfjets);
+
+  edm::Handle<pat::JetCollection> pfpuppijets;
+  iEvent.getByToken(puppijetToken,pfpuppijets);
 
   edm::Handle<pat::METCollection> pfmet;
   iEvent.getByToken(metToken,pfmet);
@@ -1245,14 +1246,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   
 
 
-  std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( *pfjets );
-  //  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection);
-  //  std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 5.0, jetID::none, '-' );
-  //  std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 30., 2.4, jetID::none, 'M' );
-
-  //  std::vector<pat::Jet> selectedJets_loose_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 3.0, jetID::none, '-' );
-  //  std::vector<pat::Jet> selectedJets_loose_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 20., 3.0, jetID::none, 'M' );
-
 
   eve->passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1_ = ( passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1 ) ? 1 : 0;
   
@@ -1884,14 +1877,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     ///
     ////////
 
+    std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( *pfjets );
     std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType );
     std::vector<pat::Jet> selectedJets_unsorted =  miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 ,
-										 ( usePUPPI  ?
-										   jetID::none
-										   :
-										   jetID::jetTight ) // <- For 2017, no LooseID, only tight.
+										 ( jetID::jetTight ) // <- For 2017, no LooseID, only tight.
 										 , '-' );
-
 
     double JecUpdatePropagationToMET_x = 0 ;
     double JecUpdatePropagationToMET_y = 0 ;
@@ -1904,6 +1894,21 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
       JecUpdatePropagationToMET_x +=  pfjets->at(i).px() - correctedJets.at(i).px() ; 
       JecUpdatePropagationToMET_y +=  pfjets->at(i).py() - correctedJets.at(i).py() ; 
+    }
+
+
+    std::vector<pat::Jet> puppirawJets = miniAODhelper.GetUncorrectedJets( *pfpuppijets );
+    std::vector<pat::Jet> puppicorrectedJets =  miniAODhelper.GetCorrectedJets(puppirawJets, iEvent, iSetup, genjetCollection , iSysType );
+    std::vector<pat::Jet> puppiselectedJets_unsorted =  miniAODhelper.GetSelectedJets(puppicorrectedJets, 20., 5.0 ,
+										      ( jetID::none ) 
+										      , '-' );
+
+    double PUPPIJecUpdatePropagationToMET_x = 0 ;
+    double PUPPIJecUpdatePropagationToMET_y = 0 ;
+    for( unsigned int i = 0 ; i < pfpuppijets -> size() ; i++ ){
+
+      PUPPIJecUpdatePropagationToMET_x +=  pfpuppijets->at(i).px() - puppicorrectedJets.at(i).px() ; 
+      PUPPIJecUpdatePropagationToMET_y +=  pfpuppijets->at(i).py() - puppicorrectedJets.at(i).py() ; 
     }
 
 
@@ -2023,6 +2028,24 @@ n_fatjets++;
     vint jet_genParentId_vect;
     vint jet_genGrandParentId_vect;
 
+    vdouble puppijet_pt  ;
+    vdouble puppijet_phi ;
+    vdouble puppijet_eta ;
+    vdouble puppijet_m   ;
+    vdouble puppijet_precore_pt  ;
+    vdouble puppijet_precore_phi ;
+    vdouble puppijet_AssociatedGenJet_pt;
+    vdouble puppijet_AssociatedGenJet_eta;
+    vdouble puppijet_AssociatedGenJet_phi;
+    vdouble puppijet_AssociatedGenJet_m;
+    vint    puppijet_partonflavour_vect;
+    vint    puppijet_flavour_vect;
+    vdouble puppijet_DeepCSV_b;
+    vdouble puppijet_DeepCSV_bb;
+
+
+
+
     // Loop over selected jets
 
     int ijet = 0 ;
@@ -2093,13 +2116,39 @@ n_fatjets++;
     }// end loop over iJet
 
 
-    // Add loose jet container
-    //    std::vector<pat::Jet> selectedJets_loose_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_loose_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, '-' );
-    //    std::vector<pat::Jet> selectedJets_loose = miniAODhelper.GetSortedByPt( selectedJets_loose_unsorted );
 
-    //    std::vector<pat::Jet> selectedJets_loose_tag_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_loose_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, 'M' );
 
-    
+
+    for( std::vector<pat::Jet>::const_iterator iJet = puppiselectedJets_unsorted.begin(); iJet != puppiselectedJets_unsorted.end(); iJet++ ){ 
+      puppijet_pt  .push_back( iJet -> pt()  );
+      puppijet_phi .push_back( iJet -> phi() );
+      puppijet_eta .push_back( iJet -> eta() );
+      puppijet_m   .push_back( iJet -> mass()   );
+
+
+      puppijet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
+      puppijet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );
+   
+      const reco::GenJet* ref = iJet -> genJet();
+      if (ref) {
+	puppijet_AssociatedGenJet_pt  .push_back( ref -> pt() );
+	puppijet_AssociatedGenJet_eta .push_back( ref -> eta() );
+	puppijet_AssociatedGenJet_phi .push_back( ref -> phi() );
+	puppijet_AssociatedGenJet_m   .push_back( ref -> mass() );
+      } else {
+	puppijet_AssociatedGenJet_pt  .push_back( -999 ) ;
+	puppijet_AssociatedGenJet_eta .push_back( -999 ) ;
+	puppijet_AssociatedGenJet_phi .push_back( -999 ) ;
+	puppijet_AssociatedGenJet_m   .push_back( -999 );
+      }
+
+      puppijet_partonflavour_vect.push_back(iJet->partonFlavour());
+      puppijet_flavour_vect.push_back(iJet->hadronFlavour());
+
+      puppijet_DeepCSV_b .push_back( iJet->bDiscriminator("pfDeepCSVJetTags:probb") );
+      puppijet_DeepCSV_bb.push_back( iJet->bDiscriminator("pfDeepCSVJetTags:probbb") );
+
+    }// end loop over PUPPI jet 
 
 
 
@@ -2174,6 +2223,23 @@ n_fatjets++;
     eve ->  genjet_phi_[iSys] = genjet_phi ;  
     eve ->  genjet_m_  [iSys] = genjet_m ; 
     eve ->  genjet_BhadronMatch_[iSys] = genjet_BhadronMatch ; 
+
+
+    // PUPPI jet
+    eve->puppijet_pt_  [iSys]                = puppijet_pt  ;
+    eve->puppijet_phi_ [iSys]                = puppijet_phi ;
+    eve->puppijet_eta_ [iSys]                = puppijet_eta ;
+    eve->puppijet_m_   [iSys]                = puppijet_m   ;
+    eve->puppijet_precorr_pt_  [iSys]        = puppijet_precore_pt  ;
+    eve->puppijet_precorr_phi_ [iSys]        = puppijet_precore_phi ;
+    eve->puppijet_AssociatedGenJet_pt_[iSys] = puppijet_AssociatedGenJet_pt;
+    eve->puppijet_AssociatedGenJet_eta_[iSys]= puppijet_AssociatedGenJet_eta;
+    eve->puppijet_AssociatedGenJet_phi_[iSys]= puppijet_AssociatedGenJet_phi;
+    eve->puppijet_AssociatedGenJet_m_[iSys]  = puppijet_AssociatedGenJet_m;
+    eve->puppijet_partonflavour_[iSys]       = puppijet_partonflavour_vect;
+    eve->puppijet_flavour_[iSys]             = puppijet_flavour_vect;
+    eve->puppijet_DeepCSV_b_  [iSys]         = puppijet_DeepCSV_b;
+    eve->puppijet_DeepCSV_bb_ [iSys]         = puppijet_DeepCSV_bb;
 
 
   } // end loop over systematics
@@ -2310,6 +2376,7 @@ n_fatjets++;
       const bool  doJES = true;
       const bool  doJER = false;
 
+      std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( *pfjets );
       std::vector<pat::Jet> jet_JESNOMI =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::NA     , doJES, doJER );
       std::vector<pat::Jet> jet_JESUP   =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::JESup  , doJES, doJER );
       std::vector<pat::Jet> jet_JESDOWN =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::JESdown, doJES, doJER );

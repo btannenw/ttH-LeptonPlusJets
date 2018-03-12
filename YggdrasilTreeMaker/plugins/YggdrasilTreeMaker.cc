@@ -2179,8 +2179,6 @@ n_fatjets++;
       eve->MET_phi_[iSys]  = atan2( met_y , met_x   );
     }
 
-    eve->PUPPIMET_[iSys]      = correctedPUPPIMET.pt();
-    eve->PUPPIMET_phi_[iSys]  = correctedPUPPIMET.phi();
 
     {
 
@@ -2191,9 +2189,24 @@ n_fatjets++;
       eve->MET_Type1xy_phi_[iSys]  = atan2( met_y , met_x   );		   
 
     }
-    eve->PUPPIMET_Type1xy_[iSys]      = correctedPUPPIMET.corPt(pat::MET::Type1XY);
-    eve->PUPPIMET_Type1xy_phi_[iSys]  = correctedPUPPIMET.corPhi(pat::MET::Type1XY);
 
+
+    // - - - -PUPPI MET - - - - - 
+    {
+      double met_x = correctedPUPPIMET.corPx(pat::MET::Type1) + PUPPIJecUpdatePropagationToMET_x ; 
+      double met_y = correctedPUPPIMET.corPy(pat::MET::Type1) + PUPPIJecUpdatePropagationToMET_y ; 
+      
+      eve->PUPPIMET_[iSys]      = sqrt( met_x * met_x + met_y * met_y );
+      eve->PUPPIMET_phi_[iSys]  = atan2( met_y , met_x   );
+    }
+    {
+
+      double met_x = correctedPUPPIMET.corPx(pat::MET::Type1XY) + PUPPIJecUpdatePropagationToMET_x ; 
+      double met_y = correctedPUPPIMET.corPy(pat::MET::Type1XY) + PUPPIJecUpdatePropagationToMET_y ; 
+
+      eve->PUPPIMET_Type1xy_[iSys]      = sqrt( met_x * met_x + met_y * met_y );
+      eve->PUPPIMET_Type1xy_phi_[iSys]  = atan2( met_y , met_x   );		   
+    }
 
     if( false ){ // For test of met correction type : 
       //  std::cout <<"Test satoshi_et: " << correctedMET.pt() << " " << correctedMET.corPt() << " " << correctedMET.corPt(pat::MET::Type1) << " " << correctedMET.corPt(pat::MET::Type1XY) << std::endl ; 

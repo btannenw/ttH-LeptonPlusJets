@@ -2144,7 +2144,7 @@ n_fatjets++;
       puppijet_eta .push_back( iJet -> eta() );
       puppijet_m   .push_back( iJet -> mass()   );
 
-      puppijet_puid . push_back( iJet -> userInt("pileupJetId:fullId") ) ;
+      puppijet_puid . push_back( 15 ) ; // = 1111
 
       puppijet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
       puppijet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );

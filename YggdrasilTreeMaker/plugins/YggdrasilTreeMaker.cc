@@ -850,7 +850,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   eve->GoodFirstPV_=firstGoodPV;
 
-  if( numpv>0 ) miniAODhelper.SetVertex(vertex);
+  if( numpv>0 ){
+    miniAODhelper.SetVertex(vertex);
+    miniAODhelper_Puppi.SetVertex(vertex);
+  }
 
   double numTruePV = -1;
   double numGenPV = -1;
@@ -881,10 +884,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   long evt = iEvent.id().event();
 
 
-  //todotodo  const JetCorrector* corrector = JetCorrector::getJetCorrector( "ak4PFchsL1L2L3", iSetup );   //Get the jet corrector from the event setup
-  //  edm::Handle<reco::JetCorrector> corrector ;
   edm::Handle<reco::JetCorrector> corrector ; 
-
   iEvent.getByToken(jetCorrectorToken_, corrector );
   miniAODhelper.SetJetCorrector( &(*corrector) );
 
@@ -1918,8 +1918,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 										      ( jetID::none ) 
 										      , '-' );
 
-
-
     double PUPPIJecUpdatePropagationToMET_x = 0 ;
     double PUPPIJecUpdatePropagationToMET_y = 0 ;
     for( unsigned int i = 0 ; i < pfpuppijets -> size() ; i++ ){
@@ -2574,7 +2572,10 @@ YggdrasilTreeMaker::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup
     miniAODhelper.UpdateJetCorrectorUncertainties( iSetup );
   }
 
+  miniAODhelper_Puppi.UpdateJetCorrectorUncertainties( iSetup );
+
   miniAODhelper.SetJER_SF_Tool( iSetup );
+  miniAODhelper_Puppi.SetJER_SF_Tool( iSetup );
 
   std::cout <<"[debug message ]YggdrasilTreeMaker::beginRun() was called." << std::endl ; 
 }

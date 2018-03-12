@@ -422,6 +422,23 @@ void yggdrasilEventVars::initialize(){
     jet_genParentId_[iSys].clear();
     jet_genGrandParentId_[iSys].clear();
 
+    puppijet_pt_  [iSys]                .clear();
+    puppijet_phi_ [iSys]                .clear();
+    puppijet_eta_ [iSys]                .clear();
+    puppijet_m_   [iSys]                .clear();
+    puppijet_precorr_pt_  [iSys]        .clear();
+    puppijet_precorr_phi_ [iSys]        .clear();
+    puppijet_AssociatedGenJet_pt_[iSys] .clear();
+    puppijet_AssociatedGenJet_eta_[iSys].clear();
+    puppijet_AssociatedGenJet_phi_[iSys].clear();
+    puppijet_AssociatedGenJet_m_[iSys]  .clear();
+    puppijet_partonflavour_[iSys]       .clear();
+    puppijet_flavour_[iSys]             .clear();
+    puppijet_DeepCSV_b_  [iSys]         .clear();
+    puppijet_DeepCSV_bb_ [iSys]         .clear();
+
+
+
   }
 
   //boosted jets

@@ -1915,7 +1915,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     std::vector<pat::Jet> puppirawJets = miniAODhelper_Puppi.GetUncorrectedJets( *pfpuppijets );
     std::vector<pat::Jet> puppicorrectedJets =  miniAODhelper_Puppi.GetCorrectedJets(puppirawJets, iEvent, iSetup, genjetCollection , iSysType );
     std::vector<pat::Jet> puppiselectedJets_unsorted =  miniAODhelper_Puppi.GetSelectedJets(puppicorrectedJets, 20., 5.0 ,
-										      ( jetID::none ) 
+											    ( jetID::jetTight )  // Same ID as CHS, but upto |eta|<2.7. //  // https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2017
 										      , '-' );
 
     double PUPPIJecUpdatePropagationToMET_x = 0 ;

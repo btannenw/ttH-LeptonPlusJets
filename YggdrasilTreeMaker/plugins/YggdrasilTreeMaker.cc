@@ -180,8 +180,6 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
 
   //  edm::EDGetTokenT <LHEEventProduct> LHEEventProductToken;
 
-  edm::EDGetTokenT <pat::JetCollection> tempjetToken;
-  
   // edm::EDGetTokenT <reco::ConversionCollection> EDMConversionCollectionToken;
   edm::EDGetTokenT< boosted::BoostedJetCollection > EDMBoostedJetsToken;
 
@@ -350,12 +348,6 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
     TtGenEventToken = consumes< TtGenEvent >( edm::InputTag("genEvt") );
   }
 
-  if( usePUPPI ) {
-  tempjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
-  }else{
-    tempjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
-  // tempjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets"))); // For hip mitigation
-  }
   // EDMConversionCollectionToken = consumes <reco::ConversionCollection > (edm::InputTag("reducedEgamma","reducedConversions",""));
   EDMBoostedJetsToken     = consumes< boosted::BoostedJetCollection >(edm::InputTag("BoostedJetMatcher","boostedjets","p"));
 
@@ -727,9 +719,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   }
 
 
-
-  edm::Handle<pat::JetCollection> pftempjets;
-  iEvent.getByToken(tempjetToken,pftempjets);
 
   ////----------------------
   ////---- tt+X Categorization
@@ -1257,12 +1246,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 
   std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( *pfjets );
-  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection);
-  std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 5.0, jetID::none, '-' );
-  std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 30., 2.4, jetID::none, 'M' );
+  //  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection);
+  //  std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 5.0, jetID::none, '-' );
+  //  std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 30., 2.4, jetID::none, 'M' );
 
-  std::vector<pat::Jet> selectedJets_loose_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 3.0, jetID::none, '-' );
-  std::vector<pat::Jet> selectedJets_loose_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 20., 3.0, jetID::none, 'M' );
+  //  std::vector<pat::Jet> selectedJets_loose_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 3.0, jetID::none, '-' );
+  //  std::vector<pat::Jet> selectedJets_loose_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 20., 3.0, jetID::none, 'M' );
 
 
   eve->passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1_ = ( passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1 ) ? 1 : 0;
@@ -2105,10 +2094,10 @@ n_fatjets++;
 
 
     // Add loose jet container
-    std::vector<pat::Jet> selectedJets_loose_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_loose_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, '-' );
-    std::vector<pat::Jet> selectedJets_loose = miniAODhelper.GetSortedByPt( selectedJets_loose_unsorted );
+    //    std::vector<pat::Jet> selectedJets_loose_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_loose_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, '-' );
+    //    std::vector<pat::Jet> selectedJets_loose = miniAODhelper.GetSortedByPt( selectedJets_loose_unsorted );
 
-    std::vector<pat::Jet> selectedJets_loose_tag_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_loose_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, 'M' );
+    //    std::vector<pat::Jet> selectedJets_loose_tag_unsorted = ( ! sysType::isJECUncertainty( iSysType )  ) ? selectedJets_loose_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 3.0, jetID::none, 'M' );
 
     
 

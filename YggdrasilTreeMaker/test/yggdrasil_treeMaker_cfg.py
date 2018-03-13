@@ -96,8 +96,8 @@ if enableJECFromLocalDB :
         cms.PSet(
             connect = cms.string( JecDBPathPrefix + '/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/' + JecLocalDataBaseName +'.db' ),
             record = cms.string('JetCorrectionsRecord'),
-            tag    = cms.string('JetCorrectorParametersCollection_'+JecLocalDataBaseName+'_AK8PFchs'),
-            label  = cms.untracked.string('AK8PFchs')
+            tag    = cms.string('JetCorrectorParametersCollection_'+ JecLocalDataBaseName +'_AK8PFPuppi'),
+            label  = cms.untracked.string('AK8PFPuppi')
             )
         )
     
@@ -120,6 +120,35 @@ process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
 #  - ak4PFPuppiL1FastL2L3ResidualCorrectorChain
 #  are defined.
 # https://github.com/cms-sw/cmssw/blob/CMSSW_9_4_X/JetMETCorrections/Configuration/python/JetCorrectors_cff.py
+
+
+process.ak8PFPuppiL1FastjetCorrector = cms.EDProducer(
+    'L1FastjetCorrectorProducer',
+    level       = cms.string('L1FastJet'),
+    algorithm   = cms.string('AK8PFPuppi'),
+    srcRho      = cms.InputTag( 'fixedGridRhoFastjetAll' )
+    )
+process.ak8PFPuppiL2RelativeCorrector = process.ak4CaloL2RelativeCorrector.clone( algorithm = 'AK8PFPuppi' )
+process.ak8PFPuppiL3AbsoluteCorrector = process.ak4CaloL3AbsoluteCorrector.clone( algorithm = 'AK8PFPuppi' )
+process.ak8PFPuppiL1FastL2L3Corrector = process.ak4PFPuppiL2L3Corrector.clone()
+process.ak8PFPuppiL1FastL2L3Corrector.correctors.insert(0,'ak8PFPuppiL1FastjetCorrector')
+
+process.ak8PFPuppiL1FastL2L3CorrectorChain = cms.Sequence(
+    process.ak8PFPuppiL1FastjetCorrector * process.ak8PFPuppiL2RelativeCorrector * process.ak8PFPuppiL3AbsoluteCorrector * process.ak8PFPuppiL1FastL2L3Corrector
+)
+
+
+process.ak8PFPuppiResidualCorrector  = process.ak4CaloResidualCorrector.clone( algorithm = 'AK8PFPuppi' )
+process.ak8PFPuppiL1FastL2L3ResidualCorrector = cms.EDProducer(
+    'ChainedJetCorrectorProducer',
+    correctors = cms.VInputTag('ak8PFPuppiL1FastjetCorrector','ak8PFPuppiL2RelativeCorrector','ak8PFPuppiL3AbsoluteCorrector','ak8PFPuppiResidualCorrector')
+    )
+process.ak8PFPuppiL1FastL2L3ResidualCorrectorTask = cms.Task(
+    process.ak8PFPuppiL1FastjetCorrector, process.ak8PFPuppiL2RelativeCorrector, process.ak8PFPuppiL3AbsoluteCorrector, process.ak8PFPuppiResidualCorrector, process.ak8PFPuppiL1FastL2L3ResidualCorrector
+)
+process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain = cms.Sequence( process.ak8PFPuppiL1FastL2L3ResidualCorrectorTask)
+
+
 
 
 process.source = cms.Source("PoolSource",
@@ -368,10 +397,12 @@ if isMC :
         process.categorizeGenTtbar *
         process.ak4PFCHSL1FastL2L3CorrectorChain *
         process.ak4PFPuppiL1FastL2L3CorrectorChain *
+        process.ak8PFPuppiL1FastL2L3CorrectorChain *
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 else :
     process.p = cms.Path(
         process.ak4PFCHSL1FastL2L3ResidualCorrectorChain *
         process.ak4PFPuppiL1FastL2L3ResidualCorrectorChain *
+        process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.PUPPIMuonRelIso * process.ttHTreeMaker)

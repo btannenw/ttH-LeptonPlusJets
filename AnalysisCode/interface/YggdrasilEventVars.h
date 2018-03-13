@@ -241,6 +241,27 @@ struct yggdrasilEventVars{
   vdouble puppijet_DeepCSV_bb_ [rNumSys]         ;
 
 
+    std::vector<double>  fatjet_pt            [rNumSys];
+    std::vector<double>  fatjet_eta	      [rNumSys];
+    std::vector<double>  fatjet_phi	      [rNumSys];
+    std::vector<double>  fatjet_m  	      [rNumSys];
+    std::vector<int>     fatjet_nSubjet 	      [rNumSys];
+    std::vector<double>  fatjet_sdmass_miniaod [rNumSys];
+    std::vector<double>  fatjet_sdmass_uncorr  [rNumSys];
+    std::vector<double>  fatjet_tau1	      [rNumSys];
+    std::vector<double>  fatjet_tau2	      [rNumSys];
+    std::vector<double>  fatjet_tau3	      [rNumSys];
+    std::vector<double>  fatjet_tau4	      [rNumSys];
+    std::vector<double>  fatjet_chstau1	      [rNumSys];
+    std::vector<double>  fatjet_chstau2	      [rNumSys];
+    std::vector<double>  fatjet_chstau3	      [rNumSys];
+    std::vector<double>  fatjet_nb1N2 	      [rNumSys];
+    std::vector<double>  fatjet_nb1N3 	      [rNumSys];
+    std::vector<double>  fatjet_nb2N2 	      [rNumSys];
+    std::vector<double>  fatjet_nb2N3 	      [rNumSys];
+    std::vector<double>  fatjet_chsprunedmass  [rNumSys];
+
+
   ///boosted jets
   vvdouble topfatJet_vect_TLV_;
   vvdouble nonW_vect_TLV_;
@@ -443,6 +464,25 @@ void yggdrasilEventVars::initialize(){
     puppijet_DeepCSV_b_  [iSys]         .clear();
     puppijet_DeepCSV_bb_ [iSys]         .clear();
 
+    fatjet_pt            [iSys] .clear() ;
+    fatjet_eta	      [iSys] .clear() ;
+    fatjet_phi	      [iSys] .clear() ;
+    fatjet_m  	      [iSys] .clear() ;
+    fatjet_nSubjet 	      [iSys] .clear() ;
+    fatjet_sdmass_miniaod [iSys] .clear() ;
+    fatjet_sdmass_uncorr  [iSys] .clear() ;
+    fatjet_tau1	      [iSys] .clear() ;
+    fatjet_tau2	      [iSys] .clear() ;
+    fatjet_tau3	      [iSys] .clear() ;
+    fatjet_tau4	      [iSys] .clear() ;
+    fatjet_chstau1	      [iSys] .clear() ;
+    fatjet_chstau2	      [iSys] .clear() ;
+    fatjet_chstau3	      [iSys] .clear() ;
+    fatjet_nb1N2 	      [iSys] .clear() ;
+    fatjet_nb1N3 	      [iSys] .clear() ;
+    fatjet_nb2N2 	      [iSys] .clear() ;
+    fatjet_nb2N3 	      [iSys] .clear() ;
+    fatjet_chsprunedmass  [iSys] .clear() ;
 
 
   }

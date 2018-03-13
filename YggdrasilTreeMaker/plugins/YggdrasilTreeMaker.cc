@@ -164,6 +164,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
 
   edm::EDGetTokenT <pat::JetCollection> jetToken;
   edm::EDGetTokenT <pat::JetCollection> puppijetToken;
+  edm::EDGetTokenT <pat::JetCollection> fatjetToken;
   edm::EDGetTokenT <pat::METCollection> metToken;
   edm::EDGetTokenT <pat::METCollection> puppimetToken;
 
@@ -188,6 +189,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   
   edm::EDGetTokenT<reco::JetCorrector> jetCorrectorToken_;
   edm::EDGetTokenT<reco::JetCorrector> puppijetCorrectorToken_;
+  edm::EDGetTokenT<reco::JetCorrector> fatjetCorrectorToken_;
 
   HLTConfigProvider hlt_config_;
 
@@ -218,6 +220,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
  
   MiniAODHelper miniAODhelper;
   MiniAODHelper miniAODhelper_Puppi;
+  MiniAODHelper miniAODhelper_fatjet ; 
 
   RoccoR * muon_roc ;
 
@@ -301,6 +304,13 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
     puppijetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFPuppiL1FastL2L3ResidualCorrector","","")) ;
   }
 
+  if( isMC ){
+    fatjetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak8PFPuppiL1FastL2L3Corrector","","")) ;
+  }else{
+    fatjetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak8PFPuppiL1FastL2L3ResidualCorrector","","")) ;
+  }
+
+
   // // new MVAelectron
   // EDMElectronsToken = consumes< edm::View<pat::Electron> >(edm::InputTag("slimmedElectrons","",""));
   // EDMeleMVAvaluesToken           = consumes<edm::ValueMap<float> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values",""));
@@ -326,6 +336,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
   puppijetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
 
+  fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsAK8")));
 
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
@@ -383,6 +394,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, ! isMC );
   miniAODhelper_Puppi.SetUp(era, insample_, iAnalysisType, ! isMC );
+  miniAODhelper_fatjet.SetUp(era, insample_, iAnalysisType, ! isMC );
 
   muon_roc = new RoccoR ( std::string(  getenv("CMSSW_BASE") ) + "/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/rcdata.2016.v3" );
 
@@ -498,6 +510,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   edm::Handle<pat::JetCollection> pfpuppijets;
   iEvent.getByToken(puppijetToken,pfpuppijets);
 
+  edm::Handle<pat::JetCollection> fatjets;
+  iEvent.getByToken(fatjetToken,fatjets);
+
   edm::Handle<pat::METCollection> pfmet;
   iEvent.getByToken(metToken,pfmet);
 
@@ -524,6 +539,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   double rho_event = ( (rhoHandle.isValid()) ) ? *rhoHandle : -99;
   miniAODhelper.SetRho(rho_event);
   miniAODhelper_Puppi.SetRho(rho_event);
+  miniAODhelper_fatjet.SetRho(rho_event);
 
   edm::Handle<std::vector< PileupSummaryInfo > > PupInfo;
   iEvent.getByToken(puInfoToken,PupInfo);
@@ -853,6 +869,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   if( numpv>0 ){
     miniAODhelper.SetVertex(vertex);
     miniAODhelper_Puppi.SetVertex(vertex);
+    miniAODhelper_fatjet.SetVertex(vertex);
   }
 
   double numTruePV = -1;
@@ -891,6 +908,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   edm::Handle<reco::JetCorrector> puppi_corrector ; 
   iEvent.getByToken(puppijetCorrectorToken_, puppi_corrector );
   miniAODhelper_Puppi.SetJetCorrector( &(*puppi_corrector) );
+
+  edm::Handle<reco::JetCorrector> fatjet_corrector ; 
+  iEvent.getByToken( fatjetCorrectorToken_, fatjet_corrector );
+  miniAODhelper_fatjet.SetJetCorrector( &(*fatjet_corrector) );
+
 
   int mHdecay = -1;
   mHdecay = isMC ? miniAODhelper.GetHiggsDecay(mcparticles) : -1 ;
@@ -2173,6 +2195,73 @@ n_fatjets++;
 
 
 
+    
+    std::vector<pat::Jet> fatrawJets = miniAODhelper_fatjet.GetUncorrectedJets( *fatjets );
+    std::vector<pat::Jet> fatcorrectedJets =  miniAODhelper_fatjet.GetCorrectedJets( fatrawJets, iEvent, iSetup, genjetCollection , iSysType );
+    
+    std::vector<double>  fatjet_pt            ;
+    std::vector<double>  fatjet_eta	      ;
+    std::vector<double>  fatjet_phi	      ;
+    std::vector<double>  fatjet_m  	      ;
+    std::vector<int>     fatjet_nSubjet 	      ;
+    std::vector<double>  fatjet_sdmass_miniaod ;
+    std::vector<double>  fatjet_sdmass_uncorr  ;
+    std::vector<double>  fatjet_tau1	      ;
+    std::vector<double>  fatjet_tau2	      ;
+    std::vector<double>  fatjet_tau3	      ;
+    std::vector<double>  fatjet_tau4	      ;
+    std::vector<double>  fatjet_chstau1	      ;
+    std::vector<double>  fatjet_chstau2	      ;
+    std::vector<double>  fatjet_chstau3	      ;
+    std::vector<double>  fatjet_nb1N2 	      ;
+    std::vector<double>  fatjet_nb1N3 	      ;
+    std::vector<double>  fatjet_nb2N2 	      ;
+    std::vector<double>  fatjet_nb2N3 	      ;
+    std::vector<double>  fatjet_chsprunedmass  ;
+
+    for( unsigned int i = 0 ; i < fatjets -> size() ; i++  ){
+      pat::Jet correctedJet = fatcorrectedJets . at(i);
+      pat::Jet originalJet  = fatjets->at(i); 
+
+      TLorentzVector puppi_softdrop, puppi_softdrop_subjet;
+      auto const & sdSubjetsPuppi = originalJet.subjets("SoftDropPuppi");
+      long n = 0 ;
+      for ( auto const & it : sdSubjetsPuppi ) {
+	n ++ ; 
+	puppi_softdrop_subjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
+	puppi_softdrop+=puppi_softdrop_subjet;
+      }
+
+
+      fatjet_pt . push_back( correctedJet .pt() ) ;  
+      fatjet_eta. push_back( correctedJet .eta() ) ;  
+      fatjet_phi. push_back( correctedJet .phi() ) ;  
+      fatjet_m  . push_back( correctedJet .mass() ) ;  
+
+      fatjet_nSubjet  . push_back( n ) ;  
+
+      fatjet_sdmass_miniaod . push_back(  originalJet . userFloat("ak8PFJetsPuppiSoftDropMass") ) ;
+      fatjet_sdmass_uncorr  . push_back( puppi_softdrop . M()  ) ; 
+
+      fatjet_tau1 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau1") ) ; 
+      fatjet_tau2 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau2") ) ; 
+      fatjet_tau3 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau3") ) ; 
+      fatjet_tau4 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau4") ) ; 
+
+      fatjet_chstau1 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau1") );
+      fatjet_chstau2 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau2") );
+      fatjet_chstau3 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau3") );
+
+      fatjet_nb1N2 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2") );
+      fatjet_nb1N3 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3") );
+      fatjet_nb2N2 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2") );
+      fatjet_nb2N3 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3") );
+
+      fatjet_chsprunedmass. push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass") );
+
+    }
+
+
 
     // - - - - MET works - - - - - 
 
@@ -2276,6 +2365,26 @@ n_fatjets++;
     eve->puppijet_flavour_[iSys]             = puppijet_flavour_vect;
     eve->puppijet_DeepCSV_b_  [iSys]         = puppijet_DeepCSV_b;
     eve->puppijet_DeepCSV_bb_ [iSys]         = puppijet_DeepCSV_bb;
+
+    eve ->  fatjet_pt         [iSys] =          fatjet_pt            ;     
+    eve ->  fatjet_eta	      [iSys] = 	        fatjet_eta	      ;	       
+    eve ->  fatjet_phi	      [iSys] = 	        fatjet_phi	      ;	       
+    eve ->  fatjet_m  	      [iSys] = 	        fatjet_m  	      ;	       
+    eve ->  fatjet_nSubjet    [iSys] =          fatjet_nSubjet 	      ;
+    eve ->  fatjet_sdmass_miniaod [iSys] =      fatjet_sdmass_miniaod ;    
+    eve ->  fatjet_sdmass_uncorr  [iSys] =      fatjet_sdmass_uncorr  ;    
+    eve ->  fatjet_tau1	      [iSys] = 	        fatjet_tau1	      ;	       
+    eve ->  fatjet_tau2	      [iSys] = 	        fatjet_tau2	      ;	       
+    eve ->  fatjet_tau3	      [iSys] = 	        fatjet_tau3	      ;	       
+    eve ->  fatjet_tau4	      [iSys] = 	        fatjet_tau4	      ;	       
+    eve ->  fatjet_chstau1	      [iSys] =  fatjet_chstau1	      ;
+    eve ->  fatjet_chstau2	      [iSys] =  fatjet_chstau2	      ;
+    eve ->  fatjet_chstau3	      [iSys] =  fatjet_chstau3	      ;
+    eve ->  fatjet_nb1N2 	      [iSys] =  fatjet_nb1N2 	      ;
+    eve ->  fatjet_nb1N3 	      [iSys] =  fatjet_nb1N3 	      ;
+    eve ->  fatjet_nb2N2 	      [iSys] =  fatjet_nb2N2 	      ;
+    eve ->  fatjet_nb2N3 	      [iSys] =  fatjet_nb2N3 	      ;
+    eve ->  fatjet_chsprunedmass  [iSys] =      fatjet_chsprunedmass  ;    
 
 
   } // end loop over systematics
@@ -2594,9 +2703,11 @@ YggdrasilTreeMaker::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup
   }
 
   miniAODhelper_Puppi.UpdateJetCorrectorUncertainties( iSetup );
+  miniAODhelper_fatjet.UpdateJetCorrectorUncertainties( iSetup );
 
   miniAODhelper.SetJER_SF_Tool( iSetup );
   miniAODhelper_Puppi.SetJER_SF_Tool( iSetup );
+  miniAODhelper_fatjet.SetJER_SF_Tool( iSetup );
 
   std::cout <<"[debug message ]YggdrasilTreeMaker::beginRun() was called." << std::endl ; 
 }

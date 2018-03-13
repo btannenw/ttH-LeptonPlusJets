@@ -2223,9 +2223,25 @@ n_fatjets++;
     std::vector<double>  fatjet_nb2N3 	      ;
     std::vector<double>  fatjet_chsprunedmass  ;
 
+    std::vector<std::vector<double> >fatjet_subjet_pt ;
+    std::vector<std::vector<double> >fatjet_subjet_eta;
+    std::vector<std::vector<double> >fatjet_subjet_phi;
+    std::vector<std::vector<double> >fatjet_subjet_m  ;
+    std::vector<std::vector<double> >fatjet_subjet_beepcsv;
+    std::vector<std::vector<double> >fatjet_subjet_csvv2  ;
+
     for( unsigned int i = 0 ; i < fatjets -> size() ; i++  ){
       pat::Jet correctedJet =  miniAODhelper_fatjet.GetCorrectedAK8Jet( fatrawJets.at(i) , iEvent, iSetup, fatgenjetCollection , iSysType );
       pat::Jet originalJet  = fatjets->at(i); 
+
+
+    std::vector<double> subjet_pt ;    
+    std::vector<double> subjet_eta;    
+    std::vector<double> subjet_phi;    
+    std::vector<double> subjet_m  ;    
+    std::vector<double> subjet_beepcsv;
+    std::vector<double> subjet_csvv2  ;
+
 
       TLorentzVector puppi_softdrop, puppi_softdrop_subjet;
       auto const & sdSubjetsPuppi = originalJet.subjets("SoftDropPuppi");
@@ -2234,8 +2250,21 @@ n_fatjets++;
 	n ++ ; 
 	puppi_softdrop_subjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
 	puppi_softdrop+=puppi_softdrop_subjet;
+
+	subjet_pt      . push_back( it -> pt()  );    
+	subjet_eta     . push_back( it -> eta() );    
+	subjet_phi     . push_back( it -> phi() );    
+	subjet_m       . push_back( it -> mass());    
+	subjet_beepcsv . push_back( it -> bDiscriminator("pfDeepCSVJetTags:probb")  +  it -> bDiscriminator("pfDeepCSVJetTags:probbb")  );
+	subjet_csvv2   . push_back( it -> bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")  );
       }
 
+      fatjet_subjet_pt       .push_back( subjet_pt      );
+      fatjet_subjet_eta      .push_back( subjet_eta     );
+      fatjet_subjet_phi      .push_back( subjet_phi     );
+      fatjet_subjet_m        .push_back( subjet_m       );
+      fatjet_subjet_beepcsv  .push_back( subjet_beepcsv );
+      fatjet_subjet_csvv2    .push_back( subjet_csvv2   );
 
       fatjet_pt . push_back( correctedJet .pt() ) ;  
       fatjet_eta. push_back( correctedJet .eta() ) ;  
@@ -2389,6 +2418,13 @@ n_fatjets++;
     eve ->  fatjet_nb2N2 	      [iSys] =  fatjet_nb2N2 	      ;
     eve ->  fatjet_nb2N3 	      [iSys] =  fatjet_nb2N3 	      ;
     eve ->  fatjet_chsprunedmass  [iSys] =      fatjet_chsprunedmass  ;    
+
+    eve -> fatjet_subjet_pt      [iSys] = fatjet_subjet_pt       ;
+    eve -> fatjet_subjet_eta     [iSys] = fatjet_subjet_eta      ;
+    eve -> fatjet_subjet_phi     [iSys] = fatjet_subjet_phi      ;
+    eve -> fatjet_subjet_m       [iSys] = fatjet_subjet_m        ;
+    eve -> fatjet_subjet_beepcsv [iSys] = fatjet_subjet_beepcsv  ;
+    eve -> fatjet_subjet_csvv2   [iSys] = fatjet_subjet_csvv2    ;
 
 
   } // end loop over systematics

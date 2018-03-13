@@ -122,6 +122,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   
   // Input tags
   edm::EDGetTokenT<reco::GenJetCollection> genJetsToken_;
+  edm::EDGetTokenT<reco::GenJetCollection> fatgenJetsToken_;
   
   edm::EDGetTokenT<std::vector<int> > genBHadJetIndexToken_;
   const edm::EDGetTokenT<std::vector<int> > genBHadFlavourToken_;
@@ -287,6 +288,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   }
   triggerResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), hltTag));
   filterResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), filterTag));
+
+  fatgenJetsToken_ =  consumes <reco::GenJetCollection> (edm::InputTag("slimmedGenJetsAK8","","")) ;
 
   TriggerObjectStandAloneToken = consumes <pat::TriggerObjectStandAloneCollection>
     ( edm::InputTag( std::string ( "slimmedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
@@ -528,9 +531,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   edm::Handle<reco::GenParticleCollection> mcparticles;
   edm::Handle<reco::GenJetCollection> genjetCollection;
+  edm::Handle<reco::GenJetCollection> fatgenjetCollection;
   if( isMC ){
     iEvent.getByToken(mcparicleToken,mcparticles);
     iEvent.getByToken( genJetsToken_ , genjetCollection );
+    iEvent.getByToken( fatgenJetsToken_ , fatgenjetCollection );
   }
 
   edm::Handle<double> rhoHandle;
@@ -911,7 +916,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   edm::Handle<reco::JetCorrector> fatjet_corrector ; 
   iEvent.getByToken( fatjetCorrectorToken_, fatjet_corrector );
-  miniAODhelper_fatjet.SetJetCorrector( &(*fatjet_corrector) );
+  miniAODhelper_fatjet.SetBoostedJetCorrector( &(*fatjet_corrector) ); // set ak8 corrector.
 
 
   int mHdecay = -1;
@@ -2197,7 +2202,6 @@ n_fatjets++;
 
     
     std::vector<pat::Jet> fatrawJets = miniAODhelper_fatjet.GetUncorrectedJets( *fatjets );
-    std::vector<pat::Jet> fatcorrectedJets =  miniAODhelper_fatjet.GetCorrectedJets( fatrawJets, iEvent, iSetup, genjetCollection , iSysType );
     
     std::vector<double>  fatjet_pt            ;
     std::vector<double>  fatjet_eta	      ;
@@ -2220,7 +2224,7 @@ n_fatjets++;
     std::vector<double>  fatjet_chsprunedmass  ;
 
     for( unsigned int i = 0 ; i < fatjets -> size() ; i++  ){
-      pat::Jet correctedJet = fatcorrectedJets . at(i);
+      pat::Jet correctedJet =  miniAODhelper_fatjet.GetCorrectedAK8Jet( fatrawJets.at(i) , iEvent, iSetup, fatgenjetCollection , iSysType );
       pat::Jet originalJet  = fatjets->at(i); 
 
       TLorentzVector puppi_softdrop, puppi_softdrop_subjet;
@@ -2696,14 +2700,9 @@ YggdrasilTreeMaker::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup
   }
 
   std::cout <<"[debug message ]YggdrasilTreeMaker::beginRun() is called." << std::endl ; 
-  if( usePUPPI ){
-    miniAODhelper.UpdateJetCorrectorUncertainties( iSetup );
-  }else{
-    miniAODhelper.UpdateJetCorrectorUncertainties( iSetup );
-  }
-
+  miniAODhelper.UpdateJetCorrectorUncertainties( iSetup );
   miniAODhelper_Puppi.UpdateJetCorrectorUncertainties( iSetup );
-  miniAODhelper_fatjet.UpdateJetCorrectorUncertainties( iSetup );
+  miniAODhelper_fatjet.SetAK8JetCorrectorUncertainty( iSetup ); // Ak8
 
   miniAODhelper.SetJER_SF_Tool( iSetup );
   miniAODhelper_Puppi.SetJER_SF_Tool( iSetup );

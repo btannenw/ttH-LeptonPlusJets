@@ -1149,3 +1149,12 @@ void ttHYggdrasilEventSelection::SetIncludeNonIsolationLepton(){
 int ttHYggdrasilEventSelection::GetNTightButNonIsoLep(){
   return NTightButNonIsoLep;
 }
+
+
+void ttHYggdrasilEventSelection::SetMuonIsoWorkingPoints( double tight , double loose ){
+
+  Thre_TightMu_Iso = tight ;
+  Thre_LooseMu_Iso = loose ;
+
+}
+

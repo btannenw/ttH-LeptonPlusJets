@@ -1351,6 +1351,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   std::vector< std::pair<float , float> > SingleMuonTriggerDirection;
   std::vector< std::pair<float , float> > SingleElTriggerDirection;
 
+  std::vector< std::pair<float , float> > DiMuonTriggerDirection;
+
   const edm::TriggerNames &names = iEvent.triggerNames(*triggerResults);
   for (unsigned int i = 0; i < triggerResults->size(); ++i) {
        
@@ -1394,6 +1396,49 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       } // end of trigger object loop
     } // end of if the trigger fired.
   } // end of trigger-bit loop (look into all HLT path)
+
+
+
+  for (unsigned int i = 0; i < triggerResults->size(); ++i) {
+       
+    unsigned long loc1 = names.triggerName(i).find( "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v" ,0);
+    unsigned long loc2 = names.triggerName(i).find( "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v" ,0);
+    unsigned long loc3 = names.triggerName(i).find( "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v" ,0);
+
+
+    if( ( loc1 == 0 || loc2 == 0 || loc3 == 0 ) && triggerResults->accept(i) ){
+
+      for (pat::TriggerObjectStandAlone obj : *triggerObjects) { // note: not "const &" since we want to call unpackPathNames
+	obj.unpackPathNames(names);
+
+	std::vector<std::string> pathNamesAll  = obj.pathNames(false);
+	std::vector<std::string> pathNamesLast = obj.pathNames(true);
+	for (unsigned int iPathName = 0; iPathName < pathNamesAll.size(); iPathName ++ ) {
+
+	  if( ( loc1 == 0 && pathNamesAll[iPathName] . find( "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v" , 0 ) == 0 )
+	      ||
+	      ( loc2 == 0 && pathNamesAll[iPathName] . find( "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v" , 0 ) == 0 )
+	      || 
+	      ( loc3 == 0 && pathNamesAll[iPathName] . find( "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v" , 0 ) == 0 )
+	      ){
+
+	    bool isBoth = obj.hasPathName( pathNamesAll[iPathName], true, true ); 
+	    if (isBoth){
+
+	      DiMuonTriggerDirection . push_back( std::pair<float, float>(  obj.eta(), obj.phi() ) );
+
+	    }// end if-"the trigger-path fired due to this object."
+
+
+	  } // end if the trigger object matches the trigger.
+	           
+	} // end loop all trigger path
+	       
+	       
+      } // end of trigger object loop
+    } // end of if the trigger fired.
+  } // end of trigger-bit loop (look into all HLT path)
+
 
 
 
@@ -1453,6 +1498,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   vdouble lepton_d0;
   vdouble lepton_dZ;
   vdouble lepton_dRSingleLepTrig ; 
+  vdouble lepton_dRDiLepTrig ; 
   vint lepton_isGlobalMuon;
   vint lepton_isTrackerMuon;
   vint lepton_isPFMuon;
@@ -1620,6 +1666,19 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     }
     lepton_dRSingleLepTrig.push_back( lep_trig_dr );
 
+    {
+      float lep_trig_dr = 10 ; 
+      for( std::vector< std::pair<float,float>>::iterator trig = DiMuonTriggerDirection.begin ();
+	   trig != DiMuonTriggerDirection.end() ; 
+	   trig ++ ){
+	float d_eta = iMu->eta() - trig->first;
+	float d_phi = iMu->phi() - trig->second;
+	d_phi = ( d_phi < M_PI ) ? d_phi : 2 * M_PI - d_phi ; 
+	double dr =  sqrt( d_eta*d_eta + d_phi*d_phi );
+	lep_trig_dr = ( lep_trig_dr < dr ) ? lep_trig_dr : dr ;
+      }
+      lepton_dRDiLepTrig.push_back( lep_trig_dr );
+    }
   }
 
   // Loop over electrons
@@ -1793,6 +1852,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     }
     lepton_dRSingleLepTrig.push_back( lep_trig_dr );
 
+    {
+      lepton_dRDiLepTrig.push_back( 10 ); // <- not prepared for di-electron yet.
+    }
   }
 
   eve->lepton_charge_           = lepton_trkCharge;
@@ -1822,6 +1884,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->lepton_scEta_           = lepton_scEta;
 
   eve->lepton_dRSingleLepTrig_        = lepton_dRSingleLepTrig ;
+  eve->lepton_dRDiLepTrig_        = lepton_dRDiLepTrig ;
 
   eve->wgt_lumi_  = intLumi_;
   eve->wgt_xs_    = mySample_xSec_;//mySample.xSec;

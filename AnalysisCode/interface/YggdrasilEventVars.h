@@ -141,6 +141,7 @@ struct yggdrasilEventVars{
   vdouble lepton_puppiIsoWithoutLep_PH_ ;
   vdouble lepton_scEta_;
   vdouble lepton_dRSingleLepTrig_;
+  vdouble lepton_dRDiLepTrig_;
 
   vfloat truth_pt_;
   vfloat truth_eta_;
@@ -385,6 +386,7 @@ void yggdrasilEventVars::initialize(){
   lepton_puppiIsoWithoutLep_PH_.clear() ;
   lepton_scEta_.clear();
   lepton_dRSingleLepTrig_.clear();
+  lepton_dRDiLepTrig_.clear();
 
   wgt_generator_        = -99.9;
   wgt_lumi_             = -99.9;

@@ -1101,6 +1101,20 @@ int ttHYggdrasilEventSelection::_GetOriginalIdxOfTightLepton( unsigned int idx )
   return -1;
 }
 
+
+int ttHYggdrasilEventSelection::_GetOriginalIdxOfLooseLepton( unsigned int idx ){
+
+  for( unsigned int iLep = 0 ; iLep < lep_pt->size() ; iLep ++ ){
+    if( fabs(  selected_looseLeptons[idx]->Pt() - lep_pt->at(iLep)) > 0.1 ) continue ;
+
+    if( _calcDR2( selected_looseLeptons[idx]->Eta(), lep_eta ->at(iLep),
+		  selected_looseLeptons[idx]->Phi(), lep_phi ->at(iLep) ) > 0.0001 ) continue ;
+    return iLep ;
+  }
+  std::cout <<"[ERROR] _GetOriginalIdxOfLooseLepton can not find original lepton" << std::endl ;
+  return -1;
+}
+
 int ttHYggdrasilEventSelection::getnNonIsoEl(){ return  nNonIsolatedElectron  ;}
 int ttHYggdrasilEventSelection::getnNonIsoMu(){ return  nNonIsolatedMuon  ; }
 

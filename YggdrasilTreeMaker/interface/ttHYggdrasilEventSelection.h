@@ -131,6 +131,8 @@ class ttHYggdrasilEventSelection{
 
   int GetNTightButNonIsoLep();
 
+  int    _GetOriginalIdxOfTightLepton( unsigned int idx );
+  int    _GetOriginalIdxOfLooseLepton( unsigned int idx );
 
  private :
 
@@ -220,7 +222,7 @@ class ttHYggdrasilEventSelection{
   std::vector<double>                selected_looseLeptonsScEta;
   std::vector<int>                   selected_looseLeptonsIsMuon;
   std::vector<int>                   selected_looseLeptonsCharge;
-
+  
   std::vector<const TLorentzVector*> selected_jets;
   std::vector<double>                selected_jetsBdiscriminant;
   std::vector<int>                selected_jetsFlav;
@@ -256,8 +258,6 @@ class ttHYggdrasilEventSelection{
   std::vector<long> nEvent_passElElCh;
   std::vector<long> nEvent_passMuMuCh;
   std::vector<long> nEvent_passElMuCh;
-
-  int    _GetOriginalIdxOfTightLepton( unsigned int idx );
 
   int nNonIsolatedElectron ;
   int nNonIsolatedMuon ;

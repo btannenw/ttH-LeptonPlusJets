@@ -289,9 +289,17 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   //    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
 
   if( isMC ){
-    jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFCHSL1FastL2L3Corrector","","")) ;
+    if( usePUPPI ){
+      jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFPuppiL1FastL2L3Corrector","","")) ;
+    }else{
+      jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFCHSL1FastL2L3Corrector","","")) ;
+    }
   }else{
-    jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFCHSL1FastL2L3ResidualCorrector","","")) ;
+    if( usePUPPI ){
+      jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFPuppiL1FastL2L3ResidualCorrector","","")) ;
+    }else{
+      jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFCHSL1FastL2L3ResidualCorrector","","")) ;
+    }
   }
   // // new MVAelectron
   // EDMElectronsToken = consumes< edm::View<pat::Electron> >(edm::InputTag("slimmedElectrons","",""));
@@ -315,13 +323,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   token_PuppuMuIso_WithoutLep_PH = consumes< edm::ValueMap<double> >(edm::InputTag("PUPPIMuonRelIso","PuppiWithoutLeptonPH","") ) ;
 
 
-  if( usePUPPI ){
-  jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
-  }else{
-    // (Normal jet->) jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+  jetToken = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds","jetsWithSeed","" ));  // Jet with random seed.
 
-    jetToken = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds","jetsWithSeed","" ));  // Jet with random seed.
-  }
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
 

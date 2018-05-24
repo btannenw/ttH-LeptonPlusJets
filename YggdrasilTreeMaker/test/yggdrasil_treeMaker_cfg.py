@@ -112,9 +112,9 @@ if enableJECFromLocalDB :
     #  line for PUPPI for temporal.
     process.GlobalTag.toGet.append(
         cms.PSet(
-            connect = cms.string( JecDBPathPrefix +'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/' + 'Summer16_25nsV5_MC'+'.db' ),
+            connect = cms.string( JecDBPathPrefix +'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/' + JecLocalDataBaseName +'.db' ),
             record = cms.string('JetCorrectionsRecord'),
-            tag    = cms.string('JetCorrectorParametersCollection_'+'Summer16_25nsV5_MC'+'_AK4PFPuppi'),
+            tag    = cms.string('JetCorrectorParametersCollection_'+JecLocalDataBaseName+'_AK4PFPuppi'),
             label  = cms.untracked.string('AK4PFPuppi')
             )
         )
@@ -168,8 +168,9 @@ process.source = cms.Source("PoolSource",
 # ttH
 #         'file:///uscms/home/satoshi/temporal_strage/44949CF4-96C6-E611-B9A0-0025905A6122.root'
 
-# data 
- 'file:///uscms/home/satoshi/temporal_strage/00B336D6-6AEC-E611-8581-E0071B7AC7B0.root'
+# 
+#  xrdcp root://cmsxrootd.fnal.gov//store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/60000/CEAB3688-1CC7-E611-8BC3-C4346BBCB6A8.root ~/temporal_strage/DY_80x_MINIAODSIM.root 
+ 'file:///uscms/home/satoshi/temporal_strage/DY_80x_MINIAODSIM.root'
             )
 )
 
@@ -182,7 +183,11 @@ muonCollection     = cms.InputTag("slimmedMuons", "", "PAT")
 tauCollection      = cms.InputTag("slimmedTaus", "", "PAT")
 photonCollection   = cms.InputTag("slimmedPhotons", "", "PAT")
 METCollection      = cms.InputTag("slimmedMETs", "", "PAT")
-jetCollection      = cms.InputTag("slimmedJets", "", "PAT")
+
+if isPUPPI :
+    jetCollection      = cms.InputTag("slimmedJetsPuppi", "", "PAT")
+else : 
+    jetCollection      = cms.InputTag("slimmedJets", "", "PAT")
 
 
 # deterministic seed producer

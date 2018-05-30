@@ -15,6 +15,8 @@
 //
 
 
+#define EVENTSYNCMODE false
+
 // system include files
 #include <memory>
 #include <algorithm>
@@ -249,7 +251,10 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   ttHYggdrasilEventSelection selection;
   ttHYggdrasilScaleFactors   scalefactors;
 
+  bool b_EventSyncFirstEvent;
+
 };
+
 
 //
 // constants, enums and typedefs
@@ -274,6 +279,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   ,  isMC(iConfig.getParameter<std::string>("inputfiletype") != "data" )
   ,  isTTbarMC(iConfig.getParameter<std::string>("inputfiletype") == "TTbarMC" )
   , usePUPPI(iConfig.getParameter<std::string>("jetPU") == "PUPPI" )
+  , b_EventSyncFirstEvent( true )
 {
    //now do what ever initialization is needed
   verbose_ = false;
@@ -2498,7 +2504,7 @@ n_fatjets++;
   //
   worldTree->Fill();
 
-  if( false  ){
+  if( EVENTSYNCMODE ){
 
     selection . EnableInfoDumpForDebug();
 
@@ -2524,7 +2530,8 @@ n_fatjets++;
 		     eve->passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v_ 
 		     ) ? 1 : 0 ;
 
-    selection . SetElTrigger( & eve->passHLT_Ele27_WPTight_Gsf_v ) ;
+
+    selection . SetElTrigger( & eve->passHLT_Ele35_WPTight_Gsf_v_ ) ;
     selection . SetMuTrigger( & MuTrig );
     selection . SetElElTrigger( & ( eve->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_  ) );
     selection . SetElMuTrigger( & ElMuTrig );
@@ -2564,8 +2571,11 @@ n_fatjets++;
 
     std::cout.setf(std::ios::fixed);
 
-   // "cout" for event sync.
-   std::cout << "run,lumi,event,is_e,is_mu,is_ee,is_emu,is_mumu,n_jets,n_btags,lep1_pt,lep1_iso,lep1_pdgId,lep2_pt,lep2_iso,lep2_pdgId,jet1_pt,jet2_pt,jet1_CSVv2,jet2_CSVv2,jet1_JecSF,jet1_JecSF_up,jet1_JecSF_down,MET_pt,MET_phi,mll,ttHFCategory,PUWeight,bWeight,topWeight,triggerSF,lepIDSF,lepISOSF,Q2_upup,Q2_downdown,pdf_up,pdf_down" << std::endl;
+   // "cout" for event sync. //todo
+    if( b_EventSyncFirstEvent ){
+      std::cout << "run,lumi,event,is_e,is_mu,is_ee,is_emu,is_mumu,n_jets,n_btags,lep1_pt,lep1_eta,lep1_iso,lep1_pdgId,lep1_idSF,lep1_isoSF,lep2_pt,lep2_eta,lep2_iso,lep2_idSF,lep2_isoSF,lep2_pdgId,jet1_pt,jet1_eta,jet1_phi,jet1_jesSF,jet1_jesSF_up,jet1_jesSF_down,jet1_jesSF_PileUpDataMC_down,jet1_jesSF_RelativeFSR_up,jet1_jerSF_nominal,jet1_csv,jet1_PUJetId,jet1_PUJetDiscriminant,jet2_pt,jet2_eta,jet2_phi, jet2_jesSF,jet2_jesSF_up,jet2_jesSF_down,jet2_jesSF_PileUpDataMC_down,jet2_jesSF_RelativeFSR_up,jet2_jerSF_nominal,jet2_csv,jet2_PUJetId,jet2_PUJetDiscriminant,MET_pt,MET_phi,mll,ttHFCategory,ttHFGenFilterTag,n_interactions,puWeight,csvSF,csvSF_lf_up,csvSF_hf_down,csvSF_cErr1_down" << std::endl;
+      b_EventSyncFirstEvent = false ;
+    }
 
     std::cout << eve->run_ << "," ;
     std::cout <<eve->lumi_ << "," ;
@@ -2588,10 +2598,17 @@ n_fatjets++;
 	*
 	( selection.looseLeptonsCharge().at(0) > 0 ? -1 : +1 ) ;
       std::cout<< std::setprecision(4) << selection.looseLeptons().at(0)->Pt()<< "," ;
+      std::cout<< std::setprecision(4) << selection.looseLeptons().at(0)->Eta()<< "," ;
       std::cout<< std::setprecision(4) << selection.looseLeptonsRelIso().at(0)<< "," ;
       std::cout << pdgid << "," ;
+
+      float lep1_ID_SF = 0 ;  //todo. to be implemented.
+      std::cout <<  lep1_ID_SF << "," ; 
+
+      float lep1_Iso_SF = 0 ;  //todo. to be implemented.
+      std::cout <<  lep1_Iso_SF << "," ; 
     }else{
-      std::cout << "-1,-1,-1," ;
+      std::cout << "-1,-1,-1,-1,-1,-1," ; // pt/eta/iso/pdgif/idSF/isoSF.
     }
 
     if( selection.looseLeptons().size() >=2 ){
@@ -2600,26 +2617,28 @@ n_fatjets++;
 	*
 	( selection.looseLeptonsCharge().at(1) > 0 ? -1 : +1 ) ;
       std::cout<< std::setprecision(4) << selection.looseLeptons().at(1)->Pt()<< "," ;
+      std::cout<< std::setprecision(4) << selection.looseLeptons().at(1)->Eta()<< "," ;
       std::cout<< std::setprecision(4) << selection.looseLeptonsRelIso().at(1)<< "," ;
-      std::cout << pdgid << "," ;
+
+      float lep2_ID_SF = 0 ;  //todo. to be implemented.
+      std::cout <<  lep2_ID_SF << "," ; 
+
+      float lep2_Iso_SF = 0 ;  //todo. to be implemented.
+      std::cout <<  lep2_Iso_SF << "," ; 
+
+      std::cout << pdgid << "," ; // Note. For Lepton-2, PDFID comes after ID_SF and iso_SF.
+
     }else{
-      std::cout << "-1,-1,-1," ;
+      std::cout << "-1,-1,-1,-1,-1,-1," ; // pt/eta/iso/pdgif/idSF/isoSF.
     }
     
     {
       bool nJet_ge_one = selection.jets().size() >=1;
       bool nJet_ge_two = selection.jets().size() >=2;
-      std::cout<< std::setprecision(4) << ( nJet_ge_one ? selection.jets().at(0)->Pt() : -1 )<< "," ;
-      std::cout<< std::setprecision(4) << ( nJet_ge_two ? selection.jets().at(1)->Pt() : -1 )<< "," ;
-      std::cout<< std::setprecision(4) << ( nJet_ge_one ? selection.jetsBdiscriminant().at(0) : -1 )<< "," ;
-      std::cout<< std::setprecision(4) << ( nJet_ge_two ? selection.jetsBdiscriminant().at(1) : -1 )<< "," ;
-      // JetEnergyCorrection.
-      //        jet1_JecSF, jet1_JecSF_up, jet1_JecSF_down, 
-      // std::cout << ( nJet_ge_one ? selection.jets().at(0)->Pt() : -1 )<< "," ;
 
-      double JEC = -1 ; 
-      double JECup = -1 ;       
-      double JECdown = -1 ; 
+      double JEC[2]     ={ -1,  -1 };
+      double JECup[2]   ={ -1,  -1 };      
+      double JECdown[2] ={ -1,  -1 };
 
       const bool  doJES = true;
       const bool  doJER = false;
@@ -2628,91 +2647,157 @@ n_fatjets++;
       std::vector<pat::Jet> jet_JESNOMI =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::NA     , doJES, doJER );
       std::vector<pat::Jet> jet_JESUP   =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::JESup  , doJES, doJER );
       std::vector<pat::Jet> jet_JESDOWN =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::JESdown, doJES, doJER );
-      if( nJet_ge_one ){
+      for( unsigned int iJet = 0 ; iJet < 2 && iJet < selection.jets().size() ; iJet ++ ){
 
-	const double eta1 = selection.jets().at(0)->Eta();
-	const double phi1 = selection.jets().at(0)->Phi();
+	const double eta = selection.jets().at(iJet)->Eta();
+	const double phi = selection.jets().at(iJet)->Phi();
 
 	// Loop for JEC_nominal
 	for( unsigned int idxJet = 0 ; idxJet < rawJets.size(); idxJet ++ ){
 
 	  pat::Jet * iRawJet = & rawJets.at( idxJet );
-	  double d_eta =       eta1 -  iRawJet->eta();
-	  double d_phi = fabs( phi1 -  iRawJet->phi() ) ; 
+	  double d_eta =       eta -  iRawJet->eta();
+	  double d_phi = fabs( phi -  iRawJet->phi() ) ; 
 	  d_phi = ( d_phi < M_PI ) ? d_phi : 2 * M_PI - d_phi ; 
 
 	  if(  d_eta*d_eta + d_phi*d_phi < 0.01 * 0.01 ){ // matching btw Raw and Corrected (physics) jet.
-	    JEC     = jet_JESNOMI.at( idxJet ).pt() / iRawJet->pt();
-	    JECup   = jet_JESUP  .at( idxJet ).pt() / jet_JESNOMI.at( idxJet ).pt();
-	    JECdown = jet_JESDOWN.at( idxJet ).pt() / jet_JESNOMI.at( idxJet ).pt();
+	    JEC    [iJet] = jet_JESNOMI.at( idxJet ).pt() / iRawJet->pt();
+	    JECup  [iJet] = jet_JESUP  .at( idxJet ).pt() / jet_JESNOMI.at( idxJet ).pt();
+	    JECdown[iJet] = jet_JESDOWN.at( idxJet ).pt() / jet_JESNOMI.at( idxJet ).pt();
 	  }
 	}
 
       }
 
-      std::cout << JEC  << "," ;
-      std::cout << JECup << "," ;
-      std::cout << JECdown << "," ;
+
+
+
+      std::cout<< std::setprecision(4) << ( nJet_ge_one ? selection.jets().at(0)->Pt() : -1 )<< "," ;
+      std::cout<< std::setprecision(4) << ( nJet_ge_one ? selection.jets().at(0)->Eta() : -1 )<< "," ;
+      std::cout<< std::setprecision(4) << ( nJet_ge_one ? selection.jets().at(0)->Phi() : -1 )<< "," ;
+
+      std::cout << JEC[0] << ","
+		<< JECup[0] << ","
+		<< JECdown[0] << "," ;
+
+      double JES_SF_PU_DATAMC_down = -1 ; 
+      double JES_SF_PU_DATAMC_up   = -1 ; 
+      double JER_nominal   = -1 ; 
+
+      std::cout << JES_SF_PU_DATAMC_down << ","
+		<< JES_SF_PU_DATAMC_up   << "," 
+		<< JER_nominal   << "," ;
+
+
+      std::cout<< std::setprecision(4) << ( nJet_ge_one ? selection.jetsBdiscriminant().at(0) : -1 )<< "," ;
+
+      double jetID = 0;
+      double pileupJetDiscri = 0;
+
+      std::cout << jetID << ","
+		<< pileupJetDiscri  << "," ;
+
+      // - - - - Second Jet - - - 
+
+      std::cout<< std::setprecision(4) << ( nJet_ge_two ? selection.jets().at(1)->Pt() : -1 )<< "," ;
+      std::cout<< std::setprecision(4) << ( nJet_ge_two ? selection.jets().at(1)->Eta() : -1 )<< "," ;
+      std::cout<< std::setprecision(4) << ( nJet_ge_two ? selection.jets().at(1)->Phi() : -1 )<< "," ;
+
+      std::cout << JEC[1] << ","
+		<< JECup[1] << ","
+		<< JECdown[1] << "," ;
+
+      std::cout << JES_SF_PU_DATAMC_down << ","
+		<< JES_SF_PU_DATAMC_up   << "," 
+		<< JER_nominal   << "," ;
+
+      std::cout<< std::setprecision(4) << ( nJet_ge_two ? selection.jetsBdiscriminant().at(1) : -1 )<< "," ;
+
+      std::cout << jetID << ","
+		<< pileupJetDiscri  << "," ;
+
     }
+
+
     
     std::cout<< std::setprecision(4) << selection . metAbs() << "," ;
     std::cout<< std::setprecision(4) << selection . metPhi() << "," ;
 
+    double mll = -1 ; 
+    if(   selection.looseLeptons().size() >=2 ){
+      mll = 
+	( * (selection.looseLeptons().at(0)) 
+	+
+	  * (selection.looseLeptons().at(1)) ) . M();
+    }
+    std::cout<< std::setprecision(4) << mll << "," ;
+
+    double ttHFenFilterTag = -1 ; 
+    double nInteraction = -1 ; 
+
     if( isMC ){
     std::cout << eve->additionalJetEventId_ <<",";
+    std::cout << ttHFenFilterTag << ",";
+    std::cout << nInteraction << ",";
     std::cout << scalefactors.get_pu_wgt( eve -> numTruePV_ ) << "," ;    // PUWeight,
     }else{
     std::cout << 1<<",";
+    std::cout << ttHFenFilterTag << ",";
+    std::cout << nInteraction << ",";
     std::cout << 1<< "," ;    // PUWeight,
     }
 
-    double bWeight = 1 ;
+    double bWeight = -1 ;
+    double bWeight_lf_up   = -1 ;
+    double bWeight_hf_down = -1 ;
+    double bWeight_cErr1   = -1 ;
+
     if( isMC ){
       int iSYS = 0 ; 
       double dummy = - 1 ;
       bWeight = scalefactors.get_csv_wgt( & selection , iSYS,  dummy , dummy , dummy );
     }
     std::cout << bWeight <<",";
+    std::cout << bWeight_lf_up   <<",";
+    std::cout << bWeight_hf_down <<",";
+    std::cout << bWeight_cErr1   <<",";
 
 
-    //  top PT weight 
-    if( isMC ){
-    std::cout << eve -> weight_topPt_ <<",";
-    }else{
-    std::cout << 1 <<",";
-    }
 
-    double triggerSF =( ! isMC ?
-			1 :
-			scalefactors.get_TrigMuSF( & selection )
-			*
-			scalefactors.get_TrigElSF( & selection )
-			) ;
-    std::cout << triggerSF <<",";
+// 
+//     double triggerSF =( ! isMC ?
+// 			1 :
+// 			scalefactors.get_TrigMuSF( & selection )
+// 			*
+// 			scalefactors.get_TrigElSF( & selection )
+// 			) ;
+//     std::cout << triggerSF <<",";
+// 
+//     double lepIDSF =  ( ! isMC ? 1 : 
+// 			scalefactors.getTightMuon_IDSF( & selection )
+// 			* 
+// 			scalefactors.getTightElectron_IDSF( & selection )
+// 			);
+//     double lepISOSF =  ( ! isMC ? 1 : 
+// 			 scalefactors.getTightElectron_RecoSF( & selection ) 
+// 			*
+// 			 scalefactors.getTightMuon_IsoSF( & selection ) 
+// 			) ; 
+//     std::cout << lepIDSF <<","<< lepISOSF <<",";
 
-    double lepIDSF =  ( ! isMC ? 1 : 
-			scalefactors.getTightMuon_IDSF( & selection )
-			* 
-			scalefactors.getTightElectron_IDSF( & selection )
-			);
-    double lepISOSF =  ( ! isMC ? 1 : 
-			 scalefactors.getTightElectron_RecoSF( & selection ) 
-			*
-			 scalefactors.getTightMuon_IsoSF( & selection ) 
-			) ; 
-    std::cout << lepIDSF <<","<< lepISOSF <<",";
 
-    if( isMC ){
-    std::cout << eve->weight_q2_upup_ <<",";
-    std::cout << eve->weight_q2_downdown_ <<",";
-    std::cout << eve-> weight_PDF_NNPDF30NLO_up_ <<",";
-    std::cout << eve-> weight_PDF_NNPDF30NLO_down_ ;
-    }else{
-    std::cout << 1 <<",";
-    std::cout << 1 <<",";
-    std::cout << 1 <<",";
-    std::cout << 1  ;
-    }
+
+//    if( isMC ){
+//    std::cout << eve->weight_q2_upup_ <<",";
+//    std::cout << eve->weight_q2_downdown_ <<",";
+//    std::cout << eve-> weight_PDF_NNPDF30NLO_up_ <<",";
+//    std::cout << eve-> weight_PDF_NNPDF30NLO_down_ ;
+//    }else{
+//    std::cout << 1 <<",";
+//    std::cout << 1 <<",";
+//    std::cout << 1 <<",";
+//    std::cout << 1  ;
+//    }
     
     std::cout << std::endl ;
   }

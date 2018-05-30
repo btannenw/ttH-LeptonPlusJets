@@ -2511,31 +2511,31 @@ n_fatjets++;
     // -----------------------
     // start setting variables --> 
 
-    int MuTrig = ( eve->passHLT_IsoMu24_v_ == 1 || eve->passHLT_IsoTkMu24_v_ == 1 ) ? 1 : 0 ; 
-    // Dilep Trig
-    int ElMuTrig = ( eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_ ==1 
-		     ||
-		     eve->passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v_ == 1 
-		     ||
-		     eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_ ==1 
-		     ||
-		     eve->passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ == 1 
-		     ) ? 1 : 0 ; 
-    int MuMuTrig = ( eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_
-		     ||
-		     eve->passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_ 
-		     ||
-		     eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v_
-		     ||
-		     eve->passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v_ 
-		     ) ? 1 : 0 ;
+
+    selection . SetEl_ORTrigger( 2 ,
+				 & eve->passHLT_Ele35_WPTight_Gsf_v_ ,
+				 & eve->passHLT_Ele28_eta2p1_WPTight_Gsf_HT150_v_) ;
+
+    selection . SetMu_ORTrigger( 2 , 
+			      & eve->passHLT_IsoMu24_2p1_v_ ,
+			      & eve->passHLT_IsoMu27_v_ 
+			      );
 
 
-    selection . SetElTrigger( & eve->passHLT_Ele35_WPTight_Gsf_v_ ) ;
-    selection . SetMuTrigger( & MuTrig );
-    selection . SetElElTrigger( & ( eve->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_  ) );
-    selection . SetElMuTrigger( & ElMuTrig );
-    selection . SetMuMuTrigger( & MuMuTrig );
+    selection . SetElEl_ORTrigger( 2 , 
+				   &  eve->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v_ ,
+				   &  eve->passHLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_  );
+
+    selection . SetElMu_ORTrigger( 4 , 
+				   & eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v_,
+				   & eve->passHLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v_,
+				   & eve->passHLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_,
+				   & eve->passHLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v_ );
+
+    selection . SetMuMu_ORTrigger( 3 , 
+				   & eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_,
+				   & eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v_,
+				   & eve->passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v_ ) ; 
 
     selection . SetGoodVtx( & ( eve->GoodFirstPV_ ) );
 

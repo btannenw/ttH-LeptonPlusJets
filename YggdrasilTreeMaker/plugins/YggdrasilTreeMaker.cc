@@ -2639,14 +2639,23 @@ n_fatjets++;
       double JEC[2]     ={ -1,  -1 };
       double JECup[2]   ={ -1,  -1 };      
       double JECdown[2] ={ -1,  -1 };
+      double JEC_PileupData_down[2] ={ -1,  -1 };
+      double JEC_RelativeSFR_up[2]   ={ -1,  -1 };      
+      double JER[2]     ={ -1,  -1 };
 
       const bool  doJES = true;
-      const bool  doJER = false;
+      const bool  dontJER = false;
 
       std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( *pfjets );
-      std::vector<pat::Jet> jet_JESNOMI =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::NA     , doJES, doJER );
-      std::vector<pat::Jet> jet_JESUP   =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::JESup  , doJES, doJER );
-      std::vector<pat::Jet> jet_JESDOWN =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::JESdown, doJES, doJER );
+      std::vector<pat::Jet> jet_JESNOMI =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::NA     , doJES, dontJER );
+      std::vector<pat::Jet> jet_JESUP   =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::JESup  , doJES, dontJER );
+      std::vector<pat::Jet> jet_JESDOWN =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::JESdown, doJES, dontJER );
+
+      std::vector<pat::Jet> jet_JES_PileupData_DOWN =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , sysType::JESPileUpDataMCdown, doJES, dontJER );
+      std::vector<pat::Jet> jet_JES_RelativeSFR_UP  =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::JESRelativeFSRup    , doJES, dontJER );
+
+      std::vector<pat::Jet> jet_JER  =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection ,sysType::NA   , false, true ); // <- Only JER
+
       for( unsigned int iJet = 0 ; iJet < 2 && iJet < selection.jets().size() ; iJet ++ ){
 
 	const double eta = selection.jets().at(iJet)->Eta();
@@ -2662,8 +2671,11 @@ n_fatjets++;
 
 	  if(  d_eta*d_eta + d_phi*d_phi < 0.01 * 0.01 ){ // matching btw Raw and Corrected (physics) jet.
 	    JEC    [iJet] = jet_JESNOMI.at( idxJet ).pt() / iRawJet->pt();
-	    JECup  [iJet] = jet_JESUP  .at( idxJet ).pt() / jet_JESNOMI.at( idxJet ).pt();
-	    JECdown[iJet] = jet_JESDOWN.at( idxJet ).pt() / jet_JESNOMI.at( idxJet ).pt();
+	    JECup  [iJet] = jet_JESUP  .at( idxJet ).pt() / iRawJet->pt();
+	    JECdown[iJet] = jet_JESDOWN.at( idxJet ).pt() / iRawJet->pt();
+	    JEC_PileupData_down[iJet] = jet_JES_PileupData_DOWN.at(idxJet).pt() / iRawJet->pt() ; // with respect to raw ? 
+	    JEC_RelativeSFR_up [iJet] = jet_JES_RelativeSFR_UP .at(idxJet).pt() / iRawJet->pt() ; // with respect to raw ? 
+	    JER                [iJet] = jet_JER                .at(idxJet).pt() / iRawJet->pt() ; // with respect to raw ? 
 	  }
 	}
 
@@ -2678,16 +2690,10 @@ n_fatjets++;
 
       std::cout << JEC[0] << ","
 		<< JECup[0] << ","
-		<< JECdown[0] << "," ;
-
-      double JES_SF_PU_DATAMC_down = -1 ; 
-      double JES_SF_PU_DATAMC_up   = -1 ; 
-      double JER_nominal   = -1 ; 
-
-      std::cout << JES_SF_PU_DATAMC_down << ","
-		<< JES_SF_PU_DATAMC_up   << "," 
-		<< JER_nominal   << "," ;
-
+		<< JECdown[0] << "," 
+		<< JEC_PileupData_down[0] << "," 
+		<< JEC_RelativeSFR_up[0] << "," 
+		<< JER[0] << "," ;
 
       std::cout<< std::setprecision(4) << ( nJet_ge_one ? selection.jetsBdiscriminant().at(0) : -1 )<< "," ;
 
@@ -2705,11 +2711,10 @@ n_fatjets++;
 
       std::cout << JEC[1] << ","
 		<< JECup[1] << ","
-		<< JECdown[1] << "," ;
-
-      std::cout << JES_SF_PU_DATAMC_down << ","
-		<< JES_SF_PU_DATAMC_up   << "," 
-		<< JER_nominal   << "," ;
+		<< JECdown[1] << "," 
+		<< JEC_PileupData_down[1] << "," 
+		<< JEC_RelativeSFR_up[1] << "," 
+		<< JER[1] << "," ;
 
       std::cout<< std::setprecision(4) << ( nJet_ge_two ? selection.jetsBdiscriminant().at(1) : -1 )<< "," ;
 

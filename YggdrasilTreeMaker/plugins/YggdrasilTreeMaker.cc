@@ -2642,6 +2642,7 @@ n_fatjets++;
       double JEC_PileupData_down[2] ={ -1,  -1 };
       double JEC_RelativeSFR_up[2]   ={ -1,  -1 };      
       double JER[2]     ={ -1,  -1 };
+      int    PileupID[2] ={ -1,  -1 };
 
       const bool  doJES = true;
       const bool  dontJER = false;
@@ -2676,6 +2677,9 @@ n_fatjets++;
 	    JEC_PileupData_down[iJet] = jet_JES_PileupData_DOWN.at(idxJet).pt() / iRawJet->pt() ; // with respect to raw ? 
 	    JEC_RelativeSFR_up [iJet] = jet_JES_RelativeSFR_UP .at(idxJet).pt() / iRawJet->pt() ; // with respect to raw ? 
 	    JER                [iJet] = jet_JER                .at(idxJet).pt() / iRawJet->pt() ; // with respect to raw ? 
+
+	    PileupID[iJet] = iRawJet  -> userInt("pileupJetId:fullId");
+
 	  }
 	}
 
@@ -2697,11 +2701,8 @@ n_fatjets++;
 
       std::cout<< std::setprecision(4) << ( nJet_ge_one ? selection.jetsBdiscriminant().at(0) : -1 )<< "," ;
 
-      double jetID = 0;
-      double pileupJetDiscri = 0;
-
-      std::cout << jetID << ","
-		<< pileupJetDiscri  << "," ;
+      std::cout << PileupID[0] << ","
+		<< PileupID[0] << "," ;
 
       // - - - - Second Jet - - - 
 
@@ -2718,8 +2719,8 @@ n_fatjets++;
 
       std::cout<< std::setprecision(4) << ( nJet_ge_two ? selection.jetsBdiscriminant().at(1) : -1 )<< "," ;
 
-      std::cout << jetID << ","
-		<< pileupJetDiscri  << "," ;
+      std::cout << PileupID[1] << ","
+		<< PileupID[1] << "," ;
 
     }
 
@@ -2745,10 +2746,10 @@ n_fatjets++;
     std::cout << eve->numTruePV_ << ",";
     std::cout << scalefactors.get_pu_wgt( eve -> numTruePV_ ) << "," ;    // PUWeight,
     }else{
-    std::cout << 1<<",";
-    std::cout << ttHFenFilterTag << ",";
+    std::cout << -1<<",";
+    std::cout << -1<<",";
     std::cout << -1 << ",";
-    std::cout << 1<< "," ;    // PUWeight,
+    std::cout << -1<< "," ;    // PUWeight,
     }
 
     double bWeight = -1 ;
@@ -2760,7 +2761,12 @@ n_fatjets++;
       int iSYS = 0 ; 
       double dummy = - 1 ;
       bWeight = scalefactors.get_csv_wgt( & selection , iSYS,  dummy , dummy , dummy );
+
+      bWeight_lf_up   = scalefactors.get_csv_wgt( & selection ,  9 ,  dummy , dummy , dummy ); //   case 9 : iSysType = sysType::CSVLFup;      
+      bWeight_hf_down = scalefactors.get_csv_wgt( & selection , 12 ,  dummy , dummy , dummy ); //   case 12: iSysType = sysType::CSVHFdown;  
+
     }
+
     std::cout << bWeight <<",";
     std::cout << bWeight_lf_up   <<",";
     std::cout << bWeight_hf_down <<",";

@@ -2561,7 +2561,7 @@ n_fatjets++;
     selection . SetJetsPTBeforRecorrection( & eve->jet_precorr_pt_  [0] , 
 					    & eve->jet_precorr_phi_ [0] ); 
 
-    selection . SetMet( & ( eve->MET_[ 0 ] ) , &( eve->MET_phi_[ 0 ] ) );
+    selection . SetMet( & ( eve->MET_Type1xy_[ 0 ] ) , &( eve->MET_Type1xy_phi_[ 0 ] ) );
 
     // ---> end setting variables.
     // -----------------------

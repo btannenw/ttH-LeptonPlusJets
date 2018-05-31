@@ -2733,17 +2733,16 @@ n_fatjets++;
     std::cout<< std::setprecision(4) << mll << "," ;
 
     double ttHFenFilterTag = -1 ; 
-    double nInteraction = -1 ; 
 
     if( isMC ){
     std::cout << eve->additionalJetEventId_ <<",";
     std::cout << ttHFenFilterTag << ",";
-    std::cout << nInteraction << ",";
+    std::cout << eve->numTruePV_ << ",";
     std::cout << scalefactors.get_pu_wgt( eve -> numTruePV_ ) << "," ;    // PUWeight,
     }else{
     std::cout << 1<<",";
     std::cout << ttHFenFilterTag << ",";
-    std::cout << nInteraction << ",";
+    std::cout << -1 << ",";
     std::cout << 1<< "," ;    // PUWeight,
     }
 

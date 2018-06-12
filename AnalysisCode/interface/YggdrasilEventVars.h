@@ -168,6 +168,9 @@ struct yggdrasilEventVars{
 
   double weight_topPt_ ; 
 
+  vint    mcWeight_key ; 
+  vdouble mcWeight_value ;
+
   Float_t MET_[rNumSys];
   Float_t uMET_[rNumSys];
   Float_t MET_phi_[rNumSys];
@@ -360,6 +363,9 @@ void yggdrasilEventVars::initialize(){
   
   truth_pdgid_.clear();
   truth_parentIdx_.clear();
+
+  mcWeight_key.clear();
+  mcWeight_value.clear();
 
   lepton_isMuon_.clear();
   lepton_charge_.clear();

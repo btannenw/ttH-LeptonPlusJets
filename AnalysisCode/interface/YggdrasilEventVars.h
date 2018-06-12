@@ -141,6 +141,7 @@ struct yggdrasilEventVars{
   vdouble lepton_puppiIsoWithoutLep_PH_ ;
   vdouble lepton_scEta_;
   vdouble lepton_dRSingleLepTrig_;
+  vdouble lepton_dRDiLepTrig_;
 
   vfloat truth_pt_;
   vfloat truth_eta_;
@@ -166,6 +167,9 @@ struct yggdrasilEventVars{
   double weight_PDF_NNPDF30NLO_down_ ;
 
   double weight_topPt_ ; 
+
+  vint    mcWeight_key ; 
+  vdouble mcWeight_value ;
 
   Float_t MET_[rNumSys];
   Float_t uMET_[rNumSys];
@@ -360,6 +364,9 @@ void yggdrasilEventVars::initialize(){
   truth_pdgid_.clear();
   truth_parentIdx_.clear();
 
+  mcWeight_key.clear();
+  mcWeight_value.clear();
+
   lepton_isMuon_.clear();
   lepton_charge_.clear();
   lepton_isTight_.clear();
@@ -385,6 +392,7 @@ void yggdrasilEventVars::initialize(){
   lepton_puppiIsoWithoutLep_PH_.clear() ;
   lepton_scEta_.clear();
   lepton_dRSingleLepTrig_.clear();
+  lepton_dRDiLepTrig_.clear();
 
   wgt_generator_        = -99.9;
   wgt_lumi_             = -99.9;

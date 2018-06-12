@@ -54,6 +54,8 @@ class ttHYggdrasilEventSelection{
 
   void EnableInfoDumpForDebug();
 
+  void SetMuonIsoWorkingPoints( double tight, double loose );
+
   void doEventSelection();
 
   // ttH Tight lepton for SingleLepton

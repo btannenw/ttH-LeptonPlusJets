@@ -724,6 +724,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   vdouble genjet_phi;
   vdouble genjet_m;
   vint   genjet_BhadronMatch;
+
+  vdouble fatgenjet_pt;
+  vdouble fatgenjet_eta;
+  vdouble fatgenjet_phi;
+  vdouble fatgenjet_m;
+
   if( isMC  ){
 
     //    genjets
@@ -754,6 +760,27 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	   
 
     // memo : https://github.com/hsatoshi/MiniAODPrivateTuple/blob/master/TupleMaker/plugins/TupleMaker.cc#L3303
+    
+    
+    
+    {// ---------- AK 8 gen jets
+      
+      const std::vector<reco::GenJet> * genjets  = fatgenjetCollection.product();
+      
+      for( unsigned int iGen = 0 ; iGen < genjets->size() ; iGen ++){
+	reco::GenJet jet = genjets->at( iGen );
+	
+	if( jet . pt() < 150.0 ) continue ;
+	if( fabs( jet . eta() ) > 5 ) continue ;
+	
+	fatgenjet_pt  . push_back( jet . pt() );
+	fatgenjet_phi . push_back( jet . phi() );
+	fatgenjet_eta . push_back( jet . eta() );
+	fatgenjet_m   . push_back( jet . mass () );
+	
+      }
+    }
+
 
   }
 
@@ -1964,6 +1991,18 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   
 
+  eve ->  genjet_pt_  = genjet_pt ;
+  eve ->  genjet_eta_ = genjet_eta ; 
+  eve ->  genjet_phi_ = genjet_phi ;  
+  eve ->  genjet_m_   = genjet_m ; 
+  eve ->  genjet_BhadronMatch_ = genjet_BhadronMatch ; 
+  
+  eve ->  fatgenjet_pt_  = fatgenjet_pt ;
+  eve ->  fatgenjet_eta_ = fatgenjet_eta ; 
+  eve ->  fatgenjet_phi_ = fatgenjet_phi ;  
+  eve ->  fatgenjet_m_   = fatgenjet_m ; 
+
+
   // Loop over systematics
   for( int iSys=0; iSys<rNumSys; iSys++ ){
 
@@ -2507,12 +2546,6 @@ n_fatjets++;
     eve->jet_AssociatedGenJet_eta_[iSys]= jet_AssociatedGenJet_eta;
     eve->jet_AssociatedGenJet_phi_[iSys]= jet_AssociatedGenJet_phi;
     eve->jet_AssociatedGenJet_m_[iSys]  = jet_AssociatedGenJet_m;
-
-    eve ->  genjet_pt_ [iSys] = genjet_pt ;
-    eve ->  genjet_eta_[iSys] = genjet_eta ; 
-    eve ->  genjet_phi_[iSys] = genjet_phi ;  
-    eve ->  genjet_m_  [iSys] = genjet_m ; 
-    eve ->  genjet_BhadronMatch_[iSys] = genjet_BhadronMatch ; 
 
 
     // PUPPI jet

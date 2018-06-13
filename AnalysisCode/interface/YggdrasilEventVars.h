@@ -221,11 +221,16 @@ struct yggdrasilEventVars{
   vint jet_genParentId_[rNumSys];
   vint jet_genGrandParentId_[rNumSys];
 
-  vdouble genjet_pt_[rNumSys];
-  vdouble genjet_eta_[rNumSys];
-  vdouble genjet_phi_[rNumSys];
-  vdouble genjet_m_[rNumSys];
-  vint    genjet_BhadronMatch_[rNumSys];
+  vdouble genjet_pt_;
+  vdouble genjet_eta_;
+  vdouble genjet_phi_;
+  vdouble genjet_m_;
+  vint    genjet_BhadronMatch_;
+
+  vdouble fatgenjet_pt_ ;
+  vdouble fatgenjet_eta_;
+  vdouble fatgenjet_phi_;
+  vdouble fatgenjet_m_  ;
 
 
   vdouble puppijet_pt_  [rNumSys]                ;
@@ -451,11 +456,6 @@ void yggdrasilEventVars::initialize(){
     jet_AssociatedGenJet_phi_[iSys].clear();
     jet_AssociatedGenJet_m_[iSys].clear();
     
-    genjet_pt_ [iSys].clear();
-    genjet_phi_[iSys].clear();
-    genjet_eta_[iSys].clear();
-    genjet_m_  [iSys].clear();
-    genjet_BhadronMatch_[iSys].clear();
 
     jet_partonflavour_[iSys].clear();
     jet_flavour_[iSys].clear();
@@ -507,6 +507,18 @@ void yggdrasilEventVars::initialize(){
     fatjet_subjet_csvv2  [iSys] .clear() ;
 
   }
+
+  genjet_pt_ . clear();
+  genjet_phi_. clear();
+  genjet_eta_. clear();
+  genjet_m_  . clear();
+  genjet_BhadronMatch_ . clear();
+  
+  fatgenjet_pt_ .clear();
+  fatgenjet_phi_.clear();
+  fatgenjet_eta_.clear();
+  fatgenjet_m_  .clear();
+
 
   //boosted jets
   topfatJet_vect_TLV_.clear();

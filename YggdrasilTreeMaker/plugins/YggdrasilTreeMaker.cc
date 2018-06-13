@@ -812,47 +812,51 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 //(debug)    std::cout <<"Satoshi debug : original wgt = " << LHEEventProductHandle -> originalXWGTUP()  << std::endl ; 
 //(debug)    std::cout <<"Satoshi debug : wgt  [zero]  = " << LHEEventProductHandle -> weights()[0].wgt  << std::endl ; 
 
+    std::vector<int> mcWeight_key ; 
+
+
     if( LHEEventProductHandle -> weights().size() > 10 ){
 
     // Memo : The size of "weights()" was 1080 as of 94x, Fall17 MiniAID.
     // Memo : It means that the index of the array is ID-1000.
-    eve -> mcWeight_key . push_back ( 0 ); 
-    eve -> mcWeight_key . push_back ( 1 );
-    eve -> mcWeight_key . push_back ( 2 );
-    eve -> mcWeight_key . push_back ( 3 );
-    eve -> mcWeight_key . push_back ( 4 );
-    eve -> mcWeight_key . push_back ( 5 );
-    eve -> mcWeight_key . push_back ( 6 );
-    eve -> mcWeight_key . push_back ( 7 );
-    eve -> mcWeight_key . push_back ( 8 );
-    eve -> mcWeight_key . push_back ( 9 );
-    for( std::vector<int>::iterator index = eve -> mcWeight_key . begin(); 
-	 index != eve -> mcWeight_key . end(); 
+
+     mcWeight_key . push_back ( 0 ); 
+     mcWeight_key . push_back ( 1 );
+     mcWeight_key . push_back ( 2 );
+     mcWeight_key . push_back ( 3 );
+     mcWeight_key . push_back ( 4 );
+     mcWeight_key . push_back ( 5 );
+     mcWeight_key . push_back ( 6 );
+     mcWeight_key . push_back ( 7 );
+     mcWeight_key . push_back ( 8 );
+     mcWeight_key . push_back ( 9 );
+    for( std::vector<int>::iterator index =  mcWeight_key . begin(); 
+	 index !=  mcWeight_key . end(); 
 	 index ++ ){
       eve -> mcWeight_value. push_back(  LHEEventProductHandle -> weights()[ *index ].wgt  );
     }
 
-    eve -> mcWeight_key . push_back ( 2000 ); // my ID. use to store Original XWGTUP();
+     mcWeight_key . push_back ( 2000 ); // my ID. use to store Original XWGTUP();
     eve -> mcWeight_value. push_back( LHEEventProductHandle -> originalXWGTUP() );
 
     }
 
     if( GenEventInfoHandle -> weights().size() >=  14 ){
 
-    eve -> mcWeight_key . push_back ( 3000 ); 
-    eve -> mcWeight_key . push_back ( 3001 ); 
-    eve -> mcWeight_key . push_back ( 3002 ); 
-    eve -> mcWeight_key . push_back ( 3003 ); 
-    eve -> mcWeight_key . push_back ( 3004 ); 
-    eve -> mcWeight_key . push_back ( 3005 ); 
-    eve -> mcWeight_key . push_back ( 3006 ); 
-    eve -> mcWeight_key . push_back ( 3007 );
-    eve -> mcWeight_key . push_back ( 3008 ); 
-    eve -> mcWeight_key . push_back ( 3009 ); 
-    eve -> mcWeight_key . push_back ( 3010 ); 
-    eve -> mcWeight_key . push_back ( 3011 ); 
-    eve -> mcWeight_key . push_back ( 3012 ); 
-    eve -> mcWeight_key . push_back ( 3013 ); 
+     mcWeight_key . push_back ( 3000 ); 
+     mcWeight_key . push_back ( 3001 ); 
+     mcWeight_key . push_back ( 3002 ); 
+     mcWeight_key . push_back ( 3003 ); 
+     mcWeight_key . push_back ( 3004 ); 
+     mcWeight_key . push_back ( 3005 ); 
+     mcWeight_key . push_back ( 3006 ); 
+     mcWeight_key . push_back ( 3007 );
+     mcWeight_key . push_back ( 3008 ); 
+     mcWeight_key . push_back ( 3009 ); 
+     mcWeight_key . push_back ( 3010 ); 
+     mcWeight_key . push_back ( 3011 ); 
+     mcWeight_key . push_back ( 3012 ); 
+     mcWeight_key . push_back ( 3013 ); 
 
     eve -> mcWeight_value. push_back(  GenEventInfoHandle -> weights()[0]  );
     eve -> mcWeight_value. push_back(  GenEventInfoHandle -> weights()[1]  );

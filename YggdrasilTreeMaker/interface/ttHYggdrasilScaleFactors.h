@@ -29,6 +29,39 @@ class ttHYggdrasilScaleFactors{
   ttHYggdrasilScaleFactors( char * sf_file_directory );
   ~ttHYggdrasilScaleFactors();
 
+
+
+  // This is indexes of ME/PS weights being filled into Yggdrasi output.
+  enum MCWeightKey{
+   DEFAULT = -1, 
+   ME_muR_NOM_muF_NOM	      =  0 ,
+   ME_muR_DOUBLE_muF_NOM    ,
+   ME_muR_HALF_muF_NOM	    ,
+   ME_muR_NOM_muF_DOUBLE    ,
+   ME_muR_DOUBLE_muF_DOUBLE ,
+   ME_muR_HALF_muF_DOUBLE   ,
+   ME_muR_NOM_muF_HALF	    ,
+   ME_muR_DOUBLE_muF_HALF   ,
+   ME_muR_HALF_muF_HALF     ,
+   ME_NOT_USED              ,
+   ME_LHC_ORIGINAL_XWGTUP   ,
+   PS_CENTRAL          	    ,
+   PS_CENTRAL_REPLICA  	    ,
+   PS_REDUCED_ISRUP  	    ,
+   PS_REDUCED_FSRUP  	    ,
+   PS_REDUCED_ISRDOWN	    ,
+   PS_REDUCED_FSRDOWN	    ,
+   PS_DEFAULT_ISRUP  	    ,
+   PS_DEFAULT_FSRUP  	    ,
+   PS_DEFAULT_ISRDOWN	    ,
+   PS_DEFAULT_FSRDOWN	    ,
+   PS_CONSERVATIVE_ISRUP    ,
+   PS_CONSERVATIVE_FSRUP    ,
+   PS_CONSERVATIVE_ISRDOWN  ,
+   PS_CONSERVATIVE_FSRDOWN  
+  };
+
+
   
   double get_csv_wgt( ttHYggdrasilEventSelection * event,
 		      int iSys, double &csvWgtHF, double &csvWgtLF, double &csvWgtCF );

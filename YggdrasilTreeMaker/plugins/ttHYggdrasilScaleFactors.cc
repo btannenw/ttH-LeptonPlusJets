@@ -51,7 +51,28 @@ void ttHYggdrasilScaleFactors::init_all(){
   init_MuonSF();
   init_TrigMuSF();
   init_TrigElSF();
+  init_SDMassSF();
 }
+
+
+void ttHYggdrasilScaleFactors::init_SDMassSF(){
+
+  {
+    // The SF RIIT fuke is taken from https://github.com/cms-jet/PuppiSoftdropMassCorr, commit  a9c509b 
+    std::string input = SFfileDir +"/" + "SDMassSF/puppiCorr.root"; 
+
+    TDirectory * main_directory = gDirectory;
+    TFile * f = TFile::Open( input.c_str() );
+    main_directory->cd();
+
+    Func_SDMassCorr_Gen         = (TF1*) f ->Get("puppiJECcorr_gen");
+    Func_SDMassCorr_Gen_Central = (TF1*) f ->Get("puppiJECcorr_reco_0eta1v3");
+    Func_SDMassCorr_Gen_Forward = (TF1*) f ->Get("puppiJECcorr_reco_1v3eta2v5");
+
+  }
+
+}
+
 
 void ttHYggdrasilScaleFactors::init_TrigElSF(){
 
@@ -61,6 +82,7 @@ void ttHYggdrasilScaleFactors::init_TrigElSF(){
   }
 
 }
+
 void ttHYggdrasilScaleFactors::init_TrigMuSF(){
 
   std::string input = SFfileDir +"/" + "trig/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root";
@@ -983,5 +1005,18 @@ double ttHYggdrasilScaleFactors::get_ElectronZVertexSF(){
   // for whole period, 
   return 0.991; 
   // error : 0.001
+
+}
+
+
+double ttHYggdrasilScaleFactors::GetSDmassScaleFactor( double pt, double eta ){
+
+  const double  genCorr =  Func_SDMassCorr_Gen -> Eval( pt  );
+
+  const double recoCorr =  ( fabs( eta )  <= 1.3 ) ? 
+    Func_SDMassCorr_Gen_Central -> Eval( pt ) : 
+    Func_SDMassCorr_Gen_Forward -> Eval( pt ) ;
+
+  return genCorr * recoCorr ;
 
 }

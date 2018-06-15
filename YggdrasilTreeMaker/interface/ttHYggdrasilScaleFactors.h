@@ -9,6 +9,8 @@
 #include <TH2D.h>
 #include <TH2F.h>
 
+#include <TF1.h>
+
 #include <TGraphAsymmErrors.h>
 
 #define NBINS_PU_REWEIGHTING 99
@@ -108,6 +110,8 @@ class ttHYggdrasilScaleFactors{
   };
   void setAnalysisPeriod( analysis_period p ); // If you use this, use before init_all();
   
+  double GetSDmassScaleFactor( double pt, double eta );
+
  private :
 
   bool initialized ;
@@ -123,6 +127,7 @@ class ttHYggdrasilScaleFactors{
   void init_MuonSF();
   void init_TrigMuSF();
   void init_TrigElSF();
+  void init_SDMassSF();
   TH2 * getTH2HistogramFromFile( std::string input , std::string histoname );
   double GetBinValueFromXYValues( TH2 * h , double xVal , double yVal , int syst = 0
 				  , bool useOveflowBinForX = false , bool useOveflowBinForY = false ) ;
@@ -196,6 +201,10 @@ class ttHYggdrasilScaleFactors{
   _MC_PU_DIST_CH_NAME   MC_PU_DISTRIBUTION_CHANNEL;
 
   std::string get_MCPUDistributionFileName( _MC_PU_DIST_CH_NAME ch );
+
+  TF1*  Func_SDMassCorr_Gen         ;
+  TF1*  Func_SDMassCorr_Gen_Central ;
+  TF1*  Func_SDMassCorr_Gen_Forward ;
 
 };
 

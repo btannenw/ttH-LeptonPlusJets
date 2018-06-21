@@ -268,12 +268,6 @@ ismc[111]=MC
 
 
 
-# /TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
-# /TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
-
-# /TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v2/MINIAODSIM
-# /TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
-
 
 ismc[112]=MC
 ismc[113]=MC
@@ -283,8 +277,8 @@ ismc[116]=MC
 ismc[117]=MC
 ismc[118]=MC
 ismc[119]=MC
-# ismc[120]=MC
-# ismc[121]=MC
+ismc[120]=MC
+ismc[121]=MC
 # ismc[122]=MC
 # ismc[123]=MC
 # 
@@ -307,7 +301,14 @@ name[117]=ttto2l2nuUEdown
 name[118]=ttto2l2nuHdumpUp  
 name[119]=ttto2l2nuHdumpDown
 
-JobIndexList=${JobIndexList}" 109 110 111   112 113 114 115 116 117 118 119 "
+
+name[120]=tttosemilepPSweight
+name[121]=ttto2l2nuPSweight
+ds[120]=/TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+ds[121]=/TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM
+
+
+JobIndexList=${JobIndexList}" 109 110 111   112 113 114 115 116 117 118 119  120 121 "
 
 
 # ismc[112]=MC

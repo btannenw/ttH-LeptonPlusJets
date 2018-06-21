@@ -724,6 +724,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   vdouble genjet_phi;
   vdouble genjet_m;
   vint   genjet_BhadronMatch;
+
+  vdouble fatgenjet_pt;
+  vdouble fatgenjet_eta;
+  vdouble fatgenjet_phi;
+  vdouble fatgenjet_m;
+
   if( isMC  ){
 
     //    genjets
@@ -754,6 +760,27 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	   
 
     // memo : https://github.com/hsatoshi/MiniAODPrivateTuple/blob/master/TupleMaker/plugins/TupleMaker.cc#L3303
+    
+    
+    
+    {// ---------- AK 8 gen jets
+      
+      const std::vector<reco::GenJet> * genjets  = fatgenjetCollection.product();
+      
+      for( unsigned int iGen = 0 ; iGen < genjets->size() ; iGen ++){
+	reco::GenJet jet = genjets->at( iGen );
+	
+	if( jet . pt() < 150.0 ) continue ;
+	if( fabs( jet . eta() ) > 5 ) continue ;
+	
+	fatgenjet_pt  . push_back( jet . pt() );
+	fatgenjet_phi . push_back( jet . phi() );
+	fatgenjet_eta . push_back( jet . eta() );
+	fatgenjet_m   . push_back( jet . mass () );
+	
+      }
+    }
+
 
   }
 
@@ -785,47 +812,51 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 //(debug)    std::cout <<"Satoshi debug : original wgt = " << LHEEventProductHandle -> originalXWGTUP()  << std::endl ; 
 //(debug)    std::cout <<"Satoshi debug : wgt  [zero]  = " << LHEEventProductHandle -> weights()[0].wgt  << std::endl ; 
 
+    std::vector<int> mcWeight_key ; 
+
+
     if( LHEEventProductHandle -> weights().size() > 10 ){
 
     // Memo : The size of "weights()" was 1080 as of 94x, Fall17 MiniAID.
     // Memo : It means that the index of the array is ID-1000.
-    eve -> mcWeight_key . push_back ( 0 ); 
-    eve -> mcWeight_key . push_back ( 1 );
-    eve -> mcWeight_key . push_back ( 2 );
-    eve -> mcWeight_key . push_back ( 3 );
-    eve -> mcWeight_key . push_back ( 4 );
-    eve -> mcWeight_key . push_back ( 5 );
-    eve -> mcWeight_key . push_back ( 6 );
-    eve -> mcWeight_key . push_back ( 7 );
-    eve -> mcWeight_key . push_back ( 8 );
-    eve -> mcWeight_key . push_back ( 9 );
-    for( std::vector<int>::iterator index = eve -> mcWeight_key . begin(); 
-	 index != eve -> mcWeight_key . end(); 
+
+     mcWeight_key . push_back ( 0 ); 
+     mcWeight_key . push_back ( 1 );
+     mcWeight_key . push_back ( 2 );
+     mcWeight_key . push_back ( 3 );
+     mcWeight_key . push_back ( 4 );
+     mcWeight_key . push_back ( 5 );
+     mcWeight_key . push_back ( 6 );
+     mcWeight_key . push_back ( 7 );
+     mcWeight_key . push_back ( 8 );
+     mcWeight_key . push_back ( 9 );
+    for( std::vector<int>::iterator index =  mcWeight_key . begin(); 
+	 index !=  mcWeight_key . end(); 
 	 index ++ ){
       eve -> mcWeight_value. push_back(  LHEEventProductHandle -> weights()[ *index ].wgt  );
     }
 
-    eve -> mcWeight_key . push_back ( 2000 ); // my ID. use to store Original XWGTUP();
+     mcWeight_key . push_back ( 2000 ); // my ID. use to store Original XWGTUP();
     eve -> mcWeight_value. push_back( LHEEventProductHandle -> originalXWGTUP() );
 
     }
 
     if( GenEventInfoHandle -> weights().size() >=  14 ){
 
-    eve -> mcWeight_key . push_back ( 3000 ); 
-    eve -> mcWeight_key . push_back ( 3001 ); 
-    eve -> mcWeight_key . push_back ( 3002 ); 
-    eve -> mcWeight_key . push_back ( 3003 ); 
-    eve -> mcWeight_key . push_back ( 3004 ); 
-    eve -> mcWeight_key . push_back ( 3005 ); 
-    eve -> mcWeight_key . push_back ( 3006 ); 
-    eve -> mcWeight_key . push_back ( 3007 );
-    eve -> mcWeight_key . push_back ( 3008 ); 
-    eve -> mcWeight_key . push_back ( 3009 ); 
-    eve -> mcWeight_key . push_back ( 3010 ); 
-    eve -> mcWeight_key . push_back ( 3011 ); 
-    eve -> mcWeight_key . push_back ( 3012 ); 
-    eve -> mcWeight_key . push_back ( 3013 ); 
+     mcWeight_key . push_back ( 3000 ); 
+     mcWeight_key . push_back ( 3001 ); 
+     mcWeight_key . push_back ( 3002 ); 
+     mcWeight_key . push_back ( 3003 ); 
+     mcWeight_key . push_back ( 3004 ); 
+     mcWeight_key . push_back ( 3005 ); 
+     mcWeight_key . push_back ( 3006 ); 
+     mcWeight_key . push_back ( 3007 );
+     mcWeight_key . push_back ( 3008 ); 
+     mcWeight_key . push_back ( 3009 ); 
+     mcWeight_key . push_back ( 3010 ); 
+     mcWeight_key . push_back ( 3011 ); 
+     mcWeight_key . push_back ( 3012 ); 
+     mcWeight_key . push_back ( 3013 ); 
 
     eve -> mcWeight_value. push_back(  GenEventInfoHandle -> weights()[0]  );
     eve -> mcWeight_value. push_back(  GenEventInfoHandle -> weights()[1]  );
@@ -1964,6 +1995,18 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   
 
+  eve ->  genjet_pt_  = genjet_pt ;
+  eve ->  genjet_eta_ = genjet_eta ; 
+  eve ->  genjet_phi_ = genjet_phi ;  
+  eve ->  genjet_m_   = genjet_m ; 
+  eve ->  genjet_BhadronMatch_ = genjet_BhadronMatch ; 
+  
+  eve ->  fatgenjet_pt_  = fatgenjet_pt ;
+  eve ->  fatgenjet_eta_ = fatgenjet_eta ; 
+  eve ->  fatgenjet_phi_ = fatgenjet_phi ;  
+  eve ->  fatgenjet_m_   = fatgenjet_m ; 
+
+
   // Loop over systematics
   for( int iSys=0; iSys<rNumSys; iSys++ ){
 
@@ -2507,12 +2550,6 @@ n_fatjets++;
     eve->jet_AssociatedGenJet_eta_[iSys]= jet_AssociatedGenJet_eta;
     eve->jet_AssociatedGenJet_phi_[iSys]= jet_AssociatedGenJet_phi;
     eve->jet_AssociatedGenJet_m_[iSys]  = jet_AssociatedGenJet_m;
-
-    eve ->  genjet_pt_ [iSys] = genjet_pt ;
-    eve ->  genjet_eta_[iSys] = genjet_eta ; 
-    eve ->  genjet_phi_[iSys] = genjet_phi ;  
-    eve ->  genjet_m_  [iSys] = genjet_m ; 
-    eve ->  genjet_BhadronMatch_[iSys] = genjet_BhadronMatch ; 
 
 
     // PUPPI jet

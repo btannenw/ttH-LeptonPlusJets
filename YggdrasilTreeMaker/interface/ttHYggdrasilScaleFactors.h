@@ -9,6 +9,8 @@
 #include <TH2D.h>
 #include <TH2F.h>
 
+#include <TF1.h>
+
 #include <TGraphAsymmErrors.h>
 
 #define NBINS_PU_REWEIGHTING 99
@@ -28,6 +30,39 @@ class ttHYggdrasilScaleFactors{
   ttHYggdrasilScaleFactors();
   ttHYggdrasilScaleFactors( char * sf_file_directory );
   ~ttHYggdrasilScaleFactors();
+
+
+
+  // This is indexes of ME/PS weights being filled into Yggdrasi output.
+  enum MCWeightKey{
+   DEFAULT = -1, 
+   ME_muR_NOM_muF_NOM	      =  0 ,
+   ME_muR_DOUBLE_muF_NOM    ,
+   ME_muR_HALF_muF_NOM	    ,
+   ME_muR_NOM_muF_DOUBLE    ,
+   ME_muR_DOUBLE_muF_DOUBLE ,
+   ME_muR_HALF_muF_DOUBLE   ,
+   ME_muR_NOM_muF_HALF	    ,
+   ME_muR_DOUBLE_muF_HALF   ,
+   ME_muR_HALF_muF_HALF     ,
+   ME_NOT_USED              ,
+   ME_LHC_ORIGINAL_XWGTUP   ,
+   PS_CENTRAL          	    ,
+   PS_CENTRAL_REPLICA  	    ,
+   PS_REDUCED_ISRUP  	    ,
+   PS_REDUCED_FSRUP  	    ,
+   PS_REDUCED_ISRDOWN	    ,
+   PS_REDUCED_FSRDOWN	    ,
+   PS_DEFAULT_ISRUP  	    ,
+   PS_DEFAULT_FSRUP  	    ,
+   PS_DEFAULT_ISRDOWN	    ,
+   PS_DEFAULT_FSRDOWN	    ,
+   PS_CONSERVATIVE_ISRUP    ,
+   PS_CONSERVATIVE_FSRUP    ,
+   PS_CONSERVATIVE_ISRDOWN  ,
+   PS_CONSERVATIVE_FSRDOWN  
+  };
+
 
   
   double get_csv_wgt( ttHYggdrasilEventSelection * event,
@@ -75,6 +110,8 @@ class ttHYggdrasilScaleFactors{
   };
   void setAnalysisPeriod( analysis_period p ); // If you use this, use before init_all();
   
+  double GetSDmassScaleFactor( double pt, double eta );
+
  private :
 
   bool initialized ;
@@ -90,6 +127,7 @@ class ttHYggdrasilScaleFactors{
   void init_MuonSF();
   void init_TrigMuSF();
   void init_TrigElSF();
+  void init_SDMassSF();
   TH2 * getTH2HistogramFromFile( std::string input , std::string histoname );
   double GetBinValueFromXYValues( TH2 * h , double xVal , double yVal , int syst = 0
 				  , bool useOveflowBinForX = false , bool useOveflowBinForY = false ) ;
@@ -163,6 +201,10 @@ class ttHYggdrasilScaleFactors{
   _MC_PU_DIST_CH_NAME   MC_PU_DISTRIBUTION_CHANNEL;
 
   std::string get_MCPUDistributionFileName( _MC_PU_DIST_CH_NAME ch );
+
+  TF1*  Func_SDMassCorr_Gen         ;
+  TF1*  Func_SDMassCorr_Gen_Central ;
+  TF1*  Func_SDMassCorr_Gen_Forward ;
 
 };
 

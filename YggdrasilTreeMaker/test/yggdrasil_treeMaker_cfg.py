@@ -1,6 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 
+# isPUPPI=True
 isPUPPI=False
 #--> if isPUPPI=true, change the code too.
 
@@ -11,12 +12,12 @@ isMC=True
 # 
 isTTBARMC=False
 
-# isGridJob=False
-isGridJob=True
+isGridJob=False
+# isGridJob=True
 
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
 #genjetInputTag = cms.InputTag("ak4GenJetsReproduced","","")
-#genjetInputTag = cms.InputTag("ak4GenJetsWithChargedLepFromTop","","")
+# genjetInputTag = cms.InputTag("ak4GenJetsWithChargedLepFromTop","","")
 
 
 enableJECFromLocalDB=True
@@ -68,7 +69,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32( 10000 )
     )
 
 
@@ -190,6 +191,8 @@ else :
     jetCollection      = cms.InputTag("slimmedJets", "", "PAT")
 
 
+
+
 # deterministic seed producer
 #
 process.load("PhysicsTools.PatUtils.deterministicSeeds_cfi")
@@ -209,6 +212,12 @@ photonCollection   = cms.InputTag("deterministicSeeds", "photonsWithSeed", proce
 jetCollection      = cms.InputTag("deterministicSeeds", "jetsWithSeed", process.name_())
 METCollection      = cms.InputTag("deterministicSeeds", "METsWithSeed", process.name_())
 
+
+
+puppijetCollection      = cms.InputTag("slimmedJetsPuppi", "", "PAT")
+process.detseedPUPPUI = process.deterministicSeeds.clone(
+    jetCollection      = puppijetCollection,
+    )
 
 
 

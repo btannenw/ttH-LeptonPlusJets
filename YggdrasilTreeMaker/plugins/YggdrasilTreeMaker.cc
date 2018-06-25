@@ -163,6 +163,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT< edm::ValueMap<double> > token_PuppuMuIso_WithoutLep_PH ; 
 
   edm::EDGetTokenT <pat::JetCollection> jetToken;
+  edm::EDGetTokenT <pat::JetCollection> puppijetToken;
   edm::EDGetTokenT <pat::METCollection> metToken;
   edm::EDGetTokenT <pat::METCollection> puppimetToken;
 
@@ -188,6 +189,8 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT< TtGenEvent >   TtGenEventToken ;
   
   edm::EDGetTokenT<reco::JetCorrector> jetCorrectorToken_;
+  edm::EDGetTokenT<reco::JetCorrector> jetCorrectorToken_puppi;
+
 
   HLTConfigProvider hlt_config_;
 
@@ -217,6 +220,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   // EGammaMvaEleEstimatorCSA14* myMVATrig;
  
   MiniAODHelper miniAODhelper;
+  MiniAODHelper miniAODhelper_puppi;
 
   RoccoR * muon_roc ;
 
@@ -288,6 +292,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
     ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "PAT") )) ; // <- ( Re-miniAOD 2017.)
   //    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
 
+  jetCorrectorToken_puppi = consumes< reco::JetCorrector > (edm::InputTag("ak4PFPuppiL1FastL2L3Corrector","","")) ;
+
   if( isMC ){
     if( usePUPPI ){
       jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFPuppiL1FastL2L3Corrector","","")) ;
@@ -324,7 +330,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
 
   jetToken = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds","jetsWithSeed","" ));  // Jet with random seed.
-
+  puppijetToken = consumes <pat::JetCollection> (edm::InputTag("detseedPUPPUI",     "jetsWithSeed","" ));  // PUPPI Het
+  
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
 
@@ -385,6 +392,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   analysisType::analysisType iAnalysisType = analysisType::LJ;
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, ! isMC );
+
+  miniAODhelper_puppi.SetUp(era, insample_, iAnalysisType, ! isMC );
 
   muon_roc = new RoccoR ( std::string(  getenv("CMSSW_BASE") ) + "/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/rcdata.2016.v3" );
 
@@ -493,6 +502,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   edm::Handle<pat::JetCollection> pfjets;
   iEvent.getByToken(jetToken,pfjets);
 
+  edm::Handle<pat::JetCollection> puppijets;
+  iEvent.getByToken(puppijetToken,puppijets);
+
   edm::Handle<pat::METCollection> pfmet;
   iEvent.getByToken(metToken,pfmet);
 
@@ -518,6 +530,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   ////------- set up rho for lepton effArea Isolation correction
   double rho_event = ( (rhoHandle.isValid()) ) ? *rhoHandle : -99;
   miniAODhelper.SetRho(rho_event);
+  miniAODhelper_puppi.SetRho(rho_event);
 
   edm::Handle<std::vector< PileupSummaryInfo > > PupInfo;
   iEvent.getByToken(puInfoToken,PupInfo);
@@ -657,16 +670,18 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   if( isMC  ){
 
     //    genjets
+
     
     edm::Handle<std::vector<int> > genBHadJetIndex;
     iEvent.getByToken(genBHadJetIndexToken_, genBHadJetIndex);
     
     const std::vector<reco::GenJet> * genjets  = genjetCollection.product();
 
+
     for( unsigned int iGen = 0 ; iGen < genjets->size() ; iGen ++){
 	reco::GenJet jet = genjets->at( iGen );
 
-	if( jet . pt() < 20.0 ) continue ;
+	//	if( jet . pt() < 20.0 ) continue ;
 	if( fabs( jet . eta() ) > 5 ) continue ;
 
 	genjet_pt  . push_back( jet . pt() );
@@ -815,8 +830,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     //    return;
   }
 
-  if( numpv>0 ) miniAODhelper.SetVertex(vertex);
-
+  if( numpv>0 ){
+ miniAODhelper.SetVertex(vertex);
+ miniAODhelper_puppi.SetVertex(vertex);
+  }
   double numTruePV = -1;
   double numGenPV = -1;
   if( (PupInfo.isValid()) ){
@@ -851,6 +868,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   edm::Handle<reco::JetCorrector> corrector ; 
   iEvent.getByToken(jetCorrectorToken_, corrector );
   miniAODhelper.SetJetCorrector( &(*corrector) );
+
+
+  edm::Handle<reco::JetCorrector> corrector_puppi ; 
+  iEvent.getByToken(jetCorrectorToken_puppi, corrector_puppi );
+  miniAODhelper_puppi .SetJetCorrector( &(*corrector_puppi) );
+
   
   int mHdecay = -1;
   mHdecay = isMC ? miniAODhelper.GetHiggsDecay(mcparticles) : -1 ;
@@ -1840,11 +1863,19 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     ////////
 
     std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType );
-    std::vector<pat::Jet> selectedJets_unsorted =  miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 ,
+    std::vector<pat::Jet> selectedJets_unsorted =  miniAODhelper.GetSelectedJets(correctedJets, 10., 5.0 ,
 										 ( usePUPPI  ?
 										   jetID::none
 										   :
 										   jetID::jetLoose ) // <- For 2016, loose.
+										 , '-' );
+
+    // Prepare PUPPI jets
+    std::vector<pat::Jet> rawJets_puppi = miniAODhelper.GetUncorrectedJets( *puppijets );
+    std::vector<pat::Jet> correctedJets_puppi =  miniAODhelper_puppi.GetCorrectedJets(rawJets_puppi,  // <- Use MiniAOD_for_PUPPIJEC.
+										iEvent, iSetup, genjetCollection , iSysType );
+    std::vector<pat::Jet> selectedJets_unsorted_puppi =  miniAODhelper.GetSelectedJets(correctedJets_puppi, 10., 5.0 ,
+										   jetID::none
 										 , '-' );
 
 
@@ -1960,6 +1991,12 @@ n_fatjets++;
     vdouble jet_phi;
     vdouble jet_m;
 
+    vint  jet_chargedHadronMultiplicity;
+    vint  jet_neutralHadronMultiplicity;
+    vint  jet_photonMultiplicity;
+    vint  jet_neutralMultiplicity;
+    vint  jet_match2puppi ;
+
     vdouble jet_AssociatedGenJet_pt;
     vdouble jet_AssociatedGenJet_eta;
     vdouble jet_AssociatedGenJet_phi;
@@ -1982,7 +2019,36 @@ n_fatjets++;
       jet_phi .push_back( iJet -> phi() );
       jet_eta .push_back( iJet -> eta() );
       jet_m   .push_back( iJet -> mass()   );
+      
+      // Find matching to PUPPI jets
+      int match2puppi = 0 ; 
+      for( std::vector<pat::Jet>::const_iterator iPuppi = selectedJets_unsorted_puppi.begin(); 
+	   iPuppi != selectedJets_unsorted_puppi.end(); iPuppi ++ ){ 
 
+	double eta1 = iJet   -> eta(); 
+	double eta2 = iPuppi -> eta(); 
+	double phi1 = iJet   -> phi(); 
+	double phi2 = iPuppi -> phi(); 
+
+	double d_eta = eta1 - eta2 ;
+	double d_phi = fabs( phi1 - phi2 ) ; 
+	d_phi = ( d_phi < M_PI ) ? d_phi : 2 * M_PI - d_phi ; 
+  
+	if( d_eta*d_eta + d_phi*d_phi < 0.2*0.2 ){
+	  match2puppi = 1 ;
+	  std::cout << "match " << d_eta << " " << d_phi << " " << ( iJet -> pt() - iPuppi -> pt() ) << std::endl ;
+	}
+
+      }
+      jet_match2puppi . push_back( match2puppi );
+
+      std::cout <<"Matching CHS jet -> PUPPI jet " << match2puppi << std::endl ; 
+
+
+      jet_chargedHadronMultiplicity.push_back( iJet ->  chargedHadronMultiplicity ()  );
+      jet_neutralHadronMultiplicity.push_back( iJet ->  neutralHadronMultiplicity ()  );
+      jet_photonMultiplicity       .push_back( iJet ->  photonMultiplicity ()   );
+      jet_neutralMultiplicity      .push_back(  iJet ->  neutralMultiplicity ()  );
 
       jet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
       jet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );
@@ -2105,6 +2171,13 @@ n_fatjets++;
     eve->jet_phi_ [iSys]= jet_phi ;
     eve->jet_eta_ [iSys]= jet_eta ;
     eve->jet_m_   [iSys]= jet_m   ;
+
+    eve-> jet_chargedHadronMultiplicity_[iSys] = jet_chargedHadronMultiplicity;
+    eve-> jet_neutralHadronMultiplicity_ [iSys] = jet_neutralHadronMultiplicity;
+    eve-> jet_photonMultiplicity_ [iSys] = jet_photonMultiplicity ;
+    eve-> jet_neutralMultiplicity_[iSys] = jet_neutralMultiplicity ;
+
+    eve-> jet_match2puppi_[iSys] = jet_match2puppi ;
 
     eve->jet_precorr_pt_  [iSys]= jet_precore_pt  ;
     eve->jet_precorr_phi_ [iSys]= jet_precore_phi ;
@@ -2436,6 +2509,9 @@ YggdrasilTreeMaker::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup
   }
 
   miniAODhelper.SetJER_SF_Tool( iSetup );
+
+  miniAODhelper_puppi.UpdateJetCorrectorUncertainties( iSetup );
+  miniAODhelper_puppi.SetJER_SF_Tool( iSetup );
 
   std::cout <<"[debug message ]YggdrasilTreeMaker::beginRun() was called." << std::endl ; 
 }

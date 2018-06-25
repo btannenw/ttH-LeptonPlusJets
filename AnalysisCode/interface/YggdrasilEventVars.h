@@ -172,6 +172,14 @@ struct yggdrasilEventVars{
   vdouble jet_phi_[rNumSys];
   vdouble jet_m_[rNumSys];
 
+  vint  jet_match2puppi_ [rNumSys];
+
+  vint jet_chargedHadronMultiplicity_[rNumSys];
+  vint jet_neutralHadronMultiplicity_ [rNumSys];
+  vint jet_photonMultiplicity_ [rNumSys];
+  vint jet_neutralMultiplicity_[rNumSys];
+
+
 
   vdouble  jet_precorr_pt_  [rNumSys];
   vdouble  jet_precorr_phi_  [rNumSys];
@@ -350,6 +358,13 @@ void yggdrasilEventVars::initialize(){
     jet_phi_[iSys].clear();
     jet_eta_[iSys].clear();
     jet_m_  [iSys].clear();
+
+    jet_match2puppi_ [iSys].clear();
+
+    jet_chargedHadronMultiplicity_[iSys].clear();
+    jet_neutralHadronMultiplicity_ [iSys].clear();
+    jet_photonMultiplicity_ [iSys].clear();
+    jet_neutralMultiplicity_[iSys].clear();
 
     jet_precorr_pt_  [iSys].clear();
     jet_precorr_phi_  [iSys].clear();

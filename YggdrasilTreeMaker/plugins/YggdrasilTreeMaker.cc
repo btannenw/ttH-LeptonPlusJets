@@ -2383,6 +2383,7 @@ n_fatjets++;
     std::vector<double>  fatjet_eta	      ;
     std::vector<double>  fatjet_phi	      ;
     std::vector<double>  fatjet_m  	      ;
+    std::vector<double>  fatjet_doublebtagging  	      ;
     std::vector<int>     fatjet_nSubjet 	      ;
     std::vector<double>  fatjet_sdmass_miniaod ;
     std::vector<double>  fatjet_sdmass_uncorr  ;
@@ -2446,6 +2447,7 @@ n_fatjets++;
       fatjet_eta. push_back( correctedJet .eta() ) ;  
       fatjet_phi. push_back( correctedJet .phi() ) ;  
       fatjet_m  . push_back( correctedJet .mass() ) ;  
+      fatjet_doublebtagging . push_back( correctedJet . bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") ) ;  
 
       fatjet_nSubjet  . push_back( n ) ;  
 
@@ -2573,6 +2575,7 @@ n_fatjets++;
     eve ->  fatjet_eta	      [iSys] = 	        fatjet_eta	      ;	       
     eve ->  fatjet_phi	      [iSys] = 	        fatjet_phi	      ;	       
     eve ->  fatjet_m  	      [iSys] = 	        fatjet_m  	      ;	       
+    eve ->  fatjet_doublebtagging  [iSys] = 	        fatjet_doublebtagging   ;	       
     eve ->  fatjet_nSubjet    [iSys] =          fatjet_nSubjet 	      ;
     eve ->  fatjet_sdmass_miniaod [iSys] =      fatjet_sdmass_miniaod ;    
     eve ->  fatjet_sdmass_uncorr  [iSys] =      fatjet_sdmass_uncorr  ;    

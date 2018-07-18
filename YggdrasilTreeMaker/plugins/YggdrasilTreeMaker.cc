@@ -298,8 +298,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   fatgenJetsToken_ =  consumes <reco::GenJetCollection> (edm::InputTag("slimmedGenJetsAK8","","")) ;
 
   TriggerObjectStandAloneToken = consumes <pat::TriggerObjectStandAloneCollection>
-    ( edm::InputTag( std::string ( "slimmedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
-  //    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
+    // ( edm::InputTag( std::string ( "slimmedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ; // 94x 
+    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ; // 80x 
 
   if( isMC ){
     jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFCHSL1FastL2L3Corrector","","")) ;
@@ -2451,24 +2451,25 @@ n_fatjets++;
 
       fatjet_nSubjet  . push_back( n ) ;  
 
-      fatjet_sdmass_miniaod . push_back(  originalJet . userFloat("ak8PFJetsPuppiSoftDropMass") ) ;
+   //      fatjet_sdmass_miniaod . push_back(  originalJet . userFloat("ak8PFJetsPuppiSoftDropMass") ) ;
+
       fatjet_sdmass_uncorr  . push_back( puppi_softdrop . M()  ) ; 
 
-      fatjet_tau1 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau1") ) ; 
-      fatjet_tau2 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau2") ) ; 
-      fatjet_tau3 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau3") ) ; 
-      fatjet_tau4 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau4") ) ; 
-
-      fatjet_chstau1 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau1") );
-      fatjet_chstau2 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau2") );
-      fatjet_chstau3 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau3") );
-
-      fatjet_nb1N2 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2") );
-      fatjet_nb1N3 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3") );
-      fatjet_nb2N2 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2") );
-      fatjet_nb2N3 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3") );
-
-      fatjet_chsprunedmass. push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass") );
+//      fatjet_tau1 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau1") ) ; 
+//      fatjet_tau2 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau2") ) ; 
+//      fatjet_tau3 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau3") ) ; 
+//      fatjet_tau4 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau4") ) ; 
+//
+//      fatjet_chstau1 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau1") );
+//      fatjet_chstau2 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau2") );
+//      fatjet_chstau3 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau3") );
+//
+//      fatjet_nb1N2 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2") );
+//      fatjet_nb1N3 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3") );
+//      fatjet_nb2N2 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2") );
+//      fatjet_nb2N3 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3") );
+//
+//      fatjet_chsprunedmass. push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass") );
 
     }
 

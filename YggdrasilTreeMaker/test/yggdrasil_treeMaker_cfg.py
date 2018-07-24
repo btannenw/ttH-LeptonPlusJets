@@ -50,9 +50,9 @@ process.load("Configuration.StandardSequences.GeometryDB_cff")
 
 # Update global tag based on : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions?rev=568
 if isMC:
-    process.GlobalTag.globaltag = '94X_mc2017_realistic_v12'
+    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
 else :
-    process.GlobalTag.globaltag = '94X_dataRun2_ReReco_EOY17_v2'
+    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v6'
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
@@ -66,13 +66,39 @@ process.maxEvents = cms.untracked.PSet(
 import sys
 import os.path
 
+# JecLocalDataBaseName = \
+#     'Fall17_17Nov2017B_V6_DATA' if period in ("2017B") else \
+#     'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
+#     'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
+#     'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
+#     'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
+#     'Fall17_17Nov2017_V6_MC'
+
+
 JecLocalDataBaseName = \
-    'Fall17_17Nov2017B_V6_DATA' if period in ("2017B") else \
-    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
-    'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
-    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
-    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
-    'Fall17_17Nov2017_V6_MC'
+    'Summer16_23Sep2016BCDV4_DATA.db' if period in ("2016B") else \
+    'Summer16_23Sep2016BCDV4_DATA.db' if period in ("2016C") else \
+    'Summer16_23Sep2016BCDV4_DATA.db' if period in ("2016D") else \
+    'Summer16_23Sep2016EFV4_DATA.db'  if period in ("2016E") else \
+    'Summer16_23Sep2016EFV4_DATA.db'  if period in ("2016F") else \
+    'Spring16_23Sep2016GV2_DATA.db'   if period in ("2016G") else \
+    'Spring16_23Sep2016HV2_DATA.db'   if period in ("2016H") else \
+    'Summer16_25nsV5_MC'
+
+# Spring16_23Sep2016BCDV2_DATA.db
+# Spring16_23Sep2016EFV2_DATA.db
+# Spring16_23Sep2016GV2_DATA.db
+# Spring16_23Sep2016HV2_DATA.db
+# Spring16_23Sep2016V2_MC.db
+# Spring16_25nsV6_DATA.db
+# Spring16_25nsV6_MC.db
+# Summer16_23Sep2016AllV4_DATA.db
+# Summer16_23Sep2016BCDV4_DATA.db
+# Summer16_23Sep2016EFV4_DATA.db
+# Summer16_23Sep2016GV4_DATA.db
+# Summer16_23Sep2016HV4_DATA.db
+# Summer16_23Sep2016V4_MC.db
+# Summer16_25nsV5_MC.db
 
 
 JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
@@ -143,10 +169,14 @@ process.ak8PFPuppiL1FastL2L3ResidualCorrector = cms.EDProducer(
     'ChainedJetCorrectorProducer',
     correctors = cms.VInputTag('ak8PFPuppiL1FastjetCorrector','ak8PFPuppiL2RelativeCorrector','ak8PFPuppiL3AbsoluteCorrector','ak8PFPuppiResidualCorrector')
     )
-process.ak8PFPuppiL1FastL2L3ResidualCorrectorTask = cms.Task(
-    process.ak8PFPuppiL1FastjetCorrector, process.ak8PFPuppiL2RelativeCorrector, process.ak8PFPuppiL3AbsoluteCorrector, process.ak8PFPuppiResidualCorrector, process.ak8PFPuppiL1FastL2L3ResidualCorrector
-)
-process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain = cms.Sequence( process.ak8PFPuppiL1FastL2L3ResidualCorrectorTask)
+
+# process.ak8PFPuppiL1FastL2L3ResidualCorrectorTask = cms.Task(
+#     process.ak8PFPuppiL1FastjetCorrector, process.ak8PFPuppiL2RelativeCorrector, process.ak8PFPuppiL3AbsoluteCorrector, process.ak8PFPuppiResidualCorrector, process.ak8PFPuppiL1FastL2L3ResidualCorrector
+# )
+
+
+process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain = cms.Sequence(
+    process.ak8PFPuppiL1FastjetCorrector *  process.ak8PFPuppiL2RelativeCorrector * process.ak8PFPuppiL3AbsoluteCorrector * process.ak8PFPuppiResidualCorrector * process.ak8PFPuppiL1FastL2L3ResidualCorrector )
 
 
 

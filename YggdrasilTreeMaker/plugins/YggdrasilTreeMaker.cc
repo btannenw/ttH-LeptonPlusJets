@@ -343,7 +343,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
 
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
-  puppijetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
+  puppijetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsAK4PFPuppi")));
 
   fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsAK8")));
 

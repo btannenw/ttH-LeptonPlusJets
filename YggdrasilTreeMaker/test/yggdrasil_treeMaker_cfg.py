@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 
-isPUPPI=False
+isPUPPI=True
 #--> if isPUPPI=true, change the code too.
 
 
@@ -160,7 +160,15 @@ process.source = cms.Source("PoolSource",
 
 # 2017-data analysis
 #'file:///uscmst1b_scratch/lpc1/3DayLifetime/satoshi/Run2017E_SingleMuon_MINIAOD.root'
- 'file:///uscmst1b_scratch/lpc1/3DayLifetime/satoshi/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8_MINIAODSIM.root'
+# 'file:///uscmst1b_scratch/lpc1/3DayLifetime/satoshi/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8_MINIAODSIM.root'
+
+
+# 80x input 
+
+# '/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/60000/1A8BEA4B-C5C6-E611-A82A-001E67F333BB.root'
+#  xrdcp root://cmsxrootd-site.fnal.gov//store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/60000/1A8BEA4B-C5C6-E611-A82A-001E67F333BB.root 
+'file:///uscmst1b_scratch/lpc1/3DayLifetime/satoshi/DY_80x.root'
+
             )
 )
 
@@ -384,6 +392,20 @@ process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
                                          , configuration = cms.string( "#detail#" )
                                          )
 
+
+############# To re-run puppi jet
+
+process.load("Configuration.StandardSequences.MagneticField_cff")
+from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
+
+process.load('CommonTools/PileupAlgos/Puppi_cff')
+## e.g. to run on miniAOD
+process.puppi.candName = cms.InputTag('packedPFCandidates')
+process.puppi.vertexName = cms.InputTag('offlineSlimmedPrimaryVertices')
+
+process.puppiOnTheFly = process.puppi.clone()
+process.puppiOnTheFly.useExistingWeights = False 
+jetToolbox( process, 'ak4', 'jetSequence', 'out', PUMethod = 'Puppi', newPFCollection=True, nameNewPFCollection='puppiOnTheFly')
 
 
 

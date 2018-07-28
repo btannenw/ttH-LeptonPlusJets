@@ -125,6 +125,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   // Input tags
   edm::EDGetTokenT<reco::GenJetCollection> genJetsToken_;
   edm::EDGetTokenT<reco::GenJetCollection> fatgenJetsToken_;
+  edm::EDGetTokenT<reco::GenJetCollection> reclusteredfatgenJetsToken_;
   
   edm::EDGetTokenT<std::vector<int> > genBHadJetIndexToken_;
   const edm::EDGetTokenT<std::vector<int> > genBHadFlavourToken_;
@@ -168,6 +169,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT <pat::JetCollection> jetToken;
   edm::EDGetTokenT <pat::JetCollection> puppijetToken;
   edm::EDGetTokenT <pat::JetCollection> fatjetToken;
+  edm::EDGetTokenT <pat::JetCollection> rerun_fatjetToken;
   edm::EDGetTokenT <pat::METCollection> metToken;
   edm::EDGetTokenT <pat::METCollection> puppimetToken;
 
@@ -296,6 +298,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   filterResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), filterTag));
 
   fatgenJetsToken_ =  consumes <reco::GenJetCollection> (edm::InputTag("slimmedGenJetsAK8","","")) ;
+  reclusteredfatgenJetsToken_ =  consumes <reco::GenJetCollection> (edm::InputTag("ak8ReclusteredGenJets","","")) ;
 
   TriggerObjectStandAloneToken = consumes <pat::TriggerObjectStandAloneCollection>
     ( edm::InputTag( std::string ( "slimmedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
@@ -344,8 +347,10 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
   puppijetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
-
+  
   fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsAK8")));
+
+  rerun_fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsAK8PFPuppi")));// Rerun of PUPPI ak8
 
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
@@ -522,6 +527,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   edm::Handle<pat::JetCollection> fatjets;
   iEvent.getByToken(fatjetToken,fatjets);
 
+  edm::Handle<pat::JetCollection> rerun_fatjets;
+  iEvent.getByToken(rerun_fatjetToken,rerun_fatjets);
+
   edm::Handle<pat::METCollection> pfmet;
   iEvent.getByToken(metToken,pfmet);
 
@@ -538,10 +546,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   edm::Handle<reco::GenParticleCollection> mcparticles;
   edm::Handle<reco::GenJetCollection> genjetCollection;
   edm::Handle<reco::GenJetCollection> fatgenjetCollection;
+  edm::Handle<reco::GenJetCollection> reclustered_fatgenjetCollection ; 
   if( isMC ){
     iEvent.getByToken(mcparicleToken,mcparticles);
     iEvent.getByToken( genJetsToken_ , genjetCollection );
     iEvent.getByToken( fatgenJetsToken_ , fatgenjetCollection );
+    iEvent.getByToken( reclusteredfatgenJetsToken_ , reclustered_fatgenjetCollection );
   }
 
   edm::Handle<double> rhoHandle;
@@ -783,7 +793,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 
   }
-
 
 
   ////----------------------
@@ -2407,6 +2416,12 @@ n_fatjets++;
     std::vector<std::vector<double> >fatjet_subjet_beepcsv;
     std::vector<std::vector<double> >fatjet_subjet_csvv2  ;
 
+    std::vector<double>  re_fatjet_pt            ;
+    std::vector<double>  re_fatjet_eta	      ;
+    std::vector<double>  re_fatjet_phi	      ;
+    std::vector<double>  re_fatjet_sdmass_miniaod ;
+    std::vector<double>  re_fatjet_sdmass_uncorr  ;
+
     for( unsigned int i = 0 ; i < fatjets -> size() ; i++  ){
       pat::Jet correctedJet =  miniAODhelper_fatjet.GetCorrectedAK8Jet( fatrawJets.at(i) , iEvent, iSetup, fatgenjetCollection , iSysType );
       pat::Jet originalJet  = fatjets->at(i); 
@@ -2473,6 +2488,43 @@ n_fatjets++;
     }
 
 
+
+    { /// --------- Add information of reclusted (by myself) jets.
+      std::vector<pat::Jet> rerun_fatrawJets = miniAODhelper_fatjet.GetUncorrectedJets( *rerun_fatjets );
+
+      for( unsigned int i = 0 ; i < rerun_fatrawJets . size() ; i++  ){
+	pat::Jet correctedJet =  miniAODhelper_fatjet.GetCorrectedAK8Jet( rerun_fatrawJets.at(i) , iEvent, iSetup, reclustered_fatgenjetCollection , iSysType ); //todo
+
+	if(        correctedJet .pt()   < 80 ) continue ; 
+	if( fabs( correctedJet .eta() ) > 2.1 ) continue ; 
+
+
+        re_fatjet_pt . push_back( correctedJet .pt() ) ;  
+	re_fatjet_eta. push_back( correctedJet .eta() ) ;  
+	re_fatjet_phi. push_back( correctedJet .phi() ) ;  
+        re_fatjet_sdmass_miniaod .push_back( rerun_fatjets -> at(i). userFloat("ak8PFJetsPuppiSoftDropMass")  );
+
+
+// Not Yet implemented 	pat::Jet originalJet = rerun_fatjets -> at(i) ; 
+// Not Yet implemented 	TLorentzVector puppi_softdrop, puppi_softdrop_subjet;
+// Not Yet implemented 	auto const & sdSubjetsPuppi = originalJet.subjets("SoftDrop");
+// Not Yet implemented 	long n = 0 ;
+// Not Yet implemented 	for ( auto const & it : sdSubjetsPuppi ) {
+// Not Yet implemented 	  n ++ ;
+// Not Yet implemented 	  puppi_softdrop_subjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
+// Not Yet implemented 	  puppi_softdrop+=puppi_softdrop_subjet;
+// Not Yet implemented 	}
+// Not Yet implemented 
+//
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetToolbox#addSubjets_from_prunning_or_soft : 
+	// addSubjets (from prunning or softdrop)
+	// 
+	//        re_fatjet_sdmass_uncorr  .push_back( puppi_softdrop . M()   );
+
+        re_fatjet_sdmass_uncorr  .push_back( 0 ) ;
+
+      }
+    }
 
     // - - - - MET works - - - - - 
 
@@ -2599,6 +2651,12 @@ n_fatjets++;
     eve -> fatjet_subjet_beepcsv [iSys] = fatjet_subjet_beepcsv  ;
     eve -> fatjet_subjet_csvv2   [iSys] = fatjet_subjet_csvv2    ;
 
+
+    eve ->  re_fatjet_pt             [iSys] =  re_fatjet_pt            ;     
+    eve ->  re_fatjet_eta	     [iSys] =  re_fatjet_eta	      ;	       
+    eve ->  re_fatjet_phi	     [iSys] =  re_fatjet_phi	      ;	       
+    eve ->  re_fatjet_sdmass_miniaod [iSys] =  re_fatjet_sdmass_miniaod ;    
+    eve ->  re_fatjet_sdmass_uncorr  [iSys] =  re_fatjet_sdmass_uncorr  ;    
 
   } // end loop over systematics
 

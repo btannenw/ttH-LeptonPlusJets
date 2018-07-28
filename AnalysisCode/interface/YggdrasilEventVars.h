@@ -278,6 +278,12 @@ struct yggdrasilEventVars{
   std::vector<std::vector<double>>  fatjet_subjet_csvv2  [rNumSys];
 
 
+  std::vector<double>  re_fatjet_pt             [rNumSys];
+  std::vector<double>  re_fatjet_eta	        [rNumSys];
+  std::vector<double>  re_fatjet_phi	        [rNumSys];
+  std::vector<double>  re_fatjet_sdmass_miniaod [rNumSys];
+  std::vector<double>  re_fatjet_sdmass_uncorr  [rNumSys];
+
   ///boosted jets
   vvdouble topfatJet_vect_TLV_;
   vvdouble nonW_vect_TLV_;
@@ -505,6 +511,13 @@ void yggdrasilEventVars::initialize(){
     fatjet_subjet_m  [iSys] .clear() ;
     fatjet_subjet_beepcsv [iSys] .clear() ;
     fatjet_subjet_csvv2  [iSys] .clear() ;
+
+
+    re_fatjet_pt              [iSys] .clear() ;
+    re_fatjet_eta	      [iSys] .clear() ;
+    re_fatjet_phi	      [iSys] .clear() ;
+    re_fatjet_sdmass_miniaod  [iSys] .clear() ;
+    re_fatjet_sdmass_uncorr   [iSys] .clear() ;
 
   }
 

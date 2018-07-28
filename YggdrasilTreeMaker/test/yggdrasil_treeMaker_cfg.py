@@ -270,6 +270,13 @@ if isMC :
         rParam = cms.double(0.4),
         jetAlgorithm = cms.string("AntiKt")
         )
+
+    process.ak8ReclusteredGenJets = ak4GenJets.clone(
+        src = 'genParticlesForJetsNoNu',
+        rParam = cms.double(0.8),
+        jetAlgorithm = cms.string("AntiKt")
+        )
+
     
     # Ghost particle collection used for Hadron-Jet association 
     # MUST use proper input particle collection
@@ -387,6 +394,24 @@ process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
 
 
 
+process.load("Configuration.StandardSequences.MagneticField_cff")
+from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
+
+process.load('CommonTools/PileupAlgos/Puppi_cff')
+## e.g. to run on miniAOD                                                                                                                                                     
+process.puppi.candName = cms.InputTag('packedPFCandidates')
+process.puppi.vertexName = cms.InputTag('offlineSlimmedPrimaryVertices')
+
+process.puppiOnTheFly = process.puppi.clone()
+#process.puppiOnTheFly.useExistingWeights = False
+process.puppiOnTheFly.useExistingWeights = True
+# --- To be consistent with MiniAOD jets, keep using the same PUPPI weight (Is this correct approach ?)
+jetToolbox( process, 'ak8', 'jetSequence', 'out', 
+            runOnMC= isMC , 
+            PUMethod = 'Puppi', newPFCollection=True, nameNewPFCollection='puppiOnTheFly' , addSoftDrop=True , addSoftDropSubjets=True )
+
+
+
 if isMC : 
     process.p = cms.Path(
         process.genParticlesForJetsNoNu * process.ak4GenJetsCustom *
@@ -399,6 +424,7 @@ if isMC :
         process.ak4PFPuppiL1FastL2L3CorrectorChain *
         process.ak8PFPuppiL1FastL2L3CorrectorChain *
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
+        process.ak8ReclusteredGenJets *
         process.PUPPIMuonRelIso * process.ttHTreeMaker)
 else :
     process.p = cms.Path(

@@ -2571,6 +2571,47 @@ n_fatjets++;
       //// list of correction types are here : https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/DataFormats/PatCandidates/interface/MET.h#L151-L168
     }
 
+    
+    if( ! EVENTSYNCMODE ){
+
+    if( jet_pt . size() < 4 ){
+      jet_pt. clear() ;
+      jet_eta. clear() ;
+      jet_phi. clear() ;
+      jet_m. clear() ;
+      jet_puid. clear() ;
+      jet_AssociatedGenJet_pt. clear() ;
+      jet_AssociatedGenJet_eta. clear() ;
+      jet_AssociatedGenJet_phi. clear() ;
+      jet_AssociatedGenJet_m. clear() ;
+      jet_precore_phi . clear() ; 
+      jet_precore_pt . clear() ; 
+      jet_genId_vect. clear() ;
+      jet_partonflavour_vect. clear() ;
+      jet_flavour_vect. clear() ;
+      jet_genParentId_vect. clear() ;
+      jet_genGrandParentId_vect. clear() ;
+    }
+    
+    if(puppijet_pt . size() < 4 ){
+      puppijet_pt  . clear() ;
+      puppijet_phi . clear() ;
+      puppijet_eta . clear() ;
+      puppijet_m   . clear() ;
+      puppijet_puid   . clear() ;
+      puppijet_precore_pt  . clear() ;
+      puppijet_precore_phi . clear() ;
+      puppijet_AssociatedGenJet_pt. clear() ;
+      puppijet_AssociatedGenJet_eta. clear() ;
+      puppijet_AssociatedGenJet_phi. clear() ;
+      puppijet_AssociatedGenJet_m. clear() ;
+      puppijet_partonflavour_vect. clear() ;
+      puppijet_flavour_vect. clear() ;
+      puppijet_DeepCSV_b. clear() ;
+      puppijet_DeepCSV_bb. clear() ;
+    }
+    }
+
     eve->jet_combinedMVABJetTags_[iSys] = jet_combinedMVABJetTags;
     eve->jet_combinedInclusiveSecondaryVertexV2BJetTags_[iSys] = jet_combinedInclusiveSecondaryVertexV2BJetTags;
 

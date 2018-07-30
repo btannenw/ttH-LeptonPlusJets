@@ -27,7 +27,12 @@ config.JobType.allowUndistributedCMSSW = True
 config.JobType.maxJobRuntimeMin = 2000 # default 1315 = 21 hours.
 # config.JobType.inputFiles = ['']
 
+config.JobType.maxMemoryMB = 4000 # Def=2000, increased for jettoolbox
+
 config.JobType.sendExternalFolder = True
+
+config.JobType.outputFiles = ['yggdrasil_treeMaker.root']
+
 
 ##########################################
 # Information of data to be analyzed, including the splitting parameters
@@ -46,7 +51,7 @@ config.Data.publication = True
 
 
 # If you want to submit jobs with nonValid sample, 
-# config.Data.allowNonValidInputDataset = True
+config.Data.allowNonValidInputDataset = True
 
 
 config.Site.storageSite = 'T3_US_FNALLPC'

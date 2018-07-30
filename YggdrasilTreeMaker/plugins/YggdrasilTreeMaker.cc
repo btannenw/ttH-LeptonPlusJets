@@ -16,6 +16,8 @@
 
 
 #define EVENTSYNCMODE false
+// In case of not EVENTSYNCMODE, event (no lepton, less jets events) can be not recorded in the output tree.
+
 
 // system include files
 #include <memory>
@@ -117,6 +119,8 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT<int> genTtbarIdToken_;
   // Histogram for ttbar event categorization ID including information about b jets from top in acceptance
   TH1* h_ttbarId_;
+
+  TH1D * h_event;
         
   // Histogram for ttbar event categorization ID based on additional jets only
   TH1* h_ttbarAdditionalJetId_;
@@ -1967,6 +1971,34 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     }
   }
 
+  eve->wgt_lumi_  = intLumi_;
+  eve->wgt_xs_    = mySample_xSec_;//mySample.xSec;
+  eve->wgt_nGen_  = mySample_nGen_;//mySample.nGen;
+
+  eve->wgt_generator_ = GenEventInfoWeight;
+
+  h_event -> Fill( 0.0 , GenEventInfoWeight > 0 ? +1.0 : -1.0 ) ; // with weight 
+  h_event -> Fill( 1.0 ) ; // no weight
+
+  
+  if( ! EVENTSYNCMODE && lepton_pt . size() == 0 ){
+    return ;  // No data recording 
+  }
+  
+
+  eve ->  genjet_pt_  = genjet_pt ;
+  eve ->  genjet_eta_ = genjet_eta ; 
+  eve ->  genjet_phi_ = genjet_phi ;  
+  eve ->  genjet_m_   = genjet_m ; 
+  eve ->  genjet_BhadronMatch_ = genjet_BhadronMatch ; 
+  
+  eve ->  fatgenjet_pt_  = fatgenjet_pt ;
+  eve ->  fatgenjet_eta_ = fatgenjet_eta ; 
+  eve ->  fatgenjet_phi_ = fatgenjet_phi ;  
+  eve ->  fatgenjet_m_   = fatgenjet_m ; 
+
+
+
   eve->lepton_charge_           = lepton_trkCharge;
   eve->lepton_isMuon_           = lepton_isMuon;
   eve->lepton_isTight_          = lepton_isTight;
@@ -1996,25 +2028,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->lepton_dRSingleLepTrig_        = lepton_dRSingleLepTrig ;
   eve->lepton_dRDiLepTrig_        = lepton_dRDiLepTrig ;
 
-  eve->wgt_lumi_  = intLumi_;
-  eve->wgt_xs_    = mySample_xSec_;//mySample.xSec;
-  eve->wgt_nGen_  = mySample_nGen_;//mySample.nGen;
 
-  eve->wgt_generator_ = GenEventInfoWeight;
 
-  
-
-  eve ->  genjet_pt_  = genjet_pt ;
-  eve ->  genjet_eta_ = genjet_eta ; 
-  eve ->  genjet_phi_ = genjet_phi ;  
-  eve ->  genjet_m_   = genjet_m ; 
-  eve ->  genjet_BhadronMatch_ = genjet_BhadronMatch ; 
-  
-  eve ->  fatgenjet_pt_  = fatgenjet_pt ;
-  eve ->  fatgenjet_eta_ = fatgenjet_eta ; 
-  eve ->  fatgenjet_phi_ = fatgenjet_phi ;  
-  eve ->  fatgenjet_m_   = fatgenjet_m ; 
-
+  bool b_TheEventHasFourJets_ForAtLeastOneSystematicVariation = false ; 
 
   // Loop over systematics
   for( int iSys=0; iSys<rNumSys; iSys++ ){
@@ -2610,8 +2626,14 @@ n_fatjets++;
       puppijet_DeepCSV_b. clear() ;
       puppijet_DeepCSV_bb. clear() ;
     }
+ 
+    if( puppijet_pt . size() >= 4 || jet_pt . size() ){
+      b_TheEventHasFourJets_ForAtLeastOneSystematicVariation = true ; 
+    }
+    
     }
 
+    
     eve->jet_combinedMVABJetTags_[iSys] = jet_combinedMVABJetTags;
     eve->jet_combinedInclusiveSecondaryVertexV2BJetTags_[iSys] = jet_combinedInclusiveSecondaryVertexV2BJetTags;
 
@@ -2701,6 +2723,10 @@ n_fatjets++;
 
   } // end loop over systematics
 
+
+  if( ! EVENTSYNCMODE && ! b_TheEventHasFourJets_ForAtLeastOneSystematicVariation ){
+    return ; // Do not record the data.
+  }
 
   //
   // Fill tree if pass full selection
@@ -3071,6 +3097,9 @@ YggdrasilTreeMaker::beginJob()
     
   h_ttbarId_ = fileService->make<TH1F>("ttbarId", "ttbarId", 260, 0, 260);
   h_ttbarAdditionalJetId_ = fileService->make<TH1F>("ttbarAdditionalJetId", "ttbarAdditionalJetId", 60, 0, 60);
+
+  h_event = fileService->make<TH1D>("event", "event", 2, 0 , 2 ) ;
+
 }
 
 // ------------ method called once each job just after ending the event loop  ------------

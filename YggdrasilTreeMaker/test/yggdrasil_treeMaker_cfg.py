@@ -415,12 +415,9 @@ process.TFileService = cms.Service("TFileService",
 	fileName = cms.string('yggdrasil_treeMaker.root')
 )
 
-process.PUPPIMuonRelIso = cms.EDProducer('PuppiLeptonIsolation'
-                                         , srcLepton =cms.string('slimmedMuons')
-                                         , dR = cms.double( 0.4 ) 
-                                         , mixFraction = cms.double( 0.5 ) 
-                                         , configuration = cms.string( "#detail#" )
-                                         )
+
+process.load( "PuppiLeptonIsolationhelper.PuppiLeptonIsolation.PuppiMuonIsolationProducer_cfi" )
+process.PUPPIMuonRelIso.addIsolationComponentInfo = cms.bool( True )
 
 
 ############# To re-run puppi jet

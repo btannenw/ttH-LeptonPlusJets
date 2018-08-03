@@ -407,7 +407,7 @@ process.puppiOnTheFly = process.puppi.clone()
 process.puppiOnTheFly.useExistingWeights = True
 # --- To be consistent with MiniAOD jets, keep using the same PUPPI weight (Is this correct approach ?)
 jetToolbox( process, 'ak8', 'jetSequence', 'out', 
-            runOnMC= isMC , 
+            runOnMC= isMC , addNsub=True, 
             PUMethod = 'Puppi', newPFCollection=True, nameNewPFCollection='puppiOnTheFly' , addSoftDrop=True , addSoftDropSubjets=True )
 
 

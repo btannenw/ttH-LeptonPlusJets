@@ -2435,6 +2435,7 @@ n_fatjets++;
     std::vector<double>  re_fatjet_pt            ;
     std::vector<double>  re_fatjet_eta	      ;
     std::vector<double>  re_fatjet_phi	      ;
+    std::vector<double>  re_fatjet_tau21      ;
     std::vector<double>  re_fatjet_sdmass_miniaod ;
     std::vector<double>  re_fatjet_sdmass_uncorr  ;
 
@@ -2518,6 +2519,11 @@ n_fatjets++;
         re_fatjet_pt . push_back( correctedJet .pt() ) ;  
 	re_fatjet_eta. push_back( correctedJet .eta() ) ;  
 	re_fatjet_phi. push_back( correctedJet .phi() ) ;  
+
+	re_fatjet_tau21 . push_back( correctedJet.userFloat("NjettinessAK8Puppi:tau2")
+				     / 
+				     correctedJet.userFloat("NjettinessAK8Puppi:tau1") );
+
         re_fatjet_sdmass_miniaod .push_back( rerun_fatjets -> at(i). userFloat("ak8PFJetsPuppiSoftDropMass")  );
 
 
@@ -2718,6 +2724,7 @@ n_fatjets++;
     eve ->  re_fatjet_pt             [iSys] =  re_fatjet_pt            ;     
     eve ->  re_fatjet_eta	     [iSys] =  re_fatjet_eta	      ;	       
     eve ->  re_fatjet_phi	     [iSys] =  re_fatjet_phi	      ;	       
+    eve ->  re_fatjet_tau21             [iSys] =  re_fatjet_tau21            ;     
     eve ->  re_fatjet_sdmass_miniaod [iSys] =  re_fatjet_sdmass_miniaod ;    
     eve ->  re_fatjet_sdmass_uncorr  [iSys] =  re_fatjet_sdmass_uncorr  ;    
 

@@ -1952,6 +1952,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   h_event -> Fill( 0.0 , GenEventInfoWeight > 0 ? +1.0 : -1.0 ) ; // with weight 
   h_event -> Fill( 1.0 ) ; // no weight
 
+  if( evt % 2 == 0 ){
+    h_event -> Fill( 2.0 , GenEventInfoWeight > 0 ? +1.0 : -1.0 ) ; // with weight 
+  }else{
+    h_event -> Fill( 3.0 , GenEventInfoWeight > 0 ? +1.0 : -1.0 ) ; // with weight 
+  }
   
   if( ! EVENTSYNCMODE && lepton_pt . size() == 0 ){
     return ;  // No data recording 
@@ -3077,7 +3082,7 @@ YggdrasilTreeMaker::beginJob()
   h_ttbarId_ = fileService->make<TH1F>("ttbarId", "ttbarId", 260, 0, 260);
   h_ttbarAdditionalJetId_ = fileService->make<TH1F>("ttbarAdditionalJetId", "ttbarAdditionalJetId", 60, 0, 60);
 
-  h_event = fileService->make<TH1D>("event", "event", 2, 0 , 2 ) ;
+  h_event = fileService->make<TH1D>("event", "event", 4, 0 , 4 ) ;
 
 }
 

@@ -18,6 +18,7 @@
 #define EVENTSYNCMODE false
 // In case of not EVENTSYNCMODE, event (no lepton, less jets events) can be not recorded in the output tree.
 
+#define DISABLE_LHE_FOR_DIBOSON_SAMPLES false
 
 // system include files
 #include <memory>
@@ -369,7 +370,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   if( isMC ){
     mcparicleToken = consumes <reco::GenParticleCollection> (edm::InputTag(std::string("prunedGenParticles")));
     genInfoProductToken = consumes <GenEventInfoProduct> (edm::InputTag(std::string("generator")));
-    LHEEventProductToken = consumes<LHEEventProduct> ( edm::InputTag(std::string("externalLHEProducer") )  );
+    if( ! DISABLE_LHE_FOR_DIBOSON_SAMPLES ){ LHEEventProductToken = consumes<LHEEventProduct> ( edm::InputTag(std::string("externalLHEProducer") )  ); }
     TtGenEventToken = consumes< TtGenEvent >( edm::InputTag("genEvt") );
   }
 
@@ -551,7 +552,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   edm::Handle<LHEEventProduct> LHEEventProductHandle;
   if( isMC ){
   iEvent.getByToken(genInfoProductToken,GenEventInfoHandle);
-  iEvent.getByToken(LHEEventProductToken,  LHEEventProductHandle) ;
+  if( ! DISABLE_LHE_FOR_DIBOSON_SAMPLES ){ iEvent.getByToken(LHEEventProductToken,  LHEEventProductHandle) ; }
   }
 
   edm::Handle<boosted::BoostedJetCollection> h_boostedjet;
@@ -786,11 +787,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   
   eve->additionalJetEventId_ = *genTtbarId;
   
+  if( ! DISABLE_LHE_FOR_DIBOSON_SAMPLES ){
     const int idx_Q2_upup     = 1005;
     eve->weight_q2_upup_     = LHEEventProductHandle -> weights()[idx_Q2_upup]    .wgt / LHEEventProductHandle -> originalXWGTUP(); 
     const int idx_Q2_downdown = 1009;
     eve->weight_q2_downdown_ = LHEEventProductHandle -> weights()[idx_Q2_downdown].wgt / LHEEventProductHandle -> originalXWGTUP(); 
-
+  }
     //
 
 //(debug)    std::cout <<"Satoshi debug : wgt size " << LHEEventProductHandle -> weights().size() << std::endl ; 
@@ -800,7 +802,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     std::vector<int> mcWeight_key ; 
 
 
-    if( LHEEventProductHandle -> weights().size() > 10 ){
+    if( ! DISABLE_LHE_FOR_DIBOSON_SAMPLES && LHEEventProductHandle -> weights().size() > 10 ){
 
     // Memo : The size of "weights()" was 1080 as of 94x, Fall17 MiniAID.
     // Memo : It means that the index of the array is ID-1000.

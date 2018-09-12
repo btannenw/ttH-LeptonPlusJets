@@ -100,7 +100,16 @@ if enableJECFromLocalDB :
             label  = cms.untracked.string('AK8PFPuppi')
             )
         )
-    
+
+    process.GlobalTag.toGet.append(
+        cms.PSet(
+            connect = cms.string( JecDBPathPrefix + '/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/' + JecLocalDataBaseName +'.db' ),
+            record = cms.string('JetCorrectionsRecord'),
+            tag    = cms.string('JetCorrectorParametersCollection_'+ JecLocalDataBaseName +'_AK8PFPuppi'),
+            label  = cms.untracked.string('AK15PFPuppi')
+            )
+        )
+
     #  line for PUPPI for temporal.
     process.GlobalTag.toGet.append(
         cms.PSet(
@@ -403,7 +412,7 @@ process.puppiOnTheFly = process.puppi.clone()
 #process.puppiOnTheFly.useExistingWeights = False
 process.puppiOnTheFly.useExistingWeights = True
 # --- To be consistent with MiniAOD jets, keep using the same PUPPI weight (Is this correct approach ?)
-jetToolbox( process, 'ak8', 'jetSequence', 'out', 
+jetToolbox( process, 'ca15', 'jetSequence', 'out', 
             runOnMC= isMC , addNsub=True, 
             PUMethod = 'Puppi', newPFCollection=True, nameNewPFCollection='puppiOnTheFly' , addSoftDrop=True , addSoftDropSubjets=True )
 

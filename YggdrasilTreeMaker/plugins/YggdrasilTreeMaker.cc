@@ -342,7 +342,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   
   fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsAK8")));
 
-  rerun_fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsAK8PFPuppi")));// Rerun of PUPPI ak8
+  //  rerun_fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsAK8PFPuppi")));// Rerun of PUPPI ak8
+  rerun_fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsCA15PFPuppi")));// Rerun of PUPPI ca15
 
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
@@ -2413,6 +2414,7 @@ n_fatjets++;
     std::vector<double>  re_fatjet_eta	      ;
     std::vector<double>  re_fatjet_phi	      ;
     std::vector<double>  re_fatjet_tau21      ;
+    std::vector<double>  re_fatjet_tau32      ;
     std::vector<double>  re_fatjet_sdmass_miniaod ;
     std::vector<double>  re_fatjet_sdmass_uncorr  ;
 
@@ -2490,18 +2492,22 @@ n_fatjets++;
 	pat::Jet correctedJet =  miniAODhelper_fatjet.GetCorrectedAK8Jet( rerun_fatrawJets.at(i) , iEvent, iSetup, reclustered_fatgenjetCollection , iSysType ); //todo
 
 	if(        correctedJet .pt()   < 80 ) continue ; 
-	if( fabs( correctedJet .eta() ) > 2.1 ) continue ; 
+	if( fabs( correctedJet .eta() ) > 2.4 ) continue ; 
 
 
         re_fatjet_pt . push_back( correctedJet .pt() ) ;  
 	re_fatjet_eta. push_back( correctedJet .eta() ) ;  
 	re_fatjet_phi. push_back( correctedJet .phi() ) ;  
 
-	re_fatjet_tau21 . push_back( correctedJet.userFloat("NjettinessAK8Puppi:tau2")
+	re_fatjet_tau21 . push_back( correctedJet.userFloat("NjettinessCA15Puppi:tau2")
 				     / 
-				     correctedJet.userFloat("NjettinessAK8Puppi:tau1") );
+				     correctedJet.userFloat("NjettinessCA15Puppi:tau1") );
 
-        re_fatjet_sdmass_miniaod .push_back( rerun_fatjets -> at(i). userFloat("ak8PFJetsPuppiSoftDropMass")  );
+	re_fatjet_tau32 . push_back( correctedJet.userFloat("NjettinessCA15Puppi:tau3")
+				     / 
+				     correctedJet.userFloat("NjettinessCA15Puppi:tau2") );
+
+        re_fatjet_sdmass_miniaod .push_back( rerun_fatjets -> at(i). userFloat("ca15PFJetsPuppiSoftDropMass")  );
 
 
 // Not Yet implemented 	pat::Jet originalJet = rerun_fatjets -> at(i) ; 
@@ -2702,6 +2708,7 @@ n_fatjets++;
     eve ->  re_fatjet_eta	     [iSys] =  re_fatjet_eta	      ;	       
     eve ->  re_fatjet_phi	     [iSys] =  re_fatjet_phi	      ;	       
     eve ->  re_fatjet_tau21             [iSys] =  re_fatjet_tau21            ;     
+    eve ->  re_fatjet_tau32             [iSys] =  re_fatjet_tau32            ;     
     eve ->  re_fatjet_sdmass_miniaod [iSys] =  re_fatjet_sdmass_miniaod ;    
     eve ->  re_fatjet_sdmass_uncorr  [iSys] =  re_fatjet_sdmass_uncorr  ;    
 

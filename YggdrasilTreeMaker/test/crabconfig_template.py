@@ -31,7 +31,11 @@ config.JobType.maxMemoryMB = 4000 # Def=2000, increased for jettoolbox
 
 config.JobType.sendExternalFolder = True
 
+config.JobType.disableAutomaticOutputCollection = True 
+# : I disable the automatic output correction not to keep jettoolbox output root file.
+
 config.JobType.outputFiles = ['yggdrasil_treeMaker.root']
+
 
 
 ##########################################

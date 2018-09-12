@@ -177,13 +177,14 @@ process.source = cms.Source("PoolSource",
 
 # collection placeholders
 electronCollection = cms.InputTag("slimmedElectrons", "", "PAT")
-muonCollection     = cms.InputTag("slimmedMuons", "", "PAT")
 tauCollection      = cms.InputTag("slimmedTaus", "", "PAT")
 photonCollection   = cms.InputTag("slimmedPhotons", "", "PAT")
 METCollection      = cms.InputTag("slimmedMETs", "", "PAT")
 jetCollection      = cms.InputTag("slimmedJets", "", "PAT")
 
-
+muonCollection     = cms.InputTag("slimmedMuons", "", "PAT")
+if not isMC : 
+    muonCollection     = cms.InputTag("slimmedMuons", "", "RECO")
 
 
 
@@ -396,7 +397,10 @@ process.TFileService = cms.Service("TFileService",
 
 process.load( "PuppiLeptonIsolationhelper.PuppiLeptonIsolation.PuppiMuonIsolationProducer_cfi" )
 process.PUPPIMuonRelIso.addIsolationComponentInfo = cms.bool( True )
-
+if not isMC :
+    process.PUPPIMuonRelIso.pfCandidates  = cms.InputTag("packedPFCandidates", "", "RECO")
+    process.PUPPIMuonRelIso.muonCollection  = muonCollection
+    
 
 
 

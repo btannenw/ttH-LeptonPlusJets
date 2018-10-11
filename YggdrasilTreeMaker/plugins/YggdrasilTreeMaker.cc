@@ -193,6 +193,10 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT<reco::JetCorrector> puppijetCorrectorToken_;
   edm::EDGetTokenT<reco::JetCorrector> fatjetCorrectorToken_;
 
+  // BBT, 10-08-18: add token for electron ID
+  edm::EDGetTokenT<edm::ValueMap<bool> > eleIdMapToken_;
+
+
   HLTConfigProvider hlt_config_;
 
   bool verbose_;
@@ -327,6 +331,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
   electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
+  // BBT, 10-08-18: token for electron ID
+  eleIdMapToken_ = consumes<edm::ValueMap<bool> > (edm::InputTag(std::string("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-tight")));
 
   //  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
   //  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("MuonWithPuppiIsolation")));
@@ -344,7 +350,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsAK8")));
 
   //  rerun_fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsAK8PFPuppi")));// Rerun of PUPPI ak8
-  rerun_fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsCA15PFPuppi")));// Rerun of PUPPI ca15
+  //rerun_fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsCA15PFPuppi")));// Rerun of PUPPI ca15
 
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
@@ -480,6 +486,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   /// old way of getting electrons
   edm::Handle<pat::ElectronCollection> electrons;
   iEvent.getByToken(electronToken,electrons);
+
+  // BBT, 10-08-18: electron ID
+  edm::Handle<edm::ValueMap<bool> > ele_id_decisions;
+  iEvent.getByToken(eleIdMapToken_ ,ele_id_decisions);
+
   // //// MVAelectrons
   // edm::Handle< edm::View<pat::Electron> > h_electrons;
   // iEvent.getByToken( EDMElectronsToken,h_electrons );
@@ -504,8 +515,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   edm::Handle<pat::JetCollection> fatjets;
   iEvent.getByToken(fatjetToken,fatjets);
 
-  edm::Handle<pat::JetCollection> rerun_fatjets;
-  iEvent.getByToken(rerun_fatjetToken,rerun_fatjets);
+  //edm::Handle<pat::JetCollection> rerun_fatjets;
+  //iEvent.getByToken(rerun_fatjetToken,rerun_fatjets);
 
   edm::Handle<pat::METCollection> pfmet;
   iEvent.getByToken(metToken,pfmet);
@@ -1786,6 +1797,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     int trkCharge = -99;
     if( iEle->gsfTrack().isAvailable() ) trkCharge = iEle->gsfTrack()->charge();
 
+    // BBT, 10-10-18
+    //auto corrP4  = pat::Electron::p4() * pat::Electron::userFloat("ecalTrkEnergyPostCorr") / pat::Electron::energy();
+    auto corrP4  = iEle->p4() * iEle->userFloat("ecalTrkEnergyPostCorr") / iEle->energy();
+    //std::cout << "[Electron loop] corrected pt: " << corrP4.pt() << ", nominal pt: " << iEle->pt() << std::endl;
+
 
     bool inCrack = false;
     double scEta = -99;
@@ -1800,6 +1816,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     int isPOGLoose = ! inCrack && miniAODhelper.PassElectron94XId(*iEle ,electronID::electron94XCutBasedV ) ? 1 : 0  ;
     int isPOGLooseAlt = ! inCrack && miniAODhelper.PassElectron94XId(*iEle ,electronID::electron94XCutBasedL ) ? 1 : 0  ;
 
+    //bool isPassEleId = (*ele_id_decisions)[*iEle];
+    //int isVIDTight = ! inCrack && isPassEleId ? 1 : 0  ;
 
     // our pre-selections 
     if( iEle->pt() < 15 ){ continue;}
@@ -1863,15 +1881,18 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_trkCharge.push_back(trkCharge);
     lepton_isMuon.push_back(0);
     lepton_isTight.push_back(isPOGTight);
+    //lepton_isTight.push_back( iEle->electronID("cutBasedElectronID-Fall17-94X-V1-tight") ); // BBT, 10-10-18
     lepton_isLoose.push_back(isPOGLoose);
     lepton_isLooseAlt.push_back(isPOGLooseAlt);
     lepton_genId.push_back(genId);
     lepton_genParentId.push_back(genParentId);
     lepton_genGrandParentId.push_back(genGrandParentId);
-    lepton_pt.push_back(iEle->pt());
+    //lepton_pt.push_back(iEle->pt()); // ygg core
+    lepton_pt.push_back( corrP4.pt() ); // BBT, 10-10-18
     lepton_eta.push_back(iEle->eta());
     lepton_phi.push_back(iEle->phi());
-    lepton_e.push_back(iEle->energy());
+    //lepton_e.push_back(iEle->energy()); // ygg core
+    lepton_e.push_back( corrP4.energy() ); // BBT, 10-10-18
     lepton_relIso.push_back(     miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::fall17) );
     lepton_puppirelIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::fall17) );
     lepton_dbiso_CH . push_back(0);
@@ -2101,7 +2122,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     ////////
 
     std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( *pfjets );
-    std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType );
+    //cout << "!!! before ak4pfchs correction" << endl;
+    //std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType ); // ygg core
+    std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType, true, true ); // BBT, 10-05-18
+    //cout << "!!! after ak4pfchs correction" << endl;
     std::vector<pat::Jet> selectedJets_unsorted =  miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 ,
 										 ( jetID::jetTight ) // <- For 2017, no LooseID, only tight.
 										 , '-' );
@@ -2109,12 +2133,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     double JecUpdatePropagationToMET_x = 0 ;
     double JecUpdatePropagationToMET_y = 0 ;
     for( unsigned int i = 0 ; i < pfjets -> size() ; i++ ){
-
-//      if(iSys == 0 ){
-//	std::cout <<" JEC diff " << i << " " << pfjets->at(i).px() - correctedJets.at(i).px() << " " << pfjets->at(i).py() - correctedJets.at(i).py()  << std::endl ; 
-//	std::cout <<" JEC  orig " << i <<" "<< pfjets->at(i).px() << " " <<  pfjets->at(i).py() << std::endl ; 
-//      }
-
+      /* // BBT 10-05-18
+      if(iSys == 0 ){
+	std::cout <<" JEC diff " << i << " " << pfjets->at(i).px() - correctedJets.at(i).px() << " " << pfjets->at(i).py() - correctedJets.at(i).py()  << std::endl ; 
+	std::cout <<" JEC  orig " << i <<" "<< pfjets->at(i).px() << " " <<  pfjets->at(i).py() << std::endl ; 
+      }
+      */
       JecUpdatePropagationToMET_x +=  pfjets->at(i).px() - correctedJets.at(i).px() ; 
       JecUpdatePropagationToMET_y +=  pfjets->at(i).py() - correctedJets.at(i).py() ; 
     }
@@ -2486,7 +2510,7 @@ n_fatjets++;
     }
 
 
-
+    /*
     { /// --------- Add information of reclusted (by myself) jets.
       std::vector<pat::Jet> rerun_fatrawJets = miniAODhelper_fatjet.GetUncorrectedJets( *rerun_fatjets );
 
@@ -2532,7 +2556,7 @@ n_fatjets++;
 
       }
     }
-
+    */
     // - - - - MET works - - - - - 
 
     {
@@ -2551,6 +2575,19 @@ n_fatjets++;
 
       eve->MET_Type1xy_[iSys]      = sqrt( met_x * met_x + met_y * met_y );
       eve->MET_Type1xy_phi_[iSys]  = atan2( met_y , met_x   );		   
+
+    }
+
+    {
+      // BBT, 10-04-18
+      //double met_x = correctedMET.shiftedP4(pat::MET::NoShift, pat::MET::Type1XY) ; 
+      //double met_x = correctedMET.shiftedP4(pat::MET::NoShift, pat::MET::Type1XY) ; 
+      //double met_y = pfmet[0].shiftedP4(pat::MET::NoShift, pat::MET::Type1XY) ; 
+      //double met_y = pfmet[0].shiftedP4(pat::MET::NoShift, pat::MET::Type1XY) ; 
+      double met_x = correctedMET.corPx(pat::MET::Type1XY);
+      double met_y = correctedMET.corPy(pat::MET::Type1XY);
+      eve->MET_Type1xy_sync_[iSys]      = sqrt( met_x * met_x + met_y * met_y );
+      eve->MET_Type1xy_phi_sync_[iSys]  = atan2( met_y , met_x   );		   
 
     }
 
@@ -3118,16 +3155,20 @@ YggdrasilTreeMaker::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup
     return;
   }
 
-  std::cout <<"[debug message ]YggdrasilTreeMaker::beginRun() is called." << std::endl ; 
+  std::cout <<"[debug message] YggdrasilTreeMaker::beginRun() is called." << std::endl ; 
   miniAODhelper.UpdateJetCorrectorUncertainties( iSetup );
   miniAODhelper_Puppi.UpdateJetCorrectorUncertainties( iSetup );
   miniAODhelper_fatjet.SetAK8JetCorrectorUncertainty( iSetup ); // Ak8
 
-  miniAODhelper.SetJER_SF_Tool( iSetup );
-  miniAODhelper_Puppi.SetJER_SF_Tool( iSetup );
-  miniAODhelper_fatjet.SetJER_SF_Tool( iSetup );
+  std::cout << "[debug message] YggdrasilTreeMaker::beginRun() has finished JetCorrectorWork for all jet collections" << std::endl;
 
-  std::cout <<"[debug message ]YggdrasilTreeMaker::beginRun() was called." << std::endl ; 
+
+  miniAODhelper.SetJER_SF_Tool( iSetup );
+  std::cout <<"[debug message] YggdrasilTreeMaker::beginRun() has finished JER SF work for resolved jets" << std::endl ; 
+  miniAODhelper_Puppi.SetJER_SF_Tool( iSetup );
+  std::cout <<"[debug message] YggdrasilTreeMaker::beginRun() has finished JER SF work for PUPPI jets" << std::endl ; 
+  miniAODhelper_fatjet.SetJER_SF_Tool( iSetup );
+  std::cout <<"[debug message] YggdrasilTreeMaker::beginRun() has finished JER SF work for all jets" << std::endl ; 
 }
 
 

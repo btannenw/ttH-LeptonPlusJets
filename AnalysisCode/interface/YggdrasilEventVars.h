@@ -178,6 +178,10 @@ struct yggdrasilEventVars{
   Float_t MET_Type1xy_[rNumSys];
   Float_t MET_Type1xy_phi_[rNumSys];
 
+  // BBT, 10-04-18
+  Float_t MET_Type1xy_sync_[rNumSys];
+  Float_t MET_Type1xy_phi_sync_[rNumSys];
+
   Float_t PUPPIMET_[rNumSys];
   Float_t PUPPIMET_phi_[rNumSys];
 
@@ -435,6 +439,10 @@ void yggdrasilEventVars::initialize(){
 
     MET_Type1xy_[iSys]                        = -99.9;
     MET_Type1xy_phi_[iSys]                        = -99.9;
+
+    // BBT, 10-04-18
+    MET_Type1xy_sync_[iSys]                        = -99.9;
+    MET_Type1xy_phi_sync_[iSys]                        = -99.9;
 
     PUPPIMET_Type1xy_[iSys]                            = -99.9;
     PUPPIMET_Type1xy_phi_[iSys]                        = -99.9;

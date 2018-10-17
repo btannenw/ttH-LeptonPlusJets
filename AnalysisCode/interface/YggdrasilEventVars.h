@@ -142,6 +142,7 @@ struct yggdrasilEventVars{
   vdouble lepton_scEta_;
   vdouble lepton_dRSingleLepTrig_;
   vdouble lepton_dRDiLepTrig_;
+  vdouble lepton_seed_; // BBT 10-12-18
 
   vfloat truth_pt_;
   vfloat truth_eta_;
@@ -208,6 +209,7 @@ struct yggdrasilEventVars{
   vdouble jet_m_[rNumSys];
 
   vint    jet_puid_[rNumSys];
+  vint    jet_seed_[rNumSys]; // BBT 10-12-18
 
 
   vdouble  jet_precorr_pt_  [rNumSys];
@@ -409,6 +411,7 @@ void yggdrasilEventVars::initialize(){
   lepton_scEta_.clear();
   lepton_dRSingleLepTrig_.clear();
   lepton_dRDiLepTrig_.clear();
+  lepton_seed_.clear(); // BBT 10-12-18
 
   wgt_generator_        = -99.9;
   wgt_lumi_             = -99.9;
@@ -462,6 +465,7 @@ void yggdrasilEventVars::initialize(){
     jet_m_  [iSys].clear();
 
     jet_puid_ [iSys].clear();
+    jet_seed_ [iSys].clear(); // BBT 10-12-18
 
     jet_precorr_pt_  [iSys].clear();
     jet_precorr_phi_  [iSys].clear();

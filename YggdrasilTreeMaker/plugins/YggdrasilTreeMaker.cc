@@ -164,6 +164,8 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT < edm::View<pat::Muon> > muonview_Token;
 
   edm::EDGetTokenT <pat::JetCollection> jetToken;
+  edm::EDGetTokenT <pat::JetCollection> jetTokenWithSeeds; // BBT 10-12-18
+  edm::EDGetTokenT <pat::JetCollection> jetTokenWithSeeds_v2; // BBT 10-15-18
   edm::EDGetTokenT <pat::JetCollection> puppijetToken;
   edm::EDGetTokenT <pat::JetCollection> fatjetToken;
   edm::EDGetTokenT <pat::JetCollection> rerun_fatjetToken;
@@ -334,9 +336,9 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   // BBT, 10-08-18: token for electron ID
   eleIdMapToken_ = consumes<edm::ValueMap<bool> > (edm::InputTag(std::string("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-tight")));
 
-  //  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
-  //  muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("MuonWithPuppiIsolation")));
-  muonToken = consumes <pat::MuonCollection> (edm::InputTag("PUPPIMuonRelIso", "MuonWithPuppiIsolation","" ) ) ;
+   muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons"))); // uncomment BBT, 10-12-18
+  // muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("MuonWithPuppiIsolation")));
+  //muonToken = consumes <pat::MuonCollection> (edm::InputTag("PUPPIMuonRelIso", "MuonWithPuppiIsolation","" ) ) ; // comment out ygg core
 
   //muonToken = consumes <pat::MuonCollection> (edm::InputTag("deterministicSeeds", "muonsWithSeed",""));
 
@@ -345,8 +347,11 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
 
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+  jetTokenWithSeeds = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds", "jetsWithSeed","")); // BBT 10-12-18
+  //edm::InputTag jetCollection_config; // BBT 10-15-18
+  //jetCollection_config = iConfig.getParameter<edm::InputTag>("jetCollection"); // BBT 10-15-18
+  //jetTokenWithSeeds_v2 = consumes <pat::JetCollection> (jetCollection_config); // BBT 10-15-18
   puppijetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
-  
   fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsAK8")));
 
   //  rerun_fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsAK8PFPuppi")));// Rerun of PUPPI ak8
@@ -507,7 +512,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   iEvent.getByToken(muonToken,muons);
 
   edm::Handle<pat::JetCollection> pfjets;
-  iEvent.getByToken(jetToken,pfjets);
+  //iEvent.getByToken(jetTokenWithSeeds_v2,pfjets); // BBT 10-15-18
+  //iEvent.getByToken(jetTokenWithSeeds,pfjets); // BBT 10-12-18
+  iEvent.getByToken(jetToken,pfjets); // ygg core
 
   edm::Handle<pat::JetCollection> pfpuppijets;
   iEvent.getByToken(puppijetToken,pfpuppijets);
@@ -1566,6 +1573,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   vdouble lepton_eta;
   vdouble lepton_phi;
   vdouble lepton_e;
+  vdouble lepton_seed;  // BBT 10-12-18
   vdouble lepton_relIso;
   vdouble lepton_puppirelIso;
   vdouble lepton_dbiso_CH ;
@@ -1697,19 +1705,20 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_eta.push_back(iMu->eta());
     lepton_phi.push_back(iMu->phi());
     lepton_e.push_back(iMu->energy());
+    //lepton_seed.push_back( iMu -> userInt("deterministicSeed") );  // BBT 10-12-18
     lepton_relIso.push_back( miniAODhelper.GetMuonRelIso(*iMu, coneSize::R04, corrType::deltaBeta) ) ;
 
-    lepton_puppirelIso.push_back( iMu -> userFloat( "reliso_puppicombined" ) ) ;
+    //lepton_puppirelIso.push_back( iMu -> userFloat( "reliso_puppicombined" ) ) ;
     lepton_dbiso_CH . push_back( iMu -> pfIsolationR04().sumChargedHadronPt );
     lepton_dbiso_NH . push_back( iMu -> pfIsolationR04().sumNeutralHadronEt );
     lepton_dbiso_PH . push_back( iMu -> pfIsolationR04().sumPhotonEt );
     lepton_dbiso_PU . push_back( iMu -> pfIsolationR04().sumPUPt );
-    lepton_puppiIsoWithLep_CH    . push_back( iMu -> userFloat( "reliso_puppiwithlepton_ch" )   );
-    lepton_puppiIsoWithLep_NH    . push_back( iMu -> userFloat( "reliso_puppiwithlepton_nh" )   );
-    lepton_puppiIsoWithLep_PH    . push_back( iMu -> userFloat( "reliso_puppiwithlepton_ph" )   );
-    lepton_puppiIsoWithoutLep_CH . push_back( iMu -> userFloat( "reliso_puppinolepton_ch" )   );
-    lepton_puppiIsoWithoutLep_NH . push_back( iMu -> userFloat( "reliso_puppinolepton_nh" )   );
-    lepton_puppiIsoWithoutLep_PH . push_back( iMu -> userFloat( "reliso_puppinolepton_ph" )   );
+    //lepton_puppiIsoWithLep_CH    . push_back( iMu -> userFloat( "reliso_puppiwithlepton_ch" )   );
+    //lepton_puppiIsoWithLep_NH    . push_back( iMu -> userFloat( "reliso_puppiwithlepton_nh" )   );
+    //lepton_puppiIsoWithLep_PH    . push_back( iMu -> userFloat( "reliso_puppiwithlepton_ph" )   );
+    //lepton_puppiIsoWithoutLep_CH . push_back( iMu -> userFloat( "reliso_puppinolepton_ch" )   );
+    //lepton_puppiIsoWithoutLep_NH . push_back( iMu -> userFloat( "reliso_puppinolepton_nh" )   );
+    //lepton_puppiIsoWithoutLep_PH . push_back( iMu -> userFloat( "reliso_puppinolepton_ph" )   );
     lepton_mvaTrigValue.push_back(-99);
     lepton_scSigmaIEtaIEta.push_back(-99);
     lepton_full5x5_scSigmaIEtaIEta.push_back(-99);
@@ -1812,7 +1821,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       scEta = iEle->superCluster()->position().eta();
     }
 
-    int isPOGTight = ! inCrack && miniAODhelper.PassElectron94XId(*iEle ,electronID::electron94XCutBasedT ) ? 1 : 0  ;
+    //int isPOGTight = iEle->electronID("cutBasedElectronID-Fall17-94X-V1-tight") && ? 1 : 0  ; // BBT 10-17-18
+    int isPOGTight = ! inCrack && miniAODhelper.PassElectron94XId(*iEle ,electronID::electron94XCutBasedT ) ? 1 : 0  ; // ygg core
     int isPOGLoose = ! inCrack && miniAODhelper.PassElectron94XId(*iEle ,electronID::electron94XCutBasedV ) ? 1 : 0  ;
     int isPOGLooseAlt = ! inCrack && miniAODhelper.PassElectron94XId(*iEle ,electronID::electron94XCutBasedL ) ? 1 : 0  ;
 
@@ -1893,6 +1903,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     lepton_phi.push_back(iEle->phi());
     //lepton_e.push_back(iEle->energy()); // ygg core
     lepton_e.push_back( corrP4.energy() ); // BBT, 10-10-18
+    //lepton_seed.push_back( iEle -> userInt("deterministicSeed") ); // BBT, 10-12-18
     lepton_relIso.push_back(     miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::fall17) );
     lepton_puppirelIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::fall17) );
     lepton_dbiso_CH . push_back(0);
@@ -2009,6 +2020,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->lepton_eta_              = lepton_eta;
   eve->lepton_phi_              = lepton_phi;
   eve->lepton_e_              = lepton_e;
+  eve->lepton_seed_              = lepton_seed;  // BBT 10-12-18
   eve->lepton_relIso_           = lepton_relIso;
   eve->lepton_puppirelIso_           = lepton_puppirelIso;
 
@@ -2262,6 +2274,7 @@ n_fatjets++;
     vdouble jet_m;
 
     vint   jet_puid;
+    vint   jet_seed;  // BBT 10-12-18
 
     vdouble jet_AssociatedGenJet_pt;
     vdouble jet_AssociatedGenJet_eta;
@@ -2306,6 +2319,7 @@ n_fatjets++;
       jet_m   .push_back( iJet -> mass()   );
 
       jet_puid . push_back( iJet -> userInt("pileupJetId:fullId") ) ;
+      //jet_puid . push_back( iJet -> userInt("deterministicSeed") ) ; // BBT 10-12-18
 
       jet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
       jet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );
@@ -2624,6 +2638,7 @@ n_fatjets++;
       jet_phi. clear() ;
       jet_m. clear() ;
       jet_puid. clear() ;
+      jet_seed. clear() ; // BBT 10-12-18
       jet_AssociatedGenJet_pt. clear() ;
       jet_AssociatedGenJet_eta. clear() ;
       jet_AssociatedGenJet_phi. clear() ;
@@ -2687,6 +2702,7 @@ n_fatjets++;
     eve->jet_m_   [iSys]= jet_m   ;
 
     eve->jet_puid_  [iSys]= jet_puid  ;
+    eve->jet_seed_  [iSys]= jet_seed  ; // BBT 10-12-18
 
     eve->jet_precorr_pt_  [iSys]= jet_precore_pt  ;
     eve->jet_precorr_phi_ [iSys]= jet_precore_phi ;

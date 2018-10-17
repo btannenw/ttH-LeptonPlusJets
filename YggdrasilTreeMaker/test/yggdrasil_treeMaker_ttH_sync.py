@@ -193,7 +193,6 @@ if not isMC :
     muonCollection     = cms.InputTag("slimmedMuons", "", "RECO")
 
 
-
 if not isMC :
     if ForDebugAndEventSync_EnableLumiMaskByHand :
         import sys
@@ -204,26 +203,6 @@ if not isMC :
                                                           ).getVLuminosityBlockRange()
 
 
-
-## The line below should always be included
-from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
-
-## Example 1: If you only want to re-correct MET and get the proper uncertainties [e.g. when updating JEC]
-runMetCorAndUncFromMiniAOD(process,
-                           isData           = not isMC
-#            jecUncFile       = os.path.basename(options.JESUncFiles[0]),
-#            electronColl     = electronCollection.value(),
-#            muonColl         = muonCollection.value(),
-#            tauColl          = tauCollection.value(),
-#            photonColl       = photonCollection.value(),
-#            jetCollUnskimmed = jetCollection.value(),
-#            #pfCandColl=cms.InputTag("packedPFCandidates"),
-#            #recoMetFromPFCs  = True
-                           )
-#process.p = cms.Path(
-#                    process.fullPatMetSequence *
-#                    process.yourAnalyzer
-#                    )
 
 
 if isMC :
@@ -372,9 +351,6 @@ eleVIDModules = [
 
 switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
-
-
-
 for mod in eleVIDModules:
     setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
 
@@ -445,7 +421,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_10-11-18_v11_full.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_10-17-18_v16.root')
 )
 
 
@@ -456,6 +432,41 @@ if not isMC :
     process.PUPPIMuonRelIso.muonCollection  = muonCollection
     
 
+#BBT, 10-12-18, add deterministic seeds
+process.load("PhysicsTools.PatUtils.deterministicSeeds_cfi")
+process.deterministicSeeds.produceCollections = cms.bool(True)
+process.deterministicSeeds.produceValueMaps   = cms.bool(False)
+#process.deterministicSeeds.seedUserInt        = cms.string('deterministicSeed')
+process.deterministicSeeds.electronCollection = electronCollection
+process.deterministicSeeds.muonCollection     = muonCollection
+process.deterministicSeeds.tauCollection      = tauCollection
+process.deterministicSeeds.photonCollection   = photonCollection
+process.deterministicSeeds.jetCollection      = jetCollection
+process.deterministicSeeds.METCollection      = METCollection
+
+#BBT, 10-12-18, add deterministic seeds
+# overwrite output collections (skip electrons as the EGamma tools handle the deterministic seed creation internally)
+muonCollection     = cms.InputTag("deterministicSeeds", "muonsWithSeed", process.name_())
+tauCollection      = cms.InputTag("deterministicSeeds", "tausWithSeed", process.name_())
+photonCollection   = cms.InputTag("deterministicSeeds", "photonsWithSeed", process.name_())
+jetCollection      = cms.InputTag("deterministicSeeds", "jetsWithSeed", process.name_())
+METCollection      = cms.InputTag("deterministicSeeds", "METsWithSeed", process.name_())
+
+
+## The line below should always be included, BBT, 10-09-18
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+## Example 1: If you only want to re-correct MET and get the proper uncertainties [e.g. when updating JEC]
+runMetCorAndUncFromMiniAOD(process,
+                           isData           = not isMC
+#            jecUncFile       = os.path.basename(options.JESUncFiles[0]),
+#            electronColl     = electronCollection.value(),
+#            muonColl         = muonCollection.value(),
+#            tauColl          = tauCollection.value(),
+#            photonColl       = photonCollection.value(),
+#            jetCollUnskimmed = jetCollection.value(),
+#            #pfCandColl=cms.InputTag("packedPFCandidates"),
+#            #recoMetFromPFCs  = True
+                           )
 
 
 #process.load("Configuration.StandardSequences.MagneticField_cff")
@@ -493,6 +504,7 @@ if isMC :
         process.fullPatMetSequence *  # BBT, 10-04-18
         process.egmGsfElectronIDSequence * # BBT, 10-08-18
         process.egammaPostRecoSeq * # BBT, 10-11-18
+        process.deterministicSeeds * # BBT, 10-12-18
         process.ttHTreeMaker)
 else :
     process.p = cms.Path(

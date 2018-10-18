@@ -120,6 +120,7 @@ struct yggdrasilEventVars{
 
   vint lepton_isMuon_;
   vint lepton_charge_;
+  vint lepton_trkCharge_;
   vint lepton_isTight_;
   vint lepton_isLoose_;
   vint lepton_isLooseAlt_;
@@ -387,6 +388,7 @@ void yggdrasilEventVars::initialize(){
 
   lepton_isMuon_.clear();
   lepton_charge_.clear();
+  lepton_trkCharge_.clear();
   lepton_isTight_.clear();
   lepton_isLoose_.clear();
   lepton_isLooseAlt_.clear();

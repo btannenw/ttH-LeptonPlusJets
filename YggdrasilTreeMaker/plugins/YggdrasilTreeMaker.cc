@@ -1568,7 +1568,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   vvdouble vvleptons;
 
   
-  vint lepton_genId, lepton_genParentId, lepton_genGrandParentId, lepton_trkCharge, lepton_isMuon, lepton_isTight, lepton_isLoose, lepton_isLooseAlt;
+  vint lepton_genId, lepton_genParentId, lepton_genGrandParentId, lepton_trkCharge, lepton_charge, lepton_isMuon, lepton_isTight, lepton_isLoose, lepton_isLooseAlt;
   vdouble lepton_pt;
   vdouble lepton_eta;
   vdouble lepton_phi;
@@ -1633,7 +1633,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
     int trkCharge = -99;
     if( iMu->muonBestTrack().isAvailable() ) trkCharge = iMu->muonBestTrack()->charge();
-
+    int charge = iMu->charge();
+   
     int isPOGTight = miniAODhelper.passesMuonPOGIdTight(*iMu) ? 1 : 0;
     int isPOGLoose = 1 ; //this is needed for the consistency of variables with electron.
 
@@ -1672,6 +1673,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 
     lepton_trkCharge.push_back(trkCharge);
+    lepton_charge.push_back(charge);
     lepton_isMuon.push_back(1);
     lepton_isTight.push_back(isPOGTight);
     lepton_isLoose.push_back(isPOGLoose);
@@ -1805,6 +1807,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
     int trkCharge = -99;
     if( iEle->gsfTrack().isAvailable() ) trkCharge = iEle->gsfTrack()->charge();
+    int charge = iEle->charge();
 
     // BBT, 10-10-18
     //auto corrP4  = pat::Electron::p4() * pat::Electron::userFloat("ecalTrkEnergyPostCorr") / pat::Electron::energy();
@@ -1889,6 +1892,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     }
 
     lepton_trkCharge.push_back(trkCharge);
+    lepton_charge.push_back(charge);
     lepton_isMuon.push_back(0);
     lepton_isTight.push_back(isPOGTight);
     //lepton_isTight.push_back( iEle->electronID("cutBasedElectronID-Fall17-94X-V1-tight") ); // BBT, 10-10-18
@@ -2011,7 +2015,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 
 
-  eve->lepton_charge_           = lepton_trkCharge;
+  eve->lepton_trkCharge_        = lepton_trkCharge;
+  eve->lepton_charge_           = lepton_charge;
   eve->lepton_isMuon_           = lepton_isMuon;
   eve->lepton_isTight_          = lepton_isTight;
   eve->lepton_isLoose_          = lepton_isLoose;

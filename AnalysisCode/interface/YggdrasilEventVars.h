@@ -103,7 +103,18 @@ struct yggdrasilEventVars{
   int passHLT_PFHT430_SixJet40_BTagCSV_p080_v_                       ;  
   int passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v_                    ;  
 
+  /*// MET Filters, BBT 10-19-18
+  int passMETFilter_Flag_goodVertices_v_ ; 
+  int passMETFilter_Flag_globalTightHalo2016Filter_v_ ; 
+  int passMETFilter_Flag_HBHENoiseFilter_v_ ;
+  int passMETFilter_Flag_HBHENoiseIsoFilter_v_ ; 
+  int passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v_ ;
+  int passMETFilter_Flag_BadPFMuonFilter_v_ ; 
+  int passMETFilter_Flag_BadChargedCandidateFilter_v_ ;  
+  int passMETFilter_Flag_ecalBadCalibFilter_v_ ;
+  */
 
+  // normal run stuff
   int run_;
   int lumi_;
   long evt_;

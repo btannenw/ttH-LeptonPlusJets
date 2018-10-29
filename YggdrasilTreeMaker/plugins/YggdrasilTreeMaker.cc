@@ -292,7 +292,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
 
   if( isMC ){
     filterTag = "PAT";
-    hltTag = "HLT";
+    hltTag    = "HLT";
+    filterTag = "RECO"; // BBT 10-19-18
   }else{
     filterTag = "HLT";
     hltTag = "HLT";
@@ -345,7 +346,6 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   //  muonview_Token = consumes < edm::View<pat::Muon> > (edm::InputTag("PUPPIMuonRelIso", "MuonWithPuppiIsolation","" ) ) ;
   muonview_Token = consumes < edm::View<pat::Muon> > (edm::InputTag(std::string("slimmedMuons")));
 
-
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
   jetTokenWithSeeds = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds", "jetsWithSeed","")); // BBT 10-12-18
   //edm::InputTag jetCollection_config; // BBT 10-15-18
@@ -364,7 +364,8 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
     metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
   }else{
     //    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsMuEGClean","","") );
-    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","RECO") );
+    //metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","RECO") ); // ygg core, but not present in data files?
+    metToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") ); // BBT, 10-24-18
   }
 
   puppimetToken = consumes <pat::METCollection> (edm::InputTag("slimmedMETsPuppi","","") );
@@ -586,6 +587,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   iEvent.getByToken(triggerResultsToken, triggerResults);
   edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
   iEvent.getByToken( TriggerObjectStandAloneToken , triggerObjects ) ; 
+  edm::Handle<edm::TriggerResults> filterResults; // MET Filter, 10-19-18
+  iEvent.getByToken(filterResultsToken, filterResults); // MET Filter, 10-19-18
 
   bool passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1 = false;
   bool passHLT_Ele27_eta2p1_WPTight_Gsf_v = false;
@@ -645,6 +648,16 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   bool passHLT_PFHT430_SixJet40_BTagCSV_p080_v  = false ; 
   bool passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v  = false ; 
 
+  /*// MET Filters, BBT 10-19-18
+  bool passMETFilter_Flag_goodVertices_v = false ; 
+  bool passMETFilter_Flag_globalTightHalo2016Filter_v = false ; 
+  bool passMETFilter_Flag_HBHENoiseFilter_v = false ;
+  bool passMETFilter_Flag_HBHENoiseIsoFilter_v = false ; 
+  bool passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v = false ;
+  bool passMETFilter_Flag_BadPFMuonFilter_v = false ; 
+  bool passMETFilter_Flag_BadChargedCandidateFilter_v = false ;  
+  bool passMETFilter_Flag_ecalBadCalibFilter_v = false ;
+  */
 
   if( triggerResults.isValid() ){
     std::vector<std::string> triggerNames = hlt_config_.triggerNames();
@@ -720,7 +733,36 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       }
     }
   }
+  /*
+  if( filterResults.isValid() ){
+    std::vector<std::string> filterNames = hlt_config_.triggerNames();
 
+    for( unsigned int iPath=0; iPath<filterNames.size(); iPath++ ){
+      std::string pathName = filterNames[iPath];
+      std::cout << "FilterName[" << iPath << "] = " << pathName << std::endl;
+      unsigned int filterIndex = hlt_config_.triggerIndex(pathName);
+
+      if( filterIndex >= filterResults->size() ) continue;
+
+      int accept = filterResults->accept(filterIndex);
+
+      if( accept ){
+      
+	const unsigned long MatchedAtTheBegining = 0 ; 
+
+	// MET Filters, BBT 10-19-18
+	if( pathName.find( "Flag_goodVertices", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_goodVertices_v = true ;} 
+	if( pathName.find( "Flag_globalTightHalo2016Filter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_globalTightHalo2016Filter_v = true ;} 
+	if( pathName.find( "Flag_HBHENoiseFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_HBHENoiseFilter_v = true ;} 
+	if( pathName.find( "Flag_HBHENoiseIsoFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_HBHENoiseIsoFilter_v = true ;} 
+	if( pathName.find( "Flag_EcalDeadCellTriggerPrimitiveFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v = true ;} 
+	if( pathName.find( "Flag_BadPFMuonFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_BadPFMuonFilter_v = true ;} 
+	if( pathName.find( "Flag_BadChargedCandidateFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_BadChargedCandidateFilter_v = true ;} 
+	if( pathName.find( "Flag_ecalBadCalibFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_ecalBadCalibFilter_v = true ;} 
+      }
+    }
+  }
+  */
 
 
   ///-- Genjet Information 
@@ -1453,6 +1495,17 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->passHLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2_v_ = passHLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2_v ? 1 : 0 ; 
   eve->passHLT_PFHT430_SixJet40_BTagCSV_p080_v_ = passHLT_PFHT430_SixJet40_BTagCSV_p080_v ? 1 : 0 ; 
   eve->passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v_ = passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v ? 1 : 0 ; 
+  /*
+  // MET Filters, BBT 10-19-18
+  eve->passMETFilter_Flag_goodVertices_v_ = passMETFilter_Flag_goodVertices_v ? 1 : 0 ; 
+  eve->passMETFilter_Flag_globalTightHalo2016Filter_v_ = passMETFilter_Flag_globalTightHalo2016Filter_v ? 1 : 0 ; 
+  eve->passMETFilter_Flag_HBHENoiseFilter_v_ = passMETFilter_Flag_HBHENoiseFilter_v ? 1 : 0 ; 
+  eve->passMETFilter_Flag_HBHENoiseIsoFilter_v_ = passMETFilter_Flag_HBHENoiseIsoFilter_v ? 1 : 0 ; 
+  eve->passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v_ = passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v ? 1 : 0 ; 
+  eve->passMETFilter_Flag_BadPFMuonFilter_v_ = passMETFilter_Flag_BadPFMuonFilter_v ? 1 : 0 ; 
+  eve->passMETFilter_Flag_BadChargedCandidateFilter_v_ = passMETFilter_Flag_BadChargedCandidateFilter_v ? 1 : 0 ; 
+  eve->passMETFilter_Flag_ecalBadCalibFilter_v_ = passMETFilter_Flag_ecalBadCalibFilter_v ? 1 : 0 ; 
+  */
 
   std::vector< std::pair<float , float> > SingleMuonTriggerDirection;
   std::vector< std::pair<float , float> > SingleElTriggerDirection;

@@ -59,8 +59,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( 100 )
-    #input = cms.untracked.int32( -1 )
+    #input = cms.untracked.int32( 100 )
+    input = cms.untracked.int32( -1 )
     )
 
 

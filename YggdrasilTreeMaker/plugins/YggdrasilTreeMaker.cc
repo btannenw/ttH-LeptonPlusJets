@@ -2195,16 +2195,18 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     /// Pfjets
     ///
     ////////
+    //std::cout << "START AK4 jets" << std::endl;
 
     std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( *pfjets );
     //cout << "!!! before ak4pfchs correction" << endl;
     //std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType ); // ygg core
-    std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType, true, true ); // BBT, 10-05-18
+    std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType, true, true, true ); // BBT, 10-29-18
     //cout << "!!! after ak4pfchs correction" << endl;
     std::vector<pat::Jet> selectedJets_unsorted =  miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 ,
 										 ( jetID::jetTight ) // <- For 2017, no LooseID, only tight.
 										 , '-' );
-
+    //std::cout << "END AK4 jets" << std::endl;
+    
     double JecUpdatePropagationToMET_x = 0 ;
     double JecUpdatePropagationToMET_y = 0 ;
     for( unsigned int i = 0 ; i < pfjets -> size() ; i++ ){
@@ -2218,7 +2220,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       JecUpdatePropagationToMET_y +=  pfjets->at(i).py() - correctedJets.at(i).py() ; 
     }
 
-
+    //std::cout << "START PUPPI jets" << std::endl;
     std::vector<pat::Jet> puppirawJets = miniAODhelper_Puppi.GetUncorrectedJets( *pfpuppijets );
     std::vector<pat::Jet> puppicorrectedJets =  miniAODhelper_Puppi.GetCorrectedJets(puppirawJets, iEvent, iSetup, genjetCollection , iSysType );
     std::vector<pat::Jet> puppiselectedJets_unsorted =  miniAODhelper_Puppi.GetSelectedJets(puppicorrectedJets, 20., 5.0 ,
@@ -2232,26 +2234,26 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       PUPPIJecUpdatePropagationToMET_x +=  pfpuppijets->at(i).px() - puppicorrectedJets.at(i).px() ; 
       PUPPIJecUpdatePropagationToMET_y +=  pfpuppijets->at(i).py() - puppicorrectedJets.at(i).py() ; 
     }
+    //std::cout << "END PUPPI jets" << std::endl;
 
-
-  ///// HEP top tagged jet
-  int numTopTags = 0;
-  int  n_fatjets=0;
-  ///// Higgs tagged jet
-  int numHiggsTags = 0;
-  
-  boosted::BoostedJetCollection selectedBoostedJets;
-  if(h_boostedjet.isValid()){
-  boosted::BoostedJetCollection const &boostedjets_unsorted = *h_boostedjet;
-
-  //    boosted::BoostedJetCollection boostedjets = BoostedUtils::GetSortedByPt(boostedjets_unsorted);
-  boosted::BoostedJetCollection boostedjets = boostedjets_unsorted;
-
-    selectedBoostedJets = miniAODhelper.GetSelectedBoostedJets(boostedjets, 200., 2.0, 20., 2.4, jetID::jetLoose);
+    ///// HEP top tagged jet
+    int numTopTags = 0;
+    int  n_fatjets=0;
+    ///// Higgs tagged jet
+    int numHiggsTags = 0;
     
-  
-  vector<boosted::BoostedJet> syncTopJets;
- // if( h_htttopjet.isValid() ){
+    boosted::BoostedJetCollection selectedBoostedJets;
+    if(h_boostedjet.isValid()){
+      boosted::BoostedJetCollection const &boostedjets_unsorted = *h_boostedjet;
+      
+      //    boosted::BoostedJetCollection boostedjets = BoostedUtils::GetSortedByPt(boostedjets_unsorted);
+      boosted::BoostedJetCollection boostedjets = boostedjets_unsorted;
+      
+      selectedBoostedJets = miniAODhelper.GetSelectedBoostedJets(boostedjets, 200., 2.0, 20., 2.4, jetID::jetLoose);
+      
+      
+      vector<boosted::BoostedJet> syncTopJets;
+      // if( h_htttopjet.isValid() ){
     //boosted::HTTTopJetCollection const &htttopjets_unsorted = *h_htttopjet;
     //boosted::HTTTopJetCollection htttopjets = BoostedUtils::GetSortedByPt(htttopjets_unsorted);
 
@@ -2384,7 +2386,7 @@ n_fatjets++;
       jet_puid . push_back( iJet -> userInt("pileupJetId:fullId") ) ;
       //std::cout << " %%% jet puid: " << iJet -> userInt("pileupJetId:fullId") << std::endl;     
       jet_seed . push_back( iJet -> userInt("deterministicSeed") ) ; // BBT 10-12-18
-      //std::cout << " %%% jet seed: " << iJet -> userInt("deterministicSeed") << std::endl;
+      //std::cout << " %%% jet pt: " << iJet->pt() << " , jet eta: " << iJet->eta() << " , jet seed: " << iJet -> userInt("deterministicSeed") << std::endl;
 
       jet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
       jet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );

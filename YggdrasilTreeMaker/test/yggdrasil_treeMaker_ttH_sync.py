@@ -422,7 +422,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_10-19-18_v19_runData.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_10-29-18_v19_testSeeds.root')
 )
 
 
@@ -447,7 +447,9 @@ process.deterministicSeeds.METCollection      = METCollection
 
 #BBT, 10-12-18, add deterministic seeds
 # overwrite output collections (skip electrons as the EGamma tools handle the deterministic seed creation internally)
-muonCollection     = cms.InputTag("deterministicSeeds", "muonsWithSeed", process.name_())
+#print "@@@@@@@@@@@ ", process.name_()
+
+Muoncollection     = cms.InputTag("deterministicSeeds", "muonsWithSeed", process.name_())
 tauCollection      = cms.InputTag("deterministicSeeds", "tausWithSeed", process.name_())
 photonCollection   = cms.InputTag("deterministicSeeds", "photonsWithSeed", process.name_())
 jetCollection      = cms.InputTag("deterministicSeeds", "jetsWithSeed", process.name_())

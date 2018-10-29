@@ -305,8 +305,9 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   reclusteredfatgenJetsToken_ =  consumes <reco::GenJetCollection> (edm::InputTag("ak8ReclusteredGenJets","","")) ;
 
   TriggerObjectStandAloneToken = consumes <pat::TriggerObjectStandAloneCollection>
-    ( edm::InputTag( std::string ( "slimmedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
-  //    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ;
+    //( edm::InputTag( std::string ( "slimmedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ; // ygg core, but no RECO in 2017 data files
+    ( edm::InputTag( std::string ( "slimmedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "PAT") )) ;  // BBT, 10-29-18
+  //    ( edm::InputTag( std::string ( "selectedPatTrigger" ), std::string("") , std::string(isMC ? "PAT" : "RECO") )) ; // ygg core, but commented out by default
 
   if( isMC ){
     jetCorrectorToken_ = consumes< reco::JetCorrector > (edm::InputTag("ak4PFCHSL1FastL2L3Corrector","","")) ;
@@ -347,10 +348,14 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   muonview_Token = consumes < edm::View<pat::Muon> > (edm::InputTag(std::string("slimmedMuons")));
 
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
-  jetTokenWithSeeds = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds", "jetsWithSeed","")); // BBT 10-12-18
+  //jetTokenWithSeeds = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds", "jetsWithSeed","")); // BBT 10-12-18
+  jetTokenWithSeeds = consumes <pat::JetCollection> (edm::InputTag("deterministicSeeds", "jetsWithSeed","MAOD")); // BBT 10-29-18
+  //edm::InputTag jetCollection_v2 = iConfig.getParameter<edm::InputTag>("jetCollection"); // BBT 10-29-18 
+  //jetTokenWithSeeds_v2 = consumes <pat::JetCollection> (jetCollection_v2); // BBT 10-29-18 
+
   //edm::InputTag jetCollection_config; // BBT 10-15-18
   //jetCollection_config = iConfig.getParameter<edm::InputTag>("jetCollection"); // BBT 10-15-18
-  //jetTokenWithSeeds_v2 = consumes <pat::JetCollection> (jetCollection_config); // BBT 10-15-18
+  //jetTokenWithSeeds_v2 = consumes <pat::JetCollection> (jetCollection_config); // BBT 10-15-18 iConfig.getParameter
   puppijetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
   fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsAK8")));
 
@@ -514,8 +519,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   edm::Handle<pat::JetCollection> pfjets;
   //iEvent.getByToken(jetTokenWithSeeds_v2,pfjets); // BBT 10-15-18
-  //iEvent.getByToken(jetTokenWithSeeds,pfjets); // BBT 10-12-18
-  iEvent.getByToken(jetToken,pfjets); // ygg core
+  iEvent.getByToken(jetTokenWithSeeds,pfjets); // BBT 10-12-18
+  //iEvent.getByToken(jetToken,pfjets); // ygg core
 
   edm::Handle<pat::JetCollection> pfpuppijets;
   iEvent.getByToken(puppijetToken,pfpuppijets);
@@ -2377,7 +2382,9 @@ n_fatjets++;
       jet_m   .push_back( iJet -> mass()   );
 
       jet_puid . push_back( iJet -> userInt("pileupJetId:fullId") ) ;
-      //jet_puid . push_back( iJet -> userInt("deterministicSeed") ) ; // BBT 10-12-18
+      //std::cout << " %%% jet puid: " << iJet -> userInt("pileupJetId:fullId") << std::endl;     
+      jet_seed . push_back( iJet -> userInt("deterministicSeed") ) ; // BBT 10-12-18
+      //std::cout << " %%% jet seed: " << iJet -> userInt("deterministicSeed") << std::endl;
 
       jet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
       jet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );

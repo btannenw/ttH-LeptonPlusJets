@@ -26,7 +26,8 @@ enableJECFromLocalDB = True
 #  This is a flag used to apply dedicated JEC for each data set.
 #  The placeholder will be replaced by crab job make script.
 
-period="XXXPERIODXXX"
+#period="XXXPERIODXXX"
+period="2017B"
 # e.g "2017B"
 
 # - - - - - - - - - - - - - - - - - - - -
@@ -176,8 +177,9 @@ process.source = cms.Source("PoolSource",
   #'root://cmsxrootd.fnal.gov//store/mc/RunIIFall17MiniAOD/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/CC0FCC49-B50A-E811-9694-02163E0144C8.root' # v10
   #'root://cmsxrootd.fnal.gov//store/mc/RunIIFall17MiniAODv2/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/60000/AC628CE7-0169-E811-9C5E-00010100096B.root' # v14
    #'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_0_patch1/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8__MINIAODSIM__PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1__00096B.root' # v-14 local
-  'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_9/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/data_Run2017B_MuonEG_MINIAOD_31Mar2018_v1__0025904B871E.root' # v-14 local
-        )
+   #'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_9/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/data_Run2017B_MuonEG_MINIAOD_31Mar2018_v1__0025904B871E.root' # v-14 local
+        'root://cms-xrd-global.cern.ch///store/data/Run2017B/DoubleEG/MINIAOD/31Mar2018-v1/00000/A06BB64C-0B38-E811-B205-0CC47A4D7664.root'
+    )
 )
 
 

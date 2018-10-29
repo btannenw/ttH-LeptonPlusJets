@@ -6,7 +6,7 @@ isPUPPI=False
 
 
 #isMC=True
-isMC=True
+isMC=False
 
 # 
 isTTBARMC=False
@@ -26,7 +26,8 @@ enableJECFromLocalDB = True
 #  This is a flag used to apply dedicated JEC for each data set.
 #  The placeholder will be replaced by crab job make script.
 
-period="XXXPERIODXXX"
+#period="XXXPERIODXXX"
+period="2017D"
 # e.g "2017B"
 
 # - - - - - - - - - - - - - - - - - - - -
@@ -175,8 +176,13 @@ process.source = cms.Source("PoolSource",
 # 2018 ttH sync exercise 
   #'root://cmsxrootd.fnal.gov//store/mc/RunIIFall17MiniAOD/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/CC0FCC49-B50A-E811-9694-02163E0144C8.root' # v10
   #'root://cmsxrootd.fnal.gov//store/mc/RunIIFall17MiniAODv2/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/60000/AC628CE7-0169-E811-9C5E-00010100096B.root' # v14
-  'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_0_patch1/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8__MINIAODSIM__PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1__00096B.root' # v-14 local
-        )
+   #'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_0_patch1/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8__MINIAODSIM__PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1__00096B.root' # v-14 local
+   #'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_9/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/data_Run2017B_MuonEG_MINIAOD_31Mar2018_v1__0025904B871E.root' # v-14 local
+        'root://cms-xrd-global.cern.ch///store/data/Run2017D/DoubleEG/MINIAOD/31Mar2018-v1/00000/4E56EE06-1D37-E811-BAE0-44A84225D36F.root',
+        'root://cms-xrd-global.cern.ch///store/data/Run2017D/MuonEG/MINIAOD/31Mar2018-v1/100000/8CC59C03-ED36-E811-8A29-008CFA1C6414.root',
+        'root://cms-xrd-global.cern.ch///store/data/Run2017D/DoubleMuon/MINIAOD/31Mar2018-v1/30000/5C33F7D9-5938-E811-8F8C-0026B9277A32.root'
+
+    )
 )
 
 
@@ -188,10 +194,10 @@ tauCollection      = cms.InputTag("slimmedTaus", "", "PAT")
 photonCollection   = cms.InputTag("slimmedPhotons", "", "PAT")
 METCollection      = cms.InputTag("slimmedMETs", "", "PAT")
 jetCollection      = cms.InputTag("slimmedJets", "", "PAT")
-
 muonCollection     = cms.InputTag("slimmedMuons", "", "PAT")
 if not isMC : 
-    muonCollection     = cms.InputTag("slimmedMuons", "", "RECO")
+    muonCollection = cms.InputTag("slimmedMuons", "", "RECO")
+    #METCollection  = cms.InputTag("slimmedMETs", "", "RECO") # BBT, 10-24-18
 
 
 if not isMC :
@@ -422,15 +428,15 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_10-29-18_v20.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_10-29-18_v20_data_'+period+'.root')
 )
 
 
 process.load( "PuppiLeptonIsolationhelper.PuppiLeptonIsolation.PuppiMuonIsolationProducer_cfi" )
 process.PUPPIMuonRelIso.addIsolationComponentInfo = cms.bool( True )
-if not isMC :
-    process.PUPPIMuonRelIso.pfCandidates  = cms.InputTag("packedPFCandidates", "", "RECO")
-    process.PUPPIMuonRelIso.muonCollection  = muonCollection
+#if not isMC :
+    #process.PUPPIMuonRelIso.pfCandidates  = cms.InputTag("packedPFCandidates", "", "RECO")
+    #process.PUPPIMuonRelIso.muonCollection  = muonCollection
     
 
 #BBT, 10-12-18, add deterministic seeds
@@ -447,9 +453,7 @@ process.deterministicSeeds.METCollection      = METCollection
 
 #BBT, 10-12-18, add deterministic seeds
 # overwrite output collections (skip electrons as the EGamma tools handle the deterministic seed creation internally)
-#print "@@@@@@@@@@@ ", process.name_()
-
-Muoncollection     = cms.InputTag("deterministicSeeds", "muonsWithSeed", process.name_())
+muonCollection     = cms.InputTag("deterministicSeeds", "muonsWithSeed", process.name_())
 tauCollection      = cms.InputTag("deterministicSeeds", "tausWithSeed", process.name_())
 photonCollection   = cms.InputTag("deterministicSeeds", "photonsWithSeed", process.name_())
 jetCollection      = cms.InputTag("deterministicSeeds", "jetsWithSeed", process.name_())
@@ -461,14 +465,14 @@ from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMet
 ## Example 1: If you only want to re-correct MET and get the proper uncertainties [e.g. when updating JEC]
 runMetCorAndUncFromMiniAOD(process,
                            isData           = not isMC
-#            jecUncFile       = os.path.basename(options.JESUncFiles[0]),
-#            electronColl     = electronCollection.value(),
-#            muonColl         = muonCollection.value(),
-#            tauColl          = tauCollection.value(),
-#            photonColl       = photonCollection.value(),
-#            jetCollUnskimmed = jetCollection.value(),
-#            #pfCandColl=cms.InputTag("packedPFCandidates"),
-#            #recoMetFromPFCs  = True
+##            jecUncFile       = os.path.basename(options.JESUncFiles[0]),
+##            electronColl     = electronCollection.value(),
+##            muonColl         = muonCollection.value(),
+##            tauColl          = tauCollection.value(),
+##            photonColl       = photonCollection.value(),
+##            jetCollUnskimmed = jetCollection.value(),
+##            #pfCandColl=cms.InputTag("packedPFCandidates"),
+##            #recoMetFromPFCs  = True
                            )
 
 
@@ -503,7 +507,7 @@ if isMC :
         process.ak8PFPuppiL1FastL2L3CorrectorChain *
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
         process.ak8ReclusteredGenJets *
-        process.PUPPIMuonRelIso * 
+        #process.PUPPIMuonRelIso * 
         process.fullPatMetSequence *  # BBT, 10-04-18
         process.egmGsfElectronIDSequence * # BBT, 10-08-18
         process.egammaPostRecoSeq * # BBT, 10-11-18
@@ -514,4 +518,5 @@ else :
         process.ak4PFCHSL1FastL2L3ResidualCorrectorChain *
         process.ak4PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain *
-        process.PUPPIMuonRelIso * process.ttHTreeMaker)
+        #process.PUPPIMuonRelIso * 
+        process.ttHTreeMaker)

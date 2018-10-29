@@ -519,8 +519,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   edm::Handle<pat::JetCollection> pfjets;
   //iEvent.getByToken(jetTokenWithSeeds_v2,pfjets); // BBT 10-15-18
-  iEvent.getByToken(jetTokenWithSeeds,pfjets); // BBT 10-12-18
-  //iEvent.getByToken(jetToken,pfjets); // ygg core
+  if (isMC)
+    iEvent.getByToken(jetTokenWithSeeds,pfjets); // BBT 10-12-18
+  else
+    iEvent.getByToken(jetToken,pfjets); // ygg core
 
   edm::Handle<pat::JetCollection> pfpuppijets;
   iEvent.getByToken(puppijetToken,pfpuppijets);
@@ -2200,7 +2202,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( *pfjets );
     //cout << "!!! before ak4pfchs correction" << endl;
     //std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType ); // ygg core
-    std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType, true, true, true ); // BBT, 10-29-18
+    //std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType, true, true, true ); // BBT, 10-29-18
+    //                                                                                                                         doJES, doJER, isAK4
+    std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType, true,  true, true ); // BBT, 10-29-18
     //cout << "!!! after ak4pfchs correction" << endl;
     std::vector<pat::Jet> selectedJets_unsorted =  miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 ,
 										 ( jetID::jetTight ) // <- For 2017, no LooseID, only tight.
@@ -2385,7 +2389,8 @@ n_fatjets++;
 
       jet_puid . push_back( iJet -> userInt("pileupJetId:fullId") ) ;
       //std::cout << " %%% jet puid: " << iJet -> userInt("pileupJetId:fullId") << std::endl;     
-      jet_seed . push_back( iJet -> userInt("deterministicSeed") ) ; // BBT 10-12-18
+      if (isMC)
+	jet_seed . push_back( iJet -> userInt("deterministicSeed") ) ; // BBT 10-12-18
       //std::cout << " %%% jet pt: " << iJet->pt() << " , jet eta: " << iJet->eta() << " , jet seed: " << iJet -> userInt("deterministicSeed") << std::endl;
 
       jet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );

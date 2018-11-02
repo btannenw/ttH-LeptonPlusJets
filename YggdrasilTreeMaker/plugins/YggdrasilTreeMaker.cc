@@ -1874,6 +1874,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     auto corrP4  = iEle->p4() * iEle->userFloat("ecalTrkEnergyPostCorr") / iEle->energy();
     //std::cout << "[Electron loop] corrected pt: " << corrP4.pt() << ", nominal pt: " << iEle->pt() << std::endl;
 
+    // revert to usual vector if running on data
+    if (!isMC)
+      corrP4 = iEle->p4();
 
     bool inCrack = false;
     double scEta = -99;

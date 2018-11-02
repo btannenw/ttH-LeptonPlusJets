@@ -180,9 +180,7 @@ process.source = cms.Source("PoolSource",
    #'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_9/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/data_Run2017B_MuonEG_MINIAOD_31Mar2018_v1__0025904B871E.root' # v-14 local
         'root://cms-xrd-global.cern.ch///store/data/Run2017F/DoubleEG/MINIAOD/31Mar2018-v1/90000/D6EA3264-FA36-E811-B2A6-0025904C66EC.root',
         'root://cms-xrd-global.cern.ch///store/data/Run2017F/MuonEG/MINIAOD/31Mar2018-v1/30000/3E19D74D-4937-E811-9579-FA163E4AC657.root',
-        'root://cms-xrd-global.cern.ch///store/data/Run2017F/DoubleMuon/MINIAOD/31Mar2018-v1/00000/DCB73458-F036-E811-B772-3417EBE64426.root
-
-'
+        'root://cms-xrd-global.cern.ch///store/data/Run2017F/DoubleMuon/MINIAOD/31Mar2018-v1/00000/DCB73458-F036-E811-B772-3417EBE64426.root'
 
     )
 )

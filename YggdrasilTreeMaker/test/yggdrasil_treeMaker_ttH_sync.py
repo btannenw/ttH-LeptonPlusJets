@@ -175,7 +175,7 @@ process.source = cms.Source("PoolSource",
 # 2018 ttH sync exercise 
   #'root://cmsxrootd.fnal.gov//store/mc/RunIIFall17MiniAOD/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/CC0FCC49-B50A-E811-9694-02163E0144C8.root' # v10
   #'root://cmsxrootd.fnal.gov//store/mc/RunIIFall17MiniAODv2/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/60000/AC628CE7-0169-E811-9C5E-00010100096B.root' # v14
-  'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_0_patch1/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8__MINIAODSIM__PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1__00096B.root' # v-14 local
+  'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_9/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8__MINIAODSIM__PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1__00096B.root' # v-14 local
         )
 )
 
@@ -422,7 +422,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_10-29-18_v20.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-01-18_v21_checkMC.root')
 )
 
 

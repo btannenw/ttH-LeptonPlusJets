@@ -21,7 +21,7 @@
 //#include "CondTools/BTau/interface/BTagCalibrationReader.h"
 //#include "CondTools/BTau/interface/BTagCalibrationReader.h"
 #include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/BTagCalibrationStandalone.h"
-#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/plugins/BTagCalibrationStandalone.cc"
+//#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/plugins/BTagCalibrationStandalone.cc"
 
 #ifdef STANDALONECOMPILE
 #include "ttHYggdrasilEventSelection.h"
@@ -154,8 +154,8 @@ class ttHYggdrasilScaleFactors{
   TH1D* c_csv_wgt_hf[9][5];
   TH1D* h_csv_wgt_lf[9][4][3];
   // more csv stuff, BBT 11-02-18
-  BTagCalibration calib_btag;
-  BTagCalibrationReader reader_btag;
+  BTagCalibration* calib_btag;
+  BTagCalibrationReader* reader_btag;
  
 
   // PU weighting

@@ -59,8 +59,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    #input = cms.untracked.int32( 100 )
-    input = cms.untracked.int32( -1 )
+    input = cms.untracked.int32( 100 )
+    #input = cms.untracked.int32( -1 )
     )
 
 
@@ -422,7 +422,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-01-18_v21_checkMC.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-03-18_v22_addSFs.root')
 )
 
 

@@ -1769,7 +1769,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     // muon SF stuff, BBT 11-02-18
     double lepIDSF  = ( ! isMC ? 1 : scalefactors.getTightMuon_IDSF_single( iMu->pt(), iMu->eta() ) );
     double lepIsoSF = ( ! isMC ? 1 : scalefactors.getTightMuon_IsoSF_single( iMu->pt(), iMu->eta() ) );
-    //std::cout << lepIDSF <<","<< lepISOSF <<",";
+    std::cout << "muon IDSF: " << lepIDSF <<" , muon IsoSF: "<< lepIsoSF << std::endl;
 
     lepton_eta.push_back(iMu->eta());
     lepton_phi.push_back(iMu->phi());

@@ -137,16 +137,14 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
     //h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) ); // ygg core
     //h_MuSF_ID_Lumi . push_back( 19255482132.199 ); // amount of data in the period // ygg core
     std::string input = SFfileDir +"/" + "muon/ID/2017/RunBCDEF_SF_ID.root"; // BBT, 11-02-18
-    h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta")) );
-    
+    h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("NUM_TightID_DEN_genTracks_pt_abseta") ) );   
   }
   {
     //std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_GH.root"; // ygg core
     //h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) ); // ygg core
     //h_MuSF_ID_Lumi . push_back( 16290016931.807 ); // amount of data in the period // ygg core
-    std::string input = SFfileDir +"/" + "muon/ID/2017/RunBCDEF_SF_ISO.root"; // BBT, 11-02-18
-    h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("NUM_LooseID_DEN_genTracks_pt_abseta") ) );
-
+    std::string input = SFfileDir +"/" + "muon/ISO/2017/RunBCDEF_SF_ISO.root"; // BBT, 11-02-18
+    h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("NUM_LooseRelIso_DEN_TightIDandIPCut_pt_abseta")) );
   }
   h_MuSF_ID_LumiTotal = 0 ;
   for( unsigned int i = 0 ; i < h_MuSF_ID_Lumi.size() ; i++ ){
@@ -261,7 +259,7 @@ TH2* ttHYggdrasilScaleFactors::getTH2HistogramFromFile( std::string input , std:
     f->Close();
     return h_2f ; 
   }
-  std::cout <<"Failed to obtain histogarm named " << histoname<< " from file " << input << std::endl ; 
+  std::cout <<"Failed to obtain histogram named " << histoname<< " from file " << input << std::endl ; 
   assert( false );
   return 0 ; 
 }
@@ -354,7 +352,7 @@ double ttHYggdrasilScaleFactors::getTightMuon_IsoSF_single( double mu_pt, double
   const double abs_eta = std::fabs( mu_eta ) ; 
   double wgt_for_this_mu = 0 ;
   
-  wgt_for_this_mu += GetBinValueFromXYValues( h_MuSF_Iso[0] , abs_eta , mu_pt , syst );
+  wgt_for_this_mu += GetBinValueFromXYValues( h_MuSF_ID[1] , abs_eta , mu_pt , syst );
   weight *= wgt_for_this_mu;
     
   return weight ;
@@ -468,12 +466,12 @@ void ttHYggdrasilScaleFactors::init_btagSF(){
   std::string measType = "comb"; // "iterativefit" ?
   std::string sysType = "central";
   
-  BTagCalibration calib_btag("csvv3", inputCSVfile);
-  BTagCalibrationReader reader_btag(BTagEntry::OP_MEDIUM, sysType) ;
+  calib_btag = new BTagCalibration("csvv3", inputCSVfile);
+  reader_btag = new BTagCalibrationReader(BTagEntry::OP_MEDIUM, sysType) ;
   
-  reader_btag.load(calib_btag, BTagEntry::FLAV_B, measType.c_str());
-  reader_btag.load(calib_btag, BTagEntry::FLAV_C, measType);
-  reader_btag.load(calib_btag, BTagEntry::FLAV_UDSG, measType);
+  reader_btag->load(*calib_btag, BTagEntry::FLAV_B, measType);
+  reader_btag->load(*calib_btag, BTagEntry::FLAV_C, measType);
+  reader_btag->load(*calib_btag, BTagEntry::FLAV_UDSG, measType);
   
   std::cout << "\tInput CSV weight file = " << inputCSVfile << "; measurementType = " << measType << "; sysType = " << sysType << std::endl;
 
@@ -568,25 +566,29 @@ ttHYggdrasilScaleFactors::~ttHYggdrasilScaleFactors(){
 double ttHYggdrasilScaleFactors::get_csv_wgt_single (int flavor, float eta, float pt, float deepCSV, int syst )
 {
   // BBT, 11-02-18
+
   assert( initialized );
   double csv_weight = 1.;
 
+
   if (abs(flavor) == 5 ){    //HF  
-    double iCSVWgtHF = reader_btag.eval(BTagEntry::FLAV_B, fabs(eta), pt, deepCSV);  
+    double iCSVWgtHF = reader_btag->eval(BTagEntry::FLAV_B, fabs(eta), pt, deepCSV);  
     //double iCSVWgtHF    = reader_btag.eval_auto_bounds("central", 
-    //                                                  BTagEntry::FLAV_B, 
+    //                                                   BTagEntry::FLAV_B, 
     //							abs(eta), // absolute value of eta
     //							pt); 
     if( iCSVWgtHF!=0 ) csv_weight *= iCSVWgtHF;
+    std::cout << "got HF weight" << iCSVWgtHF << std::endl;
   }
   else if( abs(flavor) == 4 ){  //C
-    //double iCSVWgtC = reader_btag.eval(BTagEntry::FLAV_C, fabs(eta), pt, deepCSV);
+      //double iCSVWgtC = reader_btag.eval(BTagEntry::FLAV_C, fabs(eta), pt, deepCSV);
     double iCSVWgtC = 1; // always 1 from twiki? https://twiki.cern.ch/twiki/bin/view/CMS/BTagShapeCalibration
-    if( iCSVWgtC!=0 ) csv_weight *= iCSVWgtC;   
+    if( iCSVWgtC!=0 ) csv_weight *= iCSVWgtC; 
   }
   else { //LF
-    double iCSVWgtLF = reader_btag.eval(BTagEntry::FLAV_UDSG, fabs(eta), pt, deepCSV);
+    double iCSVWgtLF = reader_btag->eval(BTagEntry::FLAV_UDSG, fabs(eta), pt, deepCSV);
     if( iCSVWgtLF!=0 ) csv_weight *= iCSVWgtLF;
+    std::cout << "got LF weight" << iCSVWgtLF <<  std::endl;
   }
 
   return csv_weight;

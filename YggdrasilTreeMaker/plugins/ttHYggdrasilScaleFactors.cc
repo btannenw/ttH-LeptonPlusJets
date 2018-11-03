@@ -133,14 +133,20 @@ void ttHYggdrasilScaleFactors::init_MuonSF(){
   h_MuSF_ID      .clear();
   h_MuSF_ID_Lumi .clear();
   {
-    std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_BCDEF.root"; 
-    h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) );
-    h_MuSF_ID_Lumi . push_back( 19255482132.199 ); // amount of data in the period
+    //std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_BCDEF.root"; // ygg core
+    //h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) ); // ygg core
+    //h_MuSF_ID_Lumi . push_back( 19255482132.199 ); // amount of data in the period // ygg core
+    std::string input = SFfileDir +"/" + "muon/ID/2017/RunBCDEF_SF_ID.root"; // BBT, 11-02-18
+    h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta")) );
+    
   }
   {
-    std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_GH.root";
-    h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) );
-    h_MuSF_ID_Lumi . push_back( 16290016931.807 ); // amount of data in the period
+    //std::string input = SFfileDir +"/" + "muon/ID/EfficienciesAndSF_GH.root"; // ygg core
+    //h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")) ); // ygg core
+    //h_MuSF_ID_Lumi . push_back( 16290016931.807 ); // amount of data in the period // ygg core
+    std::string input = SFfileDir +"/" + "muon/ID/2017/RunBCDEF_SF_ISO.root"; // BBT, 11-02-18
+    h_MuSF_ID . push_back( (TH2D*) getTH2HistogramFromFile( input , std::string ("NUM_LooseID_DEN_genTracks_pt_abseta") ) );
+
   }
   h_MuSF_ID_LumiTotal = 0 ;
   for( unsigned int i = 0 ; i < h_MuSF_ID_Lumi.size() ; i++ ){
@@ -290,6 +296,20 @@ double ttHYggdrasilScaleFactors::getTightMuonSF( ttHYggdrasilEventSelection * ev
 
 }
 
+double ttHYggdrasilScaleFactors::getTightMuon_IDSF_single( double mu_pt, double mu_eta, int syst ) { // BBT, 11-02-18
+
+  assert( initialized );
+  
+  double weight = 1 ; 
+  const double abs_eta = std::fabs( mu_eta ) ; 
+  double wgt_for_this_mu = 0 ;
+
+  wgt_for_this_mu += 	GetBinValueFromXYValues( h_MuSF_ID[0] , abs_eta , mu_pt , syst );
+  weight *= wgt_for_this_mu;
+
+  return weight ;
+
+}
 
 double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection * event , int syst ){
 
@@ -326,6 +346,21 @@ double ttHYggdrasilScaleFactors::getTightMuon_IDSF( ttHYggdrasilEventSelection *
 
 }
 
+double ttHYggdrasilScaleFactors::getTightMuon_IsoSF_single( double mu_pt, double mu_eta , int syst ){
+  // BBT 11-02-18
+  assert( initialized );
+  
+  double weight = 1 ; 
+  const double abs_eta = std::fabs( mu_eta ) ; 
+  double wgt_for_this_mu = 0 ;
+  
+  wgt_for_this_mu += GetBinValueFromXYValues( h_MuSF_Iso[0] , abs_eta , mu_pt , syst );
+  weight *= wgt_for_this_mu;
+    
+  return weight ;
+
+}
+
 double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection * event , int syst ){
 
   assert( initialized );
@@ -350,6 +385,32 @@ double ttHYggdrasilScaleFactors::getTightMuon_IsoSF( ttHYggdrasilEventSelection 
   }
   return weight ;
 
+}
+
+
+double ttHYggdrasilScaleFactors::getTightElectron_IDSF_single( double el_pt, double scEta, int syst )
+{
+  // BBT, 11-02-18
+  assert( initialized );
+  
+  double weight = 1 ; 
+
+  weight *= GetBinValueFromXYValues( h_EleSF_ID , scEta , el_pt , syst );
+
+  return weight ;
+}
+
+
+double ttHYggdrasilScaleFactors::getTightElectron_RecoSF_single( double el_pt, double scEta, int syst )
+{
+  // BBT, 11-02-18
+  assert( initialized );
+
+  double weight = 1 ; 
+
+  weight *= GetBinValueFromXYValues( h_EleSF_Reco  , scEta , el_pt , syst );
+  
+  return weight ;
 }
 
 

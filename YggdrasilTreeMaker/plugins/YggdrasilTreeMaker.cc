@@ -1634,6 +1634,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   vdouble lepton_phi;
   vdouble lepton_e;
   vdouble lepton_seed;  // BBT 10-12-18
+  vdouble lepton_IDSF;  // BBT 11-02-18
+  vdouble lepton_recoIsoSF;  // BBT 11-02-18
   vdouble lepton_relIso;
   vdouble lepton_puppirelIso;
   vdouble lepton_dbiso_CH ;
@@ -1764,11 +1766,18 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     }
 
 
+    // muon SF stuff, BBT 11-02-18
+    double lepIDSF  = ( ! isMC ? 1 : scalefactors.getTightMuon_IDSF_single( iMu->pt(), iMu->eta() ) );
+    double lepIsoSF = ( ! isMC ? 1 : scalefactors.getTightMuon_IsoSF_single( iMu->pt(), iMu->eta() ) );
+    //std::cout << lepIDSF <<","<< lepISOSF <<",";
+
     lepton_eta.push_back(iMu->eta());
     lepton_phi.push_back(iMu->phi());
     lepton_e.push_back(iMu->energy());
     //lepton_seed.push_back( iMu -> userInt("deterministicSeed") );  // BBT 10-12-18
     lepton_relIso.push_back( miniAODhelper.GetMuonRelIso(*iMu, coneSize::R04, corrType::deltaBeta) ) ;
+    lepton_IDSF.push_back(lepIDSF);
+    lepton_recoIsoSF.push_back(lepIsoSF);
 
     //lepton_puppirelIso.push_back( iMu -> userFloat( "reliso_puppicombined" ) ) ;
     lepton_dbiso_CH . push_back( iMu -> pfIsolationR04().sumChargedHadronPt );
@@ -1954,6 +1963,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       }
     }
 
+    // electron SF stuff, BBT 11-02-18
+    double lepIDSF =  ( ! isMC ? 1 : scalefactors.getTightElectron_IDSF_single( corrP4.pt(), scEta ) );
+    double lepRecoSF =  ( ! isMC ? 1 : scalefactors.getTightElectron_RecoSF_single( corrP4.pt(), scEta ) ) ; 
+//     std::cout << lepIDSF <<","<< lepISOSF <<",";
+
+
     lepton_trkCharge.push_back(trkCharge);
     lepton_charge.push_back(charge);
     lepton_isMuon.push_back(0);
@@ -1971,6 +1986,8 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     //lepton_e.push_back(iEle->energy()); // ygg core
     lepton_e.push_back( corrP4.energy() ); // BBT, 10-10-18
     //lepton_seed.push_back( iEle -> userInt("deterministicSeed") ); // BBT, 10-12-18
+    lepton_IDSF.push_back(lepIDSF);
+    lepton_recoIsoSF.push_back(lepRecoSF);
     lepton_relIso.push_back(     miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::fall17) );
     lepton_puppirelIso.push_back(miniAODhelper.GetElectronRelIso(*iEle, coneSize::R03, corrType::rhoEA,effAreaType::fall17) );
     lepton_dbiso_CH . push_back(0);
@@ -2083,14 +2100,16 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->lepton_isMuon_           = lepton_isMuon;
   eve->lepton_isTight_          = lepton_isTight;
   eve->lepton_isLoose_          = lepton_isLoose;
-  eve->lepton_isLooseAlt_          = lepton_isLooseAlt ;
+  eve->lepton_isLooseAlt_       = lepton_isLooseAlt ;
   eve->lepton_pt_               = lepton_pt;
   eve->lepton_eta_              = lepton_eta;
   eve->lepton_phi_              = lepton_phi;
-  eve->lepton_e_              = lepton_e;
-  eve->lepton_seed_              = lepton_seed;  // BBT 10-12-18
+  eve->lepton_e_                = lepton_e;
+  eve->lepton_seed_             = lepton_seed;  // BBT 10-12-18
+  eve->lepton_IDSF_             = lepton_IDSF;  // BBT 11-02-18
+  eve->lepton_recoIsoSF_        = lepton_recoIsoSF;  // BBT 11-02-18
   eve->lepton_relIso_           = lepton_relIso;
-  eve->lepton_puppirelIso_           = lepton_puppirelIso;
+  eve->lepton_puppirelIso_      = lepton_puppirelIso;
 
   eve -> lepton_dbiso_CH_    = lepton_dbiso_CH    ;
   eve -> lepton_dbiso_NH_    = lepton_dbiso_NH    ;

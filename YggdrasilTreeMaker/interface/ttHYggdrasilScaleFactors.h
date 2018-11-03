@@ -83,6 +83,11 @@ class ttHYggdrasilScaleFactors{
   double getTightMuon_IsoSF( ttHYggdrasilEventSelection * event , int syst = 0 );
   double getTightElectron_RecoSF( ttHYggdrasilEventSelection * event , int syst = 0 );
 
+  double getTightMuon_IDSF_single( double mu_pt, double eta, int syst = 0 );
+  double getTightMuon_IsoSF_single( double mu_pt, double eta, int syst = 0 );
+  double getTightElectron_IDSF_single( double el_pt, double scEta, int syst = 0 );
+  double getTightElectron_RecoSF_single( double el_pt, double scEta, int syst = 0 );
+
   // - - -
 
   double get_TrigMuSF( ttHYggdrasilEventSelection * event , int syst = 0 );

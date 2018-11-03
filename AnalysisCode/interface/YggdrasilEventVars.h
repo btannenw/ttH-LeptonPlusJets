@@ -224,6 +224,7 @@ struct yggdrasilEventVars{
 
   vint    jet_puid_[rNumSys];
   vint    jet_seed_[rNumSys]; // BBT 10-12-18
+  vdouble jet_DeepCSV_SF_[rNumSys]; // BBT 11-02-18
 
 
   vdouble  jet_precorr_pt_  [rNumSys];
@@ -483,6 +484,7 @@ void yggdrasilEventVars::initialize(){
 
     jet_puid_ [iSys].clear();
     jet_seed_ [iSys].clear(); // BBT 10-12-18
+    jet_DeepCSV_SF_ [iSys].clear(); // BBT 11-02-18
 
     jet_precorr_pt_  [iSys].clear();
     jet_precorr_phi_  [iSys].clear();

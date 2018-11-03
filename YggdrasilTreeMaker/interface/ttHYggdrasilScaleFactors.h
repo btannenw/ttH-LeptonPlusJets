@@ -15,6 +15,13 @@
 
 #define NBINS_PU_REWEIGHTING 99
 
+// csv SFs, BBT 11-02-18
+//#include "CondFormats/BTauObjects/interface/BTagCalibration.h"
+#include "CondFormats/BTauObjects/interface/BTagCalibration.h"
+#include "CondTools/BTau/interface/BTagCalibrationReader.h"
+//#include "CondTools/BTau/interface/BTagCalibrationReader.h"
+//#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/BTagCalibrationStandalone.h"
+//#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/BTagCalibrationStandalone.cpp"
 
 #ifdef STANDALONECOMPILE
 #include "ttHYggdrasilEventSelection.h"
@@ -64,7 +71,8 @@ class ttHYggdrasilScaleFactors{
   };
 
 
-  
+  double get_csv_wgt_single (int flavor, float eta, float pt, float deepCSV, int syst = 0);
+
   double get_csv_wgt( ttHYggdrasilEventSelection * event,
 		      int iSys, double &csvWgtHF, double &csvWgtLF, double &csvWgtCF );
 
@@ -145,6 +153,10 @@ class ttHYggdrasilScaleFactors{
   TH1D* h_csv_wgt_hf[9][5];
   TH1D* c_csv_wgt_hf[9][5];
   TH1D* h_csv_wgt_lf[9][4][3];
+  // more csv stuff, BBT 11-02-18
+  BTagCalibration calib_btag;
+  BTagCalibrationReader reader_btag;
+ 
 
   // PU weighting
   double PU_weight[ NBINS_PU_REWEIGHTING ];

@@ -2364,8 +2364,9 @@ n_fatjets++;
     vdouble jet_phi;
     vdouble jet_m;
 
-    vint   jet_puid;
-    vint   jet_seed;  // BBT 10-12-18
+    vint    jet_puid;
+    vint    jet_seed;  // BBT 10-12-18
+    vdouble jet_DeepCSV_SF;  // BBT 10-12-18
 
     vdouble jet_AssociatedGenJet_pt;
     vdouble jet_AssociatedGenJet_eta;
@@ -2414,6 +2415,10 @@ n_fatjets++;
       if (isMC)
 	jet_seed . push_back( iJet -> userInt("deterministicSeed") ) ; // BBT 10-12-18
       //std::cout << " %%% jet pt: " << iJet->pt() << " , jet eta: " << iJet->eta() << " , jet seed: " << iJet -> userInt("deterministicSeed") << std::endl;
+
+      // DeepCSV SFs, BBT 11-02-18
+      double deepCSV_SF  = ( ! isMC ? 1 : scalefactors.get_csv_wgt_single( iJet->hadronFlavour(), iJet -> eta(), iJet -> pt(), iJet->bDiscriminator("pfDeepCSVJetTags:probb")+iJet->bDiscriminator("pfDeepCSVJetTags:probbb")) );
+      jet_DeepCSV_SF.push_back( deepCSV_SF );
 
       jet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
       jet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );
@@ -2733,6 +2738,7 @@ n_fatjets++;
       jet_m. clear() ;
       jet_puid. clear() ;
       jet_seed. clear() ; // BBT 10-12-18
+      jet_DeepCSV_SF. clear() ; // BBT 11-02-18
       jet_AssociatedGenJet_pt. clear() ;
       jet_AssociatedGenJet_eta. clear() ;
       jet_AssociatedGenJet_phi. clear() ;
@@ -2797,6 +2803,7 @@ n_fatjets++;
 
     eve->jet_puid_  [iSys]= jet_puid  ;
     eve->jet_seed_  [iSys]= jet_seed  ; // BBT 10-12-18
+    eve->jet_DeepCSV_SF_  [iSys]= jet_DeepCSV_SF  ; // BBT 11-02-18
 
     eve->jet_precorr_pt_  [iSys]= jet_precore_pt  ;
     eve->jet_precorr_phi_ [iSys]= jet_precore_phi ;
@@ -3120,12 +3127,12 @@ n_fatjets++;
     std::cout << -1 << ",";
     std::cout << -1<< "," ;    // PUWeight,
     }
-
+    /*
     double bWeight = -1 ;
     double bWeight_lf_up   = -1 ;
     double bWeight_hf_down = -1 ;
     double bWeight_cErr1   = -1 ;
-
+    
     if( isMC ){
       int iSYS = 0 ; 
       double dummy = - 1 ;
@@ -3140,7 +3147,7 @@ n_fatjets++;
     std::cout << bWeight_lf_up   <<",";
     std::cout << bWeight_hf_down <<",";
     std::cout << bWeight_cErr1   <<",";
-
+    */
 
 
 // 

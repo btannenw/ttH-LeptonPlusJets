@@ -462,7 +462,23 @@ double ttHYggdrasilScaleFactors::getTightElectronSF( ttHYggdrasilEventSelection 
 
 void ttHYggdrasilScaleFactors::init_btagSF(){
 
+  std::cout << "===> Loading the input .csv SF file..." << std::endl;
+  
+  std::string inputCSVfile = SFfileDir + "/" + "btag/DeepCSV_94XSF_V3_B_F.csv";
+  std::string measType = "comb"; // "iterativefit" ?
+  std::string sysType = "central";
+  
+  BTagCalibration calib_btag("csvv3", inputCSVfile);
+  BTagCalibrationReader reader_btag(BTagEntry::OP_MEDIUM, sysType) ;
+  
+  reader_btag.load(calib_btag, BTagEntry::FLAV_B, measType.c_str());
+  reader_btag.load(calib_btag, BTagEntry::FLAV_C, measType);
+  reader_btag.load(calib_btag, BTagEntry::FLAV_UDSG, measType);
+  
+  std::cout << "\tInput CSV weight file = " << inputCSVfile << "; measurementType = " << measType << "; sysType = " << sysType << std::endl;
 
+    return;
+  /*
   std::string inputFileHF = SFfileDir +"/" + "btag/Deepcsv_rwt_fit_hf_v2_final_2018_2_12test.root" ; 
   std::string inputFileLF = SFfileDir +"/" + "btag/Deepcsv_rwt_fit_lf_v2_final_2018_2_12test.root" ; 
 
@@ -539,7 +555,7 @@ void ttHYggdrasilScaleFactors::init_btagSF(){
   }
 
   return;
-
+*/
 
 }
 
@@ -549,6 +565,32 @@ ttHYggdrasilScaleFactors::~ttHYggdrasilScaleFactors(){
 
 }
 
+double ttHYggdrasilScaleFactors::get_csv_wgt_single (int flavor, float eta, float pt, float deepCSV, int syst )
+{
+  // BBT, 11-02-18
+  assert( initialized );
+  double csv_weight = 1.;
+
+  if (abs(flavor) == 5 ){    //HF  
+    double iCSVWgtHF = reader_btag.eval(BTagEntry::FLAV_B, fabs(eta), pt, deepCSV);  
+    //double iCSVWgtHF    = reader_btag.eval_auto_bounds("central", 
+    //                                                  BTagEntry::FLAV_B, 
+    //							abs(eta), // absolute value of eta
+    //							pt); 
+    if( iCSVWgtHF!=0 ) csv_weight *= iCSVWgtHF;
+  }
+  else if( abs(flavor) == 4 ){  //C
+    //double iCSVWgtC = reader_btag.eval(BTagEntry::FLAV_C, fabs(eta), pt, deepCSV);
+    double iCSVWgtC = 1; // always 1 from twiki? https://twiki.cern.ch/twiki/bin/view/CMS/BTagShapeCalibration
+    if( iCSVWgtC!=0 ) csv_weight *= iCSVWgtC;   
+  }
+  else { //LF
+    double iCSVWgtLF = reader_btag.eval(BTagEntry::FLAV_UDSG, fabs(eta), pt, deepCSV);
+    if( iCSVWgtLF!=0 ) csv_weight *= iCSVWgtLF;
+  }
+
+  return csv_weight;
+}
 
 double ttHYggdrasilScaleFactors::get_csv_wgt( std::vector<double> jetPts, std::vector<double> jetEtas, std::vector<double> jetCSVs, std::vector<int> jetFlavors, 
 					      int iSys, double &csvWgtHF, double &csvWgtLF, double &csvWgtCF ){

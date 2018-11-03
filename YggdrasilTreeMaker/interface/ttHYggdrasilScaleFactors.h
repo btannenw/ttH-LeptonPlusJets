@@ -17,11 +17,11 @@
 
 // csv SFs, BBT 11-02-18
 //#include "CondFormats/BTauObjects/interface/BTagCalibration.h"
-#include "CondFormats/BTauObjects/interface/BTagCalibration.h"
-#include "CondTools/BTau/interface/BTagCalibrationReader.h"
+//#include "CondFormats/BTauObjects/interface/BTagCalibration.h"
 //#include "CondTools/BTau/interface/BTagCalibrationReader.h"
-//#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/BTagCalibrationStandalone.h"
-//#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/BTagCalibrationStandalone.cpp"
+//#include "CondTools/BTau/interface/BTagCalibrationReader.h"
+#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/BTagCalibrationStandalone.h"
+#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/plugins/BTagCalibrationStandalone.cc"
 
 #ifdef STANDALONECOMPILE
 #include "ttHYggdrasilEventSelection.h"

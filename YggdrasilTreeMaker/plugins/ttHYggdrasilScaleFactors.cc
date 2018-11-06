@@ -104,7 +104,7 @@ void ttHYggdrasilScaleFactors::init_ElectronSF(){
     else{                           input  = SFfileDir +"/el/RecoSF2017/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root" ; }    
     
     std::cout << __FILE__ << " Electron tracking SF file : " << input << std::endl ; 
-    h_EleSF_ID = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
+    h_EleSF_Reco = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
     // x : Super cluster eta : -2.5 to 2.5
     // y : ET.
   }
@@ -119,7 +119,7 @@ void ttHYggdrasilScaleFactors::init_ElectronSF(){
     else{                            input  = SFfileDir +"/el/2017CutBaseTight_SF/egammaEffi.txt_EGM2D_runBCDEF_passingTight94X.root" ; }    
 
     std::cout << __FILE__ << " Electron Reco SF file : " << input << std::endl ; 
-    h_EleSF_Reco = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
+    h_EleSF_ID = (TH2F*) getTH2HistogramFromFile( input , std::string ("EGamma_SF2D") );
     // x : super cluster -2.5 to 2.5
     // y : PT
   }

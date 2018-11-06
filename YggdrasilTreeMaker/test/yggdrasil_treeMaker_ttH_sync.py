@@ -44,23 +44,23 @@ process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 #### caution: use the correct global tag for MC or Data 
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.load("Configuration.StandardSequences.GeometryDB_cff")
 
 # Update global tag based on : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions?rev=568
 if isMC:
-    process.GlobalTag.globaltag = '94X_mc2017_realistic_v12'
+    process.GlobalTag.globaltag = '94X_mc2017_realistic_v14'
 else :
-    process.GlobalTag.globaltag = '94X_dataRun2_ReReco_EOY17_v2'
+    process.GlobalTag.globaltag = '94X_dataRun2_v6'
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( 100 )
-    #input = cms.untracked.int32( -1 )
+    #input = cms.untracked.int32( 100 )
+    input = cms.untracked.int32( -1 )
     )
 
 
@@ -200,7 +200,7 @@ if not isMC :
         import os.path
         import FWCore.PythonUtilities.LumiList as Lumilist
         process.source.lumisToProcess = LumiList.LumiList(filename =
-                                                          os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt'
+                                                          os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
                                                           ).getVLuminosityBlockRange()
 
 
@@ -422,7 +422,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-03-18_v22_addSFs.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-05-18_v24_full.root')
 )
 
 
@@ -514,4 +514,5 @@ else :
         process.ak4PFCHSL1FastL2L3ResidualCorrectorChain *
         process.ak4PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain *
-        process.PUPPIMuonRelIso * process.ttHTreeMaker)
+        process.PUPPIMuonRelIso * 
+        process.ttHTreeMaker)

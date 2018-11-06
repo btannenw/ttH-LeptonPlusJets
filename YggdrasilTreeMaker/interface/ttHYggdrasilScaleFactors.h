@@ -82,13 +82,8 @@ class ttHYggdrasilScaleFactors{
 
   double get_pu_wgt( int mc_pu );
 
-  double getTightMuonSF( ttHYggdrasilEventSelection * event );
   double getTightElectronSF( ttHYggdrasilEventSelection * event );
-
-  double getTightMuon_IDSF( ttHYggdrasilEventSelection * event , int syst = 0 );
-  double getTightElectron_IDSF( ttHYggdrasilEventSelection * event , int syst = 0 );
-
-  double getTightMuon_IsoSF( ttHYggdrasilEventSelection * event , int syst = 0 );
+  double getTightElectron_IDSF( ttHYggdrasilEventSelection * event , int syst = 0 ); 
   double getTightElectron_RecoSF( ttHYggdrasilEventSelection * event , int syst = 0 );
 
   double getTightMuon_IDSF_single( double mu_pt, double eta, int syst = 0 );
@@ -165,13 +160,15 @@ class ttHYggdrasilScaleFactors{
   // Lepton SF
   TH2F * h_EleSF_ID ;
   TH2F * h_EleSF_Reco;
-  std::vector< TH2D *> h_MuSF_ID;
+  //std::vector< TH2D *> h_MuSF_ID;
   std::vector< double> h_MuSF_ID_Lumi;
   double h_MuSF_ID_LumiTotal;
   
-  std::vector< TH2D *> h_MuSF_Iso ;
+  //std::vector< TH2D *> h_MuSF_Iso ;
   std::vector< double > h_MuSF_Iso_Lumi ;
   double h_MuSF_Iso_LumiTotal ;
+  TH2F * h_MuSF_ID ;
+  TH2F * h_MuSF_Iso;
 
   // Trif SF
   TH2D * h_MuSF_Trig_SF;

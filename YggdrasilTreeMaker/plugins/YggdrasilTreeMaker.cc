@@ -1769,7 +1769,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     // muon SF stuff, BBT 11-02-18
     double lepIDSF  = ( ! isMC ? 1 : scalefactors.getTightMuon_IDSF_single( iMu->pt(), iMu->eta() ) );
     double lepIsoSF = ( ! isMC ? 1 : scalefactors.getTightMuon_IsoSF_single( iMu->pt(), iMu->eta() ) );
-    std::cout << "muon IDSF: " << lepIDSF <<" , muon IsoSF: "<< lepIsoSF << std::endl;
+    //std::cout << "muon IDSF: " << lepIDSF <<" , muon IsoSF: "<< lepIsoSF << std::endl;
 
     lepton_eta.push_back(iMu->eta());
     lepton_phi.push_back(iMu->phi());
@@ -1883,9 +1883,9 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     auto corrP4  = iEle->p4() * iEle->userFloat("ecalTrkEnergyPostCorr") / iEle->energy();
     //std::cout << "[Electron loop] corrected pt: " << corrP4.pt() << ", nominal pt: " << iEle->pt() << std::endl;
 
-    // revert to usual vector if running on data
-    if (!isMC)
-      corrP4 = iEle->p4();
+    // revert to usual vector if running on data, comment out for test 11-05-18
+    //if (!isMC)
+    //  corrP4 = iEle->p4();
 
     bool inCrack = false;
     double scEta = -99;
@@ -1966,7 +1966,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     // electron SF stuff, BBT 11-02-18
     double lepIDSF =  ( ! isMC ? 1 : scalefactors.getTightElectron_IDSF_single( corrP4.pt(), scEta ) );
     double lepRecoSF =  ( ! isMC ? 1 : scalefactors.getTightElectron_RecoSF_single( corrP4.pt(), scEta ) ) ; 
-//     std::cout << lepIDSF <<","<< lepISOSF <<",";
+    //std::cout << "electron IDSF: " << lepIDSF <<" , electron RecoSF: "<< lepRecoSF << std::endl;
 
 
     lepton_trkCharge.push_back(trkCharge);

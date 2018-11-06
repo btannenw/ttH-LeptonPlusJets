@@ -45,15 +45,17 @@ process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 #### caution: use the correct global tag for MC or Data 
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff') # ygg core
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff') # BBT 11-05-18
 
 process.load("Configuration.StandardSequences.GeometryDB_cff")
 
 # Update global tag based on : https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions?rev=568
 if isMC:
-    process.GlobalTag.globaltag = '94X_mc2017_realistic_v12'
+    process.GlobalTag.globaltag = '94X_mc2017_realistic_v14' # updated by BBT on 11-05-18. was previously v12
 else :
-    process.GlobalTag.globaltag = '94X_dataRun2_ReReco_EOY17_v2'
+    #process.GlobalTag.globaltag = '94X_dataRun2_ReReco_EOY17_v2' # ygg core 
+    process.GlobalTag.globaltag = '94X_dataRun2_v6' # BBT 11-05-18
 
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
@@ -203,7 +205,7 @@ if not isMC :
         import os.path
         import FWCore.PythonUtilities.LumiList as Lumilist
         process.source.lumisToProcess = LumiList.LumiList(filename =
-                                                          os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt'
+                                                          os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
                                                           ).getVLuminosityBlockRange()
 
 
@@ -425,7 +427,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-01-18_v21_singleData_Emu_PeriodB_full.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-05-18_v24_singleData_Emu_PeriodB_full.root')
 )
 
 
@@ -515,6 +517,6 @@ else :
         process.ak4PFCHSL1FastL2L3ResidualCorrectorChain *
         process.ak4PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain *
-        #process.egammaPostRecoSeq * # BBT, 11-01-18
+        process.egammaPostRecoSeq * # BBT, 11-01-18
         #process.PUPPIMuonRelIso * 
         process.ttHTreeMaker)

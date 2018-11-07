@@ -655,16 +655,53 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   bool passHLT_PFHT430_SixJet40_BTagCSV_p080_v  = false ; 
   bool passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v  = false ; 
 
-  /*// MET Filters, BBT 10-19-18
-  bool passMETFilter_Flag_goodVertices_v = false ; 
-  bool passMETFilter_Flag_globalTightHalo2016Filter_v = false ; 
-  bool passMETFilter_Flag_HBHENoiseFilter_v = false ;
-  bool passMETFilter_Flag_HBHENoiseIsoFilter_v = false ; 
-  bool passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v = false ;
-  bool passMETFilter_Flag_BadPFMuonFilter_v = false ; 
-  bool passMETFilter_Flag_BadChargedCandidateFilter_v = false ;  
-  bool passMETFilter_Flag_ecalBadCalibFilter_v = false ;
-  */
+  // MET Filters, BBT 11-06-18
+  // 2017 MET triggers
+  bool passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v = false ;
+  bool passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v = false ;
+  bool passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v = false ;
+  bool passHLT_PFHT700_PFMET95_PFMHT95_IDTight_v = false ;
+  bool passHLT_PFHT800_PFMET75_PFMHT75_IDTight_v = false ;
+  bool passHLT_PFHT800_PFMET85_PFMHT85_IDTight_v = false ;
+  bool passHLT_PFMET110_PFMHT110_IDTight_v = false ;
+  bool passHLT_PFMET120_PFMHT120_IDTight_v = false ;
+  bool passHLT_PFMET130_PFMHT130_IDTight_v = false ;
+  bool passHLT_PFMET140_PFMHT140_IDTight_v = false ;
+  bool passHLT_PFMETTypeOne110_PFMHT110_IDTight_v = false ;
+  bool passHLT_PFMETTypeOne120_PFMHT120_IDTight_v = false ;
+  bool passHLT_PFMETTypeOne130_PFMHT130_IDTight_v = false ;
+  bool passHLT_PFMETTypeOne140_PFMHT140_IDTight_v = false ;
+  bool passHLT_DiJet110_35_Mjj650_PFMET110_v = false ;
+  bool passHLT_DiJet110_35_Mjj650_PFMET120_v = false ;
+  bool passHLT_DiJet110_35_Mjj650_PFMET130_v = false ;
+  bool passHLT_TripleJet110_35_35_Mjj650_PFMET110_v = false ;
+  bool passHLT_TripleJet110_35_35_Mjj650_PFMET120_v = false ;
+  bool passHLT_TripleJet110_35_35_Mjj650_PFMET130_v = false ;
+  bool passHLT_MET105_IsoTrk50_v = false ;
+  bool passHLT_MET120_IsoTrk50_v = false ;
+  bool passHLT_PFMET120_PFMHT120_IDTight_PFHT60_v = false ;
+  bool passHLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60_v = false ;
+  bool passHLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1_v = false ;
+  bool passHLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1_v = false ;
+  bool passHLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1_v = false ;
+  bool passHLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1_v = false ;
+  bool passHLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1_v = false ;
+  bool passHLT_CaloMET100_HBHECleaned_v = false ;
+  bool passHLT_CaloMET250_HBHECleaned_v = false ;
+  bool passHLT_CaloMET300_HBHECleaned_v = false ;
+  bool passHLT_CaloMET350_HBHECleaned_v = false ;
+  bool passHLT_CaloMET70_HBHECleaned_v = false ;
+  bool passHLT_CaloMET80_HBHECleaned_v = false ;
+  bool passHLT_CaloMET90_HBHECleaned_v = false ;
+  bool passHLT_PFMET200_HBHE_BeamHaloCleaned_v = false ;
+  bool passHLT_PFMET200_HBHECleaned_v = false ;
+  bool passHLT_PFMET250_HBHECleaned_v = false ;
+  bool passHLT_PFMET300_HBHECleaned_v = false ;
+  bool passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v = false ;
+  bool passHLT_PFMET100_PFMHT100_IDTight_PFHT60_v = false ;
+  bool passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v = false ;
+  bool passHLT_PFHT250_v = false ;
+
 
   if( triggerResults.isValid() ){
     std::vector<std::string> triggerNames = hlt_config_.triggerNames();
@@ -737,6 +774,54 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	if( pathName.find( "HLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2_v = true ;} 
 	if( pathName.find( "HLT_PFHT430_SixJet40_BTagCSV_p080_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFHT430_SixJet40_BTagCSV_p080_v = true ;} 
 	if( pathName.find( "HLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v = true ;}
+
+	// MET Filters, BBT 11-06-18
+	// 2017 MET triggers
+	if( pathName.find( "HLT_PFHT500_PFMET100_PFMHT100_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFHT500_PFMET110_PFMHT110_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFHT700_PFMET85_PFMHT85_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFHT700_PFMET95_PFMHT95_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFHT700_PFMET95_PFMHT95_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFHT800_PFMET75_PFMHT75_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFHT800_PFMET75_PFMHT75_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFHT800_PFMET85_PFMHT85_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFHT800_PFMET85_PFMHT85_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFMET110_PFMHT110_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET110_PFMHT110_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFMET120_PFMHT120_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET120_PFMHT120_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFMET130_PFMHT130_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET130_PFMHT130_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFMET140_PFMHT140_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET140_PFMHT140_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFMETTypeOne110_PFMHT110_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMETTypeOne110_PFMHT110_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFMETTypeOne120_PFMHT120_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMETTypeOne120_PFMHT120_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFMETTypeOne130_PFMHT130_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMETTypeOne130_PFMHT130_IDTight_v = true ;}
+	if( pathName.find( "HLT_PFMETTypeOne140_PFMHT140_IDTight_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMETTypeOne140_PFMHT140_IDTight_v = true ;}
+	if( pathName.find( "HLT_DiJet110_35_Mjj650_PFMET110_v" , 0 ) == MatchedAtTheBegining ){ passHLT_DiJet110_35_Mjj650_PFMET110_v = true ;}
+	if( pathName.find( "HLT_DiJet110_35_Mjj650_PFMET120_v" , 0 ) == MatchedAtTheBegining ){ passHLT_DiJet110_35_Mjj650_PFMET120_v = true ;}
+	if( pathName.find( "HLT_DiJet110_35_Mjj650_PFMET130_v" , 0 ) == MatchedAtTheBegining ){ passHLT_DiJet110_35_Mjj650_PFMET130_v = true ;}
+	if( pathName.find( "HLT_TripleJet110_35_35_Mjj650_PFMET110_v" , 0 ) == MatchedAtTheBegining ){ passHLT_TripleJet110_35_35_Mjj650_PFMET110_v = true ;}
+	if( pathName.find( "HLT_TripleJet110_35_35_Mjj650_PFMET120_v" , 0 ) == MatchedAtTheBegining ){ passHLT_TripleJet110_35_35_Mjj650_PFMET120_v = true ;}
+	if( pathName.find( "HLT_TripleJet110_35_35_Mjj650_PFMET130_v" , 0 ) == MatchedAtTheBegining ){ passHLT_TripleJet110_35_35_Mjj650_PFMET130_v = true ;}
+	if( pathName.find( "HLT_MET105_IsoTrk50_v" , 0 ) == MatchedAtTheBegining ){ passHLT_MET105_IsoTrk50_v = true ;}
+	if( pathName.find( "HLT_MET120_IsoTrk50_v" , 0 ) == MatchedAtTheBegining ){ passHLT_MET120_IsoTrk50_v = true ;}
+	if( pathName.find( "HLT_PFMET120_PFMHT120_IDTight_PFHT60_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET120_PFMHT120_IDTight_PFHT60_v = true ;}
+	if( pathName.find( "HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60_v = true ;}
+	if( pathName.find( "HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1_v = true ;}
+	if( pathName.find( "HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1_v = true ;}
+	if( pathName.find( "HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1_v = true ;}
+	if( pathName.find( "HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1_v = true ;}
+	if( pathName.find( "HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1_v = true ;}
+	if( pathName.find( "HLT_CaloMET100_HBHECleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_CaloMET100_HBHECleaned_v = true ;}
+	if( pathName.find( "HLT_CaloMET250_HBHECleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_CaloMET250_HBHECleaned_v = true ;}
+	if( pathName.find( "HLT_CaloMET300_HBHECleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_CaloMET300_HBHECleaned_v = true ;}
+	if( pathName.find( "HLT_CaloMET350_HBHECleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_CaloMET350_HBHECleaned_v = true ;}
+	if( pathName.find( "HLT_CaloMET70_HBHECleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_CaloMET70_HBHECleaned_v = true ;}
+	if( pathName.find( "HLT_CaloMET80_HBHECleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_CaloMET80_HBHECleaned_v = true ;}
+	if( pathName.find( "HLT_CaloMET90_HBHECleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_CaloMET90_HBHECleaned_v = true ;}
+	if( pathName.find( "HLT_PFMET200_HBHE_BeamHaloCleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET200_HBHE_BeamHaloCleaned_v = true ;}
+	if( pathName.find( "HLT_PFMET200_HBHECleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET200_HBHECleaned_v = true ;}
+	if( pathName.find( "HLT_PFMET250_HBHECleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET250_HBHECleaned_v = true ;}
+	if( pathName.find( "HLT_PFMET300_HBHECleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET300_HBHECleaned_v = true ;}
+	if( pathName.find( "HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v = true ;}
+	if( pathName.find( "HLT_PFMET100_PFMHT100_IDTight_PFHT60_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMET100_PFMHT100_IDTight_PFHT60_v = true ;}
+	if( pathName.find( "HLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v = true ;}
+	if( pathName.find( "HLT_PFHT250_v" , 0 ) == MatchedAtTheBegining ){ passHLT_PFHT250_v = true ;}
+
       }
     }
   }
@@ -1502,17 +1587,54 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->passHLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2_v_ = passHLT_PFHT380_SixPFJet32_DoublePFBTagDeepCSV_2p2_v ? 1 : 0 ; 
   eve->passHLT_PFHT430_SixJet40_BTagCSV_p080_v_ = passHLT_PFHT430_SixJet40_BTagCSV_p080_v ? 1 : 0 ; 
   eve->passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v_ = passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v ? 1 : 0 ; 
-  /*
-  // MET Filters, BBT 10-19-18
-  eve->passMETFilter_Flag_goodVertices_v_ = passMETFilter_Flag_goodVertices_v ? 1 : 0 ; 
-  eve->passMETFilter_Flag_globalTightHalo2016Filter_v_ = passMETFilter_Flag_globalTightHalo2016Filter_v ? 1 : 0 ; 
-  eve->passMETFilter_Flag_HBHENoiseFilter_v_ = passMETFilter_Flag_HBHENoiseFilter_v ? 1 : 0 ; 
-  eve->passMETFilter_Flag_HBHENoiseIsoFilter_v_ = passMETFilter_Flag_HBHENoiseIsoFilter_v ? 1 : 0 ; 
-  eve->passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v_ = passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v ? 1 : 0 ; 
-  eve->passMETFilter_Flag_BadPFMuonFilter_v_ = passMETFilter_Flag_BadPFMuonFilter_v ? 1 : 0 ; 
-  eve->passMETFilter_Flag_BadChargedCandidateFilter_v_ = passMETFilter_Flag_BadChargedCandidateFilter_v ? 1 : 0 ; 
-  eve->passMETFilter_Flag_ecalBadCalibFilter_v_ = passMETFilter_Flag_ecalBadCalibFilter_v ? 1 : 0 ; 
-  */
+
+  // MET Filters, BBT 11-06-18
+  // 2017 MET triggers
+  eve->passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_ = passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v_ = passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v_ = passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFHT700_PFMET95_PFMHT95_IDTight_v_ = passHLT_PFHT700_PFMET95_PFMHT95_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFHT800_PFMET75_PFMHT75_IDTight_v_ = passHLT_PFHT800_PFMET75_PFMHT75_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFHT800_PFMET85_PFMHT85_IDTight_v_ = passHLT_PFHT800_PFMET85_PFMHT85_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFMET110_PFMHT110_IDTight_v_ = passHLT_PFMET110_PFMHT110_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFMET120_PFMHT120_IDTight_v_ = passHLT_PFMET120_PFMHT120_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFMET130_PFMHT130_IDTight_v_ = passHLT_PFMET130_PFMHT130_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFMET140_PFMHT140_IDTight_v_ = passHLT_PFMET140_PFMHT140_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFMETTypeOne110_PFMHT110_IDTight_v_ = passHLT_PFMETTypeOne110_PFMHT110_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFMETTypeOne120_PFMHT120_IDTight_v_ = passHLT_PFMETTypeOne120_PFMHT120_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFMETTypeOne130_PFMHT130_IDTight_v_ = passHLT_PFMETTypeOne130_PFMHT130_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_PFMETTypeOne140_PFMHT140_IDTight_v_ = passHLT_PFMETTypeOne140_PFMHT140_IDTight_v ? 1 : 0 ; 
+  eve->passHLT_DiJet110_35_Mjj650_PFMET110_v_ = passHLT_DiJet110_35_Mjj650_PFMET110_v ? 1 : 0 ; 
+  eve->passHLT_DiJet110_35_Mjj650_PFMET120_v_ = passHLT_DiJet110_35_Mjj650_PFMET120_v ? 1 : 0 ; 
+  eve->passHLT_DiJet110_35_Mjj650_PFMET130_v_ = passHLT_DiJet110_35_Mjj650_PFMET130_v ? 1 : 0 ; 
+  eve->passHLT_TripleJet110_35_35_Mjj650_PFMET110_v_ = passHLT_TripleJet110_35_35_Mjj650_PFMET110_v ? 1 : 0 ; 
+  eve->passHLT_TripleJet110_35_35_Mjj650_PFMET120_v_ = passHLT_TripleJet110_35_35_Mjj650_PFMET120_v ? 1 : 0 ; 
+  eve->passHLT_TripleJet110_35_35_Mjj650_PFMET130_v_ = passHLT_TripleJet110_35_35_Mjj650_PFMET130_v ? 1 : 0 ; 
+  eve->passHLT_MET105_IsoTrk50_v_ = passHLT_MET105_IsoTrk50_v ? 1 : 0 ; 
+  eve->passHLT_MET120_IsoTrk50_v_ = passHLT_MET120_IsoTrk50_v ? 1 : 0 ; 
+  eve->passHLT_PFMET120_PFMHT120_IDTight_PFHT60_v_ = passHLT_PFMET120_PFMHT120_IDTight_PFHT60_v ? 1 : 0 ; 
+  eve->passHLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60_v_ = passHLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60_v ? 1 : 0 ; 
+  eve->passHLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1_v_ = passHLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1_v ? 1 : 0 ; 
+  eve->passHLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1_v_ = passHLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1_v ? 1 : 0 ; 
+  eve->passHLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1_v_ = passHLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1_v ? 1 : 0 ; 
+  eve->passHLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1_v_ = passHLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1_v ? 1 : 0 ; 
+  eve->passHLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1_v_ = passHLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1_v ? 1 : 0 ; 
+  eve->passHLT_CaloMET100_HBHECleaned_v_ = passHLT_CaloMET100_HBHECleaned_v ? 1 : 0 ; 
+  eve->passHLT_CaloMET250_HBHECleaned_v_ = passHLT_CaloMET250_HBHECleaned_v ? 1 : 0 ; 
+  eve->passHLT_CaloMET300_HBHECleaned_v_ = passHLT_CaloMET300_HBHECleaned_v ? 1 : 0 ; 
+  eve->passHLT_CaloMET350_HBHECleaned_v_ = passHLT_CaloMET350_HBHECleaned_v ? 1 : 0 ; 
+  eve->passHLT_CaloMET70_HBHECleaned_v_ = passHLT_CaloMET70_HBHECleaned_v ? 1 : 0 ; 
+  eve->passHLT_CaloMET80_HBHECleaned_v_ = passHLT_CaloMET80_HBHECleaned_v ? 1 : 0 ; 
+  eve->passHLT_CaloMET90_HBHECleaned_v_ = passHLT_CaloMET90_HBHECleaned_v ? 1 : 0 ; 
+  eve->passHLT_PFMET200_HBHE_BeamHaloCleaned_v_ = passHLT_PFMET200_HBHE_BeamHaloCleaned_v ? 1 : 0 ; 
+  eve->passHLT_PFMET200_HBHECleaned_v_ = passHLT_PFMET200_HBHECleaned_v ? 1 : 0 ; 
+  eve->passHLT_PFMET250_HBHECleaned_v_ = passHLT_PFMET250_HBHECleaned_v ? 1 : 0 ; 
+  eve->passHLT_PFMET300_HBHECleaned_v_ = passHLT_PFMET300_HBHECleaned_v ? 1 : 0 ; 
+  eve->passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v_ = passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v ? 1 : 0 ; 
+  eve->passHLT_PFMET100_PFMHT100_IDTight_PFHT60_v_ = passHLT_PFMET100_PFMHT100_IDTight_PFHT60_v ? 1 : 0 ; 
+  eve->passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v_ = passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v ? 1 : 0 ; 
+  eve->passHLT_PFHT250_v_ = passHLT_PFHT250_v ? 1 : 0 ; 
+  
 
   std::vector< std::pair<float , float> > SingleMuonTriggerDirection;
   std::vector< std::pair<float , float> > SingleElTriggerDirection;

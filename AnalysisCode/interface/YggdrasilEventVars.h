@@ -114,6 +114,53 @@ struct yggdrasilEventVars{
   int passMETFilter_Flag_ecalBadCalibFilter_v_ ;
   */
 
+  // 5-15-18: unprescaled known... just gonna keep them all for sanity's sake [BBT]
+  // 2017 MET triggers
+  int passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_ ;
+  int passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v_ ;
+  int passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v_ ;
+  int passHLT_PFHT700_PFMET95_PFMHT95_IDTight_v_ ;
+  int passHLT_PFHT800_PFMET75_PFMHT75_IDTight_v_ ;
+  int passHLT_PFHT800_PFMET85_PFMHT85_IDTight_v_ ;
+  int passHLT_PFMET110_PFMHT110_IDTight_v_ ;
+  int passHLT_PFMET120_PFMHT120_IDTight_v_ ;
+  int passHLT_PFMET130_PFMHT130_IDTight_v_ ;
+  int passHLT_PFMET140_PFMHT140_IDTight_v_ ;
+  int passHLT_PFMETTypeOne110_PFMHT110_IDTight_v_ ;
+  int passHLT_PFMETTypeOne120_PFMHT120_IDTight_v_ ;
+  int passHLT_PFMETTypeOne130_PFMHT130_IDTight_v_ ;
+  int passHLT_PFMETTypeOne140_PFMHT140_IDTight_v_ ;
+  int passHLT_DiJet110_35_Mjj650_PFMET110_v_ ;
+  int passHLT_DiJet110_35_Mjj650_PFMET120_v_ ;
+  int passHLT_DiJet110_35_Mjj650_PFMET130_v_ ;
+  int passHLT_TripleJet110_35_35_Mjj650_PFMET110_v_ ;
+  int passHLT_TripleJet110_35_35_Mjj650_PFMET120_v_ ;
+  int passHLT_TripleJet110_35_35_Mjj650_PFMET130_v_ ;
+  int passHLT_MET105_IsoTrk50_v_ ;
+  int passHLT_MET120_IsoTrk50_v_ ;
+  int passHLT_PFMET120_PFMHT120_IDTight_PFHT60_v_ ;
+  int passHLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60_v_ ;
+  int passHLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1_v_ ;
+  int passHLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1_v_ ;
+  int passHLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1_v_ ;
+  int passHLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1_v_ ;
+  int passHLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1_v_ ;
+  int passHLT_CaloMET100_HBHECleaned_v_ ;
+  int passHLT_CaloMET250_HBHECleaned_v_ ;
+  int passHLT_CaloMET300_HBHECleaned_v_ ;
+  int passHLT_CaloMET350_HBHECleaned_v_ ;
+  int passHLT_CaloMET70_HBHECleaned_v_ ;
+  int passHLT_CaloMET80_HBHECleaned_v_ ;
+  int passHLT_CaloMET90_HBHECleaned_v_ ;
+  int passHLT_PFMET200_HBHE_BeamHaloCleaned_v_ ;
+  int passHLT_PFMET200_HBHECleaned_v_ ;
+  int passHLT_PFMET250_HBHECleaned_v_ ;
+  int passHLT_PFMET300_HBHECleaned_v_ ;
+  int passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v_ ;
+  int passHLT_PFMET100_PFMHT100_IDTight_PFHT60_v_ ;
+  int passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v_ ;
+  int passHLT_PFHT250_v_ ;
+
   // normal run stuff
   int run_;
   int lumi_;
@@ -376,6 +423,52 @@ void yggdrasilEventVars::initialize(){
   /* passHLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v_ = -99 ; */
   passHLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v_ = -99 ;
   passHLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v_ = -99 ;
+
+  // 5-15-18 [BBT]: add 2017 MET branhces
+  passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_ = -99 ;
+  passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v_ = -99 ;
+  passHLT_PFHT700_PFMET85_PFMHT85_IDTight_v_ = -99 ;
+  passHLT_PFHT700_PFMET95_PFMHT95_IDTight_v_ = -99 ;
+  passHLT_PFHT800_PFMET75_PFMHT75_IDTight_v_ = -99 ;
+  passHLT_PFHT800_PFMET85_PFMHT85_IDTight_v_ = -99 ;
+  passHLT_PFMET110_PFMHT110_IDTight_v_ = -99 ;
+  passHLT_PFMET120_PFMHT120_IDTight_v_ = -99 ;
+  passHLT_PFMET130_PFMHT130_IDTight_v_ = -99 ;
+  passHLT_PFMET140_PFMHT140_IDTight_v_ = -99 ;
+  passHLT_PFMETTypeOne110_PFMHT110_IDTight_v_ = -99 ;
+  passHLT_PFMETTypeOne120_PFMHT120_IDTight_v_ = -99 ;
+  passHLT_PFMETTypeOne130_PFMHT130_IDTight_v_ = -99 ;
+  passHLT_PFMETTypeOne140_PFMHT140_IDTight_v_ = -99 ;
+  passHLT_DiJet110_35_Mjj650_PFMET110_v_ = -99 ;
+  passHLT_DiJet110_35_Mjj650_PFMET120_v_ = -99 ;
+  passHLT_DiJet110_35_Mjj650_PFMET130_v_ = -99 ;
+  passHLT_TripleJet110_35_35_Mjj650_PFMET110_v_ = -99 ;
+  passHLT_TripleJet110_35_35_Mjj650_PFMET120_v_ = -99 ;
+  passHLT_TripleJet110_35_35_Mjj650_PFMET130_v_ = -99 ;
+  passHLT_MET105_IsoTrk50_v_ = -99 ;
+  passHLT_MET120_IsoTrk50_v_ = -99 ;
+  passHLT_PFMET120_PFMHT120_IDTight_PFHT60_v_ = -99 ;
+  passHLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60_v_ = -99 ;
+  passHLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1_v_ = -99 ;
+  passHLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1_v_ = -99 ;
+  passHLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1_v_ = -99 ;
+  passHLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1_v_ = -99 ;
+  passHLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1_v_ = -99 ;
+  passHLT_CaloMET100_HBHECleaned_v_ = -99 ;
+  passHLT_CaloMET250_HBHECleaned_v_ = -99 ;
+  passHLT_CaloMET300_HBHECleaned_v_ = -99 ;
+  passHLT_CaloMET350_HBHECleaned_v_ = -99 ;
+  passHLT_CaloMET70_HBHECleaned_v_ = -99 ;
+  passHLT_CaloMET80_HBHECleaned_v_ = -99 ;
+  passHLT_CaloMET90_HBHECleaned_v_ = -99 ;
+  passHLT_PFMET200_HBHE_BeamHaloCleaned_v_ = -99 ;
+  passHLT_PFMET200_HBHECleaned_v_ = -99 ;
+  passHLT_PFMET250_HBHECleaned_v_ = -99 ;
+  passHLT_PFMET300_HBHECleaned_v_ = -99 ;
+  passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v_ = -99 ;
+  passHLT_PFMET100_PFMHT100_IDTight_PFHT60_v_ = -99 ;
+  passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v_ = -99 ;
+  passHLT_PFHT250_v_ = -99 ;
 
   run_  = -99;
   lumi_ = -99;

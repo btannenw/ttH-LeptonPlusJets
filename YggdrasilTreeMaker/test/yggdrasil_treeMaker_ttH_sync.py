@@ -11,8 +11,8 @@ isMC=True
 # 
 isTTBARMC=False
 
-# isGridJob=False
-isGridJob=False
+isGridJob=True
+#isGridJob=False
 
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
 
@@ -59,8 +59,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( 100 )
-    #input = cms.untracked.int32( -1 )
+    #input = cms.untracked.int32( 100 )
+    input = cms.untracked.int32( -1 )
     )
 
 
@@ -422,7 +422,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-06-18_v25_eeMitigationMET_added.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-06-18_v26_recipeTest.root')
 )
 
 
@@ -498,7 +498,7 @@ process.puppiOnTheFly.useExistingWeights = True
 #            PUMethod = 'Puppi', newPFCollection=True, nameNewPFCollection='puppiOnTheFly' , addSoftDrop=True , addSoftDropSubjets=True )
 
 
-
+# finally, run!
 if isMC : 
     process.p = cms.Path(
         process.genParticlesForJetsNoNu * process.ak4GenJetsCustom *

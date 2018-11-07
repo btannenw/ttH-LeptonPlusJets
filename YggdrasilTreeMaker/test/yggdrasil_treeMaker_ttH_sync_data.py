@@ -460,10 +460,10 @@ METCollection      = cms.InputTag("deterministicSeeds", "METsWithSeed", process.
 
 
 ## The line below should always be included, BBT, 10-09-18
-from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+#from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 ## Example 1: If you only want to re-correct MET and get the proper uncertainties [e.g. when updating JEC]
-runMetCorAndUncFromMiniAOD(process,
-                           isData           = not isMC
+#runMetCorAndUncFromMiniAOD(process,
+#                           isData           = not isMC
 ##            jecUncFile       = os.path.basename(options.JESUncFiles[0]),
 ##            electronColl     = electronCollection.value(),
 ##            muonColl         = muonCollection.value(),
@@ -472,7 +472,16 @@ runMetCorAndUncFromMiniAOD(process,
 ##            jetCollUnskimmed = jetCollection.value(),
 ##            #pfCandColl=cms.InputTag("packedPFCandidates"),
 ##            #recoMetFromPFCs  = True
-                           )
+#                           )
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+
+runMetCorAndUncFromMiniAOD (
+        process,
+        isData = !isMC, # false for MC
+        fixEE2017 = True,
+        fixEE2017Params = {'userawPt': True, 'ptThreshold':50.0, 'minEtaThreshold':2.65, 'maxEtaThreshold': 3.139} ,
+        postfix = "ModifiedMET"
+)
 
 
 #process.load("Configuration.StandardSequences.MagneticField_cff")
@@ -507,7 +516,7 @@ if isMC :
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
         process.ak8ReclusteredGenJets *
         #process.PUPPIMuonRelIso * 
-        process.fullPatMetSequence *  # BBT, 10-04-18
+        process.fullPatMetSequenceModifiedMET * # BBT, 11-06-18
         process.egmGsfElectronIDSequence * # BBT, 10-08-18
         process.egammaPostRecoSeq * # BBT, 10-11-18
         process.deterministicSeeds * # BBT, 10-12-18
@@ -519,4 +528,5 @@ else :
         process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.egammaPostRecoSeq * # BBT, 11-01-18
         #process.PUPPIMuonRelIso * 
+        process.fullPatMetSequenceModifiedMET * # BBT, 11-06-18
         process.ttHTreeMaker)

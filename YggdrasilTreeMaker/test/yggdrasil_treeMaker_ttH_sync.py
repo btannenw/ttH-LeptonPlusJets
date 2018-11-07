@@ -59,8 +59,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    #input = cms.untracked.int32( 100 )
-    input = cms.untracked.int32( -1 )
+    input = cms.untracked.int32( 100 )
+    #input = cms.untracked.int32( -1 )
     )
 
 
@@ -422,7 +422,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-05-18_v24_full.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-06-18_v25_eeMitigationMET_added.root')
 )
 
 
@@ -457,10 +457,10 @@ METCollection      = cms.InputTag("deterministicSeeds", "METsWithSeed", process.
 
 
 ## The line below should always be included, BBT, 10-09-18
-from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+#from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 ## Example 1: If you only want to re-correct MET and get the proper uncertainties [e.g. when updating JEC]
-runMetCorAndUncFromMiniAOD(process,
-                           isData           = not isMC
+#runMetCorAndUncFromMiniAOD(process,
+#                           isData           = not isMC
 #            jecUncFile       = os.path.basename(options.JESUncFiles[0]),
 #            electronColl     = electronCollection.value(),
 #            muonColl         = muonCollection.value(),
@@ -469,8 +469,17 @@ runMetCorAndUncFromMiniAOD(process,
 #            jetCollUnskimmed = jetCollection.value(),
 #            #pfCandColl=cms.InputTag("packedPFCandidates"),
 #            #recoMetFromPFCs  = True
-                           )
+#                           )
 
+
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+
+runMetCorAndUncFromMiniAOD( process,
+    isData = not isMC, # false for MC
+    fixEE2017 = True,
+    fixEE2017Params = {'userawPt': True, 'ptThreshold':50.0, 'minEtaThreshold':2.65, 'maxEtaThreshold': 3.139} ,
+    postfix = "ModifiedMET"
+)
 
 #process.load("Configuration.StandardSequences.MagneticField_cff")
 #from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
@@ -504,7 +513,8 @@ if isMC :
         process.GenParticleWithoutChargedLeptonFropTop * process.myGenParticlesWithChargedLeptonFromTopForJet * process.ak4GenJetsWithChargedLepFromTop *  
         process.ak8ReclusteredGenJets *
         process.PUPPIMuonRelIso * 
-        process.fullPatMetSequence *  # BBT, 10-04-18
+        #process.fullPatMetSequence *  # BBT, 10-04-18
+        process.fullPatMetSequenceModifiedMET * # BBT, 11-06-18
         process.egmGsfElectronIDSequence * # BBT, 10-08-18
         process.egammaPostRecoSeq * # BBT, 10-11-18
         process.deterministicSeeds * # BBT, 10-12-18
@@ -515,4 +525,5 @@ else :
         process.ak4PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.PUPPIMuonRelIso * 
+        process.fullPatMetSequenceModifiedMET * # BBT, 11-06-18
         process.ttHTreeMaker)

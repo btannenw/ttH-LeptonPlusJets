@@ -449,7 +449,7 @@ process.deterministicSeeds.METCollection      = METCollection
 # overwrite output collections (skip electrons as the EGamma tools handle the deterministic seed creation internally)
 #print "@@@@@@@@@@@ ", process.name_()
 
-Muoncollection     = cms.InputTag("deterministicSeeds", "muonsWithSeed", process.name_())
+muoncollection     = cms.InputTag("deterministicSeeds", "muonsWithSeed", process.name_())
 tauCollection      = cms.InputTag("deterministicSeeds", "tausWithSeed", process.name_())
 photonCollection   = cms.InputTag("deterministicSeeds", "photonsWithSeed", process.name_())
 jetCollection      = cms.InputTag("deterministicSeeds", "jetsWithSeed", process.name_())
@@ -524,6 +524,7 @@ else :
         process.ak4PFCHSL1FastL2L3ResidualCorrectorChain *
         process.ak4PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain *
-        process.PUPPIMuonRelIso * 
+        process.egammaPostRecoSeq * # BBT, 11-01-18
+        #process.PUPPIMuonRelIso * 
         process.fullPatMetSequenceModifiedMET * # BBT, 11-06-18
         process.ttHTreeMaker)

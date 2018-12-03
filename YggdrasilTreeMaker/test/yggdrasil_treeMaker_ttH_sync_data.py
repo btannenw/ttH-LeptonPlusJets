@@ -12,7 +12,7 @@ isMC=False
 isTTBARMC=False
 
 # isGridJob=False
-isGridJob=False
+isGridJob=True
 
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
 
@@ -27,7 +27,7 @@ enableJECFromLocalDB = True
 #  The placeholder will be replaced by crab job make script.
 
 #period="XXXPERIODXXX"
-period="2017B"
+period="2017F"
 # e.g "2017B"
 
 # - - - - - - - - - - - - - - - - - - - -
@@ -427,7 +427,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-05-18_v24_singleData_Emu_PeriodB_full.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-12-18_v24_data.root')
 )
 
 
@@ -475,14 +475,12 @@ METCollection      = cms.InputTag("deterministicSeeds", "METsWithSeed", process.
 #                           )
 from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 
-runMetCorAndUncFromMiniAOD (
-        process,
-        isData = !isMC, # false for MC
-        fixEE2017 = True,
-        fixEE2017Params = {'userawPt': True, 'ptThreshold':50.0, 'minEtaThreshold':2.65, 'maxEtaThreshold': 3.139} ,
-        postfix = "ModifiedMET"
+runMetCorAndUncFromMiniAOD( process,
+    isData = not isMC, # false for MC
+    fixEE2017 = True,
+    fixEE2017Params = {'userawPt': True, 'ptThreshold':50.0, 'minEtaThreshold':2.65, 'maxEtaThreshold': 3.139} ,
+    postfix = "ModifiedMET"
 )
-
 
 #process.load("Configuration.StandardSequences.MagneticField_cff")
 #from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox

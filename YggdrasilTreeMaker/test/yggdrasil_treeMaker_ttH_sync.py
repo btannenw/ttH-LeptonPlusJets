@@ -11,8 +11,8 @@ isMC=True
 # 
 isTTBARMC=False
 
-isGridJob=True
-#isGridJob=False
+#isGridJob=True
+isGridJob=False
 
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
 
@@ -59,7 +59,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    #input = cms.untracked.int32( 100 )
+    #input = cms.untracked.int32( 1000 )
     input = cms.untracked.int32( -1 )
     )
 
@@ -68,12 +68,21 @@ import sys
 import os.path
 
 JecLocalDataBaseName = \
-    'Fall17_17Nov2017B_V6_DATA' if period in ("2017B") else \
-    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
-    'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
-    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
-    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
-    'Fall17_17Nov2017_V6_MC'
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017B") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017C") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017D") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017E") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017F") else \
+    'Fall17_17Nov2017_V32_94X_MC'
+#     ####  Dec 3 submission  ####
+
+#     ####  Nov 6/7/8 submission  ####
+#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017B") else \
+#    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
+#    'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
+#    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
+#    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
+#    'Fall17_17Nov2017_V6_MC'
 
 
 JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
@@ -382,9 +391,18 @@ process.electronMVAValueMapProducer.srcMiniAOD = electronCollection
 # BBT, 10-11-18
 from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
 setupEgammaPostRecoSeq(process,
-                       runVID=False, #saves CPU time by not needlessly re-running VID
-                       #era='Run2017_17Nov2017_v1')  
-                       era='2017-Nov17ReReco')  
+                       # ### Nov 6/7/8 processing, uses only V1 definitions
+                       # runVID=False, #saves CPU time by not needlessly re-running VID
+                       # #era='Run2017_17Nov2017_v1')  
+                       #era='2017-Nov17ReReco'
+
+                       # ### Dec 3 processing, uses V1+V2 definitions
+                       runVID=True, 
+                       era='2017-Nov17ReReco',
+                       applyEnergyCorrections=False,
+                       applyVIDOnCorrectedEgamma=False
+                       )  
+
 #a sequence egammaPostRecoSeq has now been created and should be added to your path, eg process.p=cms.Path(process.egammaPostRecoSeq)
 
 
@@ -422,7 +440,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-06-18_v26_recipeTest.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_12-03-18_v27_addV2_newJEC_newJER.root')
 )
 
 

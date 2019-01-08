@@ -181,7 +181,7 @@ struct yggdrasilEventVars{
   vint lepton_trkCharge_;
   vint lepton_isTight_;
   vint lepton_isTightV1_;
-  vint lepton_isTightV2_;
+  //vint lepton_isTightV2_;
   vint lepton_isLoose_;
   vint lepton_isLooseAlt_;
   vdouble lepton_pt_;
@@ -500,7 +500,7 @@ void yggdrasilEventVars::initialize(){
   lepton_trkCharge_.clear();
   lepton_isTight_.clear();
   lepton_isTightV1_.clear();
-  lepton_isTightV2_.clear();
+  //lepton_isTightV2_.clear();
   lepton_isLoose_.clear();
   lepton_isLooseAlt_.clear();
   lepton_pt_.clear();

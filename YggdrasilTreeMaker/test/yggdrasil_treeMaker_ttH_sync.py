@@ -68,22 +68,21 @@ import sys
 import os.path
 
 JecLocalDataBaseName = \
-    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017B") else \
-    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017C") else \
-    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017D") else \
-    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017E") else \
-    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017F") else \
-    'Fall17_17Nov2017_V32_94X_MC'
-#     ####  Dec 3 submission  ####
-
+    'Fall17_17Nov2017B_V6_DATA' if period in ("2017B") else \
+    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
+    'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
+    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
+    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
+    'Fall17_17Nov2017_V6_MC'
 #     ####  Nov 6/7/8 submission  ####
-#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017B") else \
-#    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
-#    'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
-#    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
-#    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
-#    'Fall17_17Nov2017_V6_MC'
 
+#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017B") else \
+#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017C") else \
+#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017D") else \
+#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017E") else \
+#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017F") else \
+#    'Fall17_17Nov2017_V32_94X_MC'
+#     ####  Dec 3 submission  ####
 
 JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
 # This switch is needed because the variable CMSSW_BASE remains the same as local job (directory where you do "cmsenv") when the job runs on the grid.
@@ -391,16 +390,16 @@ process.electronMVAValueMapProducer.srcMiniAOD = electronCollection
 # BBT, 10-11-18
 from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
 setupEgammaPostRecoSeq(process,
-                       # ### Nov 6/7/8 processing, uses only V1 definitions
-                       # runVID=False, #saves CPU time by not needlessly re-running VID
-                       # #era='Run2017_17Nov2017_v1')  
-                       #era='2017-Nov17ReReco'
+#                       # ### Nov 6/7/8 processing, uses only V1 definitions
+                       runVID=False, #saves CPU time by not needlessly re-running VID
+                       #era='Run2017_17Nov2017_v1')  
+                       era='2017-Nov17ReReco'
 
-                       # ### Dec 3 processing, uses V1+V2 definitions
-                       runVID=True, 
-                       era='2017-Nov17ReReco',
-                       applyEnergyCorrections=False,
-                       applyVIDOnCorrectedEgamma=False
+#                       # ### Dec 3 processing, uses V1+V2 definitions
+#                       runVID=True, 
+#                       era='2017-Nov17ReReco',
+#                       applyEnergyCorrections=False,
+#                       applyVIDOnCorrectedEgamma=False
                        )  
 
 #a sequence egammaPostRecoSeq has now been created and should be added to your path, eg process.p=cms.Path(process.egammaPostRecoSeq)
@@ -440,7 +439,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_12-03-18_v27_addV2_newJEC_newJER.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_01-08-19_v0_oldV1_oldJEC_newBTagSF.root')
 )
 
 

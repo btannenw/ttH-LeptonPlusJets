@@ -20,11 +20,11 @@ git clone https://github.com/btannenw/ttH-LeptonPlusJets.git  -b 94x
 
 git cms-merge-topic cms-egamma:EgammaPostRecoTools_940
 
-git cms-merge-topic yrath:deterministicSeeds 
-
 git cms-merge-topic guitargeek:EgammaID_9_4_X 
 
 git cms-merge-topic cms-met:METFixEE2017_949_v2
+
+git cms-merge-topic yrath:deterministicSeeds 
 
 scram b -j 8
 

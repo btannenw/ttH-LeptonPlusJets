@@ -1,7 +1,7 @@
 from WMCore.Configuration import Configuration 
 config = Configuration() 
 config.section_("General") 
-config.General.requestName = 'ICHEP18_postMCsync_v0_ttbarGjets' ## change//Name of the directory that crab will create
+config.General.requestName = '2017Analysis_newJECJER_v0_TTTo2L2Nu' ## change//Name of the directory that crab will create
 
 config.section_("JobType") 
 config.JobType.pluginName = 'Analysis' 
@@ -11,7 +11,8 @@ config.JobType.psetName = 'yggdrasil_treeMaker_ttH_sync.py' ###Config file that 
 config.JobType.allowUndistributedCMSSW = False
 
 config.section_("Data") ###Might need to chance to MC
-config.Data.inputDataset = '/TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM' # tt+gjets
+config.Data.inputDataset = '/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM' ## ttbar DL
+#'/TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM' # tt+gjets
 #'/TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM' # ttZ, Z->qq
 #'/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM' # ttZ, Z->ll/nunu
 #'/Ttwjetstoqq_Tunecp5_13TeV-amcatnloFXFX-madspin-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM' # ttW, W->qq
@@ -24,7 +25,7 @@ config.Data.inputDataset = '/TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/
 #'/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM' # W+jets (W->lnu)
 #'/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM' # ttH, H-> bb
 #'/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM' # ttbar SL
-#'/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM' ## ttbar DL
+
 
 
 ###Add the full Dataset you find from CMSDAS site here.
@@ -37,7 +38,7 @@ config.Data.publishDBS = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter/' ###
 #Commented OUT Feb13
 	#config.Data.publishDataName = 'Validation_v1'
 ### change user Space 
-config.Data.outLFNDirBase = '/store/group/lpctthrun2/UVA/ICHEP2018/MC/'
+config.Data.outLFNDirBase = '/store/group/lpctthrun2/2017Analysis/triggerSF/MC/'
 #config.Data.outLFNDirBase = '/store/user/btannenw/'
 
 #'/store/group/lpcmj/data/UVa/2018Data'###Wherever we can find space and start after '/eos/uscms' in the directory path.

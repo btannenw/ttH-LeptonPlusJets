@@ -11,8 +11,8 @@ isMC=True
 # 
 isTTBARMC=False
 
-#isGridJob=True
-isGridJob=False
+isGridJob=True
+#isGridJob=False
 
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
 
@@ -59,8 +59,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( 1000 )
-    #input = cms.untracked.int32( -1 )
+    #input = cms.untracked.int32( 1000 )
+    input = cms.untracked.int32( -1 )
     )
 
 
@@ -78,7 +78,7 @@ JecLocalDataBaseName = \
 
 #    'Fall17_17Nov2017B_V6_DATA' if period in ("2017B") else \
 #    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
-    'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
+#    'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
 #    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
 #    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
 #    'Fall17_17Nov2017_V6_MC'
@@ -440,7 +440,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_01-09-19_v0_oldJEC_newJER_1k.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_01-09-19_v0_fresh_1k.root')
 )
 
 

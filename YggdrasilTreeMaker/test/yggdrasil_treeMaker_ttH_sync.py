@@ -59,8 +59,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    #input = cms.untracked.int32( 1000 )
-    input = cms.untracked.int32( -1 )
+    input = cms.untracked.int32( 1000 )
+    #input = cms.untracked.int32( -1 )
     )
 
 
@@ -68,21 +68,22 @@ import sys
 import os.path
 
 JecLocalDataBaseName = \
-    'Fall17_17Nov2017B_V6_DATA' if period in ("2017B") else \
-    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017B") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017C") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017D") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017E") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017F") else \
+    'Fall17_17Nov2017_V32_94X_MC'
+#     ####  Submissions from Jan 2019 onward --> new JEC  ####
+
+#    'Fall17_17Nov2017B_V6_DATA' if period in ("2017B") else \
+#    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
     'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
-    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
-    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
-    'Fall17_17Nov2017_V6_MC'
+#    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
+#    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
+#    'Fall17_17Nov2017_V6_MC'
 #     ####  Nov 6/7/8 submission  ####
 
-#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017B") else \
-#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017C") else \
-#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017D") else \
-#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017E") else \
-#    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017F") else \
-#    'Fall17_17Nov2017_V32_94X_MC'
-#     ####  Dec 3 submission  ####
 
 JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
 # This switch is needed because the variable CMSSW_BASE remains the same as local job (directory where you do "cmsenv") when the job runs on the grid.
@@ -439,7 +440,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_01-08-19_v0_oldV1_oldJEC_newBTagSF.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_01-09-19_v0_oldJEC_newJER_1k.root')
 )
 
 

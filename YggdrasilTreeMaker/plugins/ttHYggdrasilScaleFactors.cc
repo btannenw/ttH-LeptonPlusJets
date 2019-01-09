@@ -393,7 +393,8 @@ void ttHYggdrasilScaleFactors::init_btagSF(){
 
   std::cout << "===> Loading the input .csv SF file..." << std::endl;
   
-  std::string inputCSVfile = SFfileDir + "/" + "btag/DeepCSV_94XSF_V3_B_F.csv";
+  //std::string inputCSVfile = SFfileDir + "/" + "btag/DeepCSV_94XSF_V3_B_F.csv"; // Nov 6/7/8 submission [BBT]
+  std::string inputCSVfile = SFfileDir + "/" + "btag/deepCSV_sfs_Yannik.csv";   // updated from Yannik, Dec 4 [BBT]
   std::string measType = "iterativefit"; // "comb" ?
   std::string sysType = "central";
   

@@ -37,8 +37,11 @@ scram b -j 8
 
 ## Correcting github origins
 > cd ttH-LeptonPlusJets
+
 > git remote set-url origin git@github.com:btannenw/ttH-LeptonPlusJets.git
+
 > cd ../MiniAOD
+
 > git remote set-url origin git@github.com:btannenw/MiniAOD.git
 
 # Adding BDT/DNN/MEM code

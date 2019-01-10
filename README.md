@@ -55,5 +55,6 @@ scram b -j 8
 Adding TTH/CommonClassifier results in a crab tarball that's too large for standard submission. Is there a smart way around this? Probably. In the meantime, you can do the following to clean out some of the older BDT/MEM weight collections that should be unnecessary
 
 > $ cd $CMSSW_BASE
+
 > $ source src/ttH-LeptonPlusJets/cleanup.sh 
 

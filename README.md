@@ -35,6 +35,12 @@ git cms-merge-topic yrath:deterministicSeeds
 
 scram b -j 8
 
+## Correcting github origins
+cd ttH-LeptonPlusJets
+git remote set-url origin git@github.com:btannenw/ttH-LeptonPlusJets.git
+cd ../MiniAOD
+git remote set-url origin git@github.com:btannenw/MiniAOD.git
+
 # Adding BDT/DNN/MEM code
 
 git clone https://gitlab.cern.ch/ttH/CommonClassifier.git TTH/CommonClassifier
@@ -44,3 +50,10 @@ source TTH/CommonClassifier/setup/install_mem.sh
 source TTH/CommonClassifier/setup/install_recoLikelihood.sh
 
 scram b -j 8
+
+## Crab submission
+Adding TTH/CommonClassifier results in a crab tarball that's too large for standard submission. Is there a smart way around this? Probably. In the meantime, you can do the following to clean out some of the older BDT/MEM weight collections that should be unnecessary
+
+> $ cd $CMSSW_BASE
+> $ source src/ttH-LeptonPlusJets/cleanup.sh 
+

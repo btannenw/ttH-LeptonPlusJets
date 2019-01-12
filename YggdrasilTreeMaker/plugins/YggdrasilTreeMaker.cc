@@ -83,13 +83,13 @@
 
 #include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/ttHYggdrasilEventSelection.h"
 #include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/ttHYggdrasilScaleFactors.h"
+#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/RoccoR.h"
 
 #include "LHAPDF/LHAPDF.h"
-
 #include "AnalysisDataFormats/TopObjects/interface/TtGenEvent.h"
 
+//#include "TTH/CommonClassifier/interface/BDTClassifier.h"
 
-#include "ttH-LeptonPlusJets/YggdrasilTreeMaker/interface/RoccoR.h"
 
 //
 // class declaration
@@ -233,6 +233,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
   RoccoR * muon_roc ;
 
   BDTvars bdtVARS;
+  //BDTClassifier bdt;
   
   TopTagger toptagger;
 

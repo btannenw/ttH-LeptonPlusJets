@@ -1,7 +1,7 @@
 from WMCore.Configuration import Configuration 
 config = Configuration() 
 config.section_("General") 
-config.General.requestName = 'ICHEP18_postMCsync_v0_MuonEG_PeriodF' ## change//Name of the directory that crab will create
+config.General.requestName = 'triggerSF_newJECJER_v0_PeriodD-31Mar2018-v1' ## change//Name of the directory that crab will create
 
 config.section_("JobType") 
 config.JobType.pluginName = 'Analysis' 
@@ -11,7 +11,14 @@ config.JobType.psetName = 'yggdrasil_treeMaker_ttH_sync_data.py' ###Config file 
 config.JobType.allowUndistributedCMSSW = False
 
 config.section_("Data") ###Might need to chance to MC
-config.Data.inputDataset = '/MuonEG/Run2017F-31Mar2018-v1/MINIAOD' # e+mu, period F
+config.Data.inputDataset = '/MET/Run2017D-31Mar2018-v1/MINIAOD' #MET, period D
+#'/MET/Run2017E-31Mar2018-v1/MINIAOD' #MET, period E
+#'/MET/Run2017F-31Mar2018-v1/MINIAOD' #MET, period F
+#'/MET/Run2017C-31Mar2018-v1/MINIAOD' #MET, period C
+#'/MET/Run2017B-31Mar2018-v1/MINIAOD' #MET, period B
+
+
+#'/MuonEG/Run2017F-31Mar2018-v1/MINIAOD' # e+mu, period F
 #'/MuonEG/Run2017E-31Mar2018-v1/MINIAOD' # e+mu, period E
 #'/MuonEG/Run2017D-31Mar2018-v1/MINIAOD' # e+mu, period D
 #'/MuonEG/Run2017C-31Mar2018-v1/MINIAOD' # e+mu, period C
@@ -29,12 +36,6 @@ config.Data.inputDataset = '/MuonEG/Run2017F-31Mar2018-v1/MINIAOD' # e+mu, perio
 #'/DoubleMuon/Run2017C-31Mar2018-v1/MINIAOD' # DoubleMu, period C
 #'/DoubleMuon/Run2017B-31Mar2018-v1/MINIAOD' # DoubleMu, period B
 
-#'/MET/Run2017F-31Mar2018-v1/MINIAOD' #MET, period F
-#'/MET/Run2017E-31Mar2018-v1/MINIAOD' #MET, period E
-#'/MET/Run2017D-31Mar2018-v1/MINIAOD' #MET, period D
-#'/MET/Run2017C-31Mar2018-v1/MINIAOD' #MET, period C
-#'/MET/Run2017B-31Mar2018-v1/MINIAOD' #MET, period B
-
 
 ###Add the full Dataset you find from CMSDAS site here.
 config.Data.inputDBS = 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader/' ###Probably wont need to change
@@ -46,7 +47,7 @@ config.Data.publishDBS = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter/' ###
 #Commented OUT Feb13
 	#config.Data.publishDataName = 'Validation_v1'
 ### change user Space 
-config.Data.outLFNDirBase = '/store/group/lpctthrun2/UVA/ICHEP2018/MuonEG/'
+config.Data.outLFNDirBase = '/store/group/lpctthrun2/analysis2017Data/triggerSF/MET/'
 #config.Data.outLFNDirBase = '/store/user/btannenw/'
 
 #'/store/group/lpcmj/data/UVa/2018Data'###Wherever we can find space and start after '/eos/uscms' in the directory path.

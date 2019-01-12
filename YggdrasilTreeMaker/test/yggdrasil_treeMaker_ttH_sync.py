@@ -5,7 +5,7 @@ isPUPPI=False
 #--> if isPUPPI=true, change the code too.
 
 
-#isMC=True
+#isMC=False
 isMC=True
 
 # 
@@ -200,7 +200,7 @@ jetCollection      = cms.InputTag("slimmedJets", "", "PAT")
 
 muonCollection     = cms.InputTag("slimmedMuons", "", "PAT")
 if not isMC : 
-    muonCollection     = cms.InputTag("slimmedMuons", "", "RECO")
+    muonCollection = cms.InputTag("slimmedMuons", "", "RECO")
 
 
 if not isMC :
@@ -440,7 +440,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_01-09-19_v0_fresh_1k.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_01-12-19_v0_allUpdates.root')
 )
 
 

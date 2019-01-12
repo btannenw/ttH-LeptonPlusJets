@@ -11,7 +11,7 @@ isMC=False
 # 
 isTTBARMC=False
 
-# isGridJob=False
+#isGridJob=False
 isGridJob=True
 
 genjetInputTag = cms.InputTag("slimmedGenJets","","")
@@ -45,7 +45,6 @@ process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 #### caution: use the correct global tag for MC or Data 
-#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff') # ygg core
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff') # BBT 11-05-18
 
 process.load("Configuration.StandardSequences.GeometryDB_cff")
@@ -54,7 +53,6 @@ process.load("Configuration.StandardSequences.GeometryDB_cff")
 if isMC:
     process.GlobalTag.globaltag = '94X_mc2017_realistic_v14' # updated by BBT on 11-05-18. was previously v12
 else :
-    #process.GlobalTag.globaltag = '94X_dataRun2_ReReco_EOY17_v2' # ygg core 
     process.GlobalTag.globaltag = '94X_dataRun2_v6' # BBT 11-05-18
 
 
@@ -62,8 +60,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    #input = cms.untracked.int32( 100 )
-    input = cms.untracked.int32( -1 )
+    input = cms.untracked.int32( 100 )
+    #input = cms.untracked.int32( -1 )
     )
 
 
@@ -71,12 +69,21 @@ import sys
 import os.path
 
 JecLocalDataBaseName = \
-    'Fall17_17Nov2017B_V6_DATA' if period in ("2017B") else \
-    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
-    'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
-    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
-    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
-    'Fall17_17Nov2017_V6_MC'
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017B") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017C") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017D") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017E") else \
+    'Fall17_17Nov2017_V32_94X_DATA' if period in ("2017F") else \
+    'Fall17_17Nov2017_V32_94X_MC'
+#     ####  Submissions from Jan 2019 onward --> new JEC  ####
+
+#    'Fall17_17Nov2017B_V6_DATA' if period in ("2017B") else \
+#    'Fall17_17Nov2017C_V6_DATA' if period in ("2017C") else \
+#    'Fall17_17Nov2017D_V6_DATA' if period in ("2017D") else \
+#    'Fall17_17Nov2017E_V6_DATA' if period in ("2017E") else \
+#    'Fall17_17Nov2017F_V6_DATA' if period in ("2017F") else \
+#    'Fall17_17Nov2017_V6_MC'
+#     ####  Nov 6/7/8 submission  ####
 
 
 JecDBPathPrefix = 'sqlite://.' if isGridJob else 'sqlite:///'+os.environ.get('CMSSW_BASE') 
@@ -389,7 +396,14 @@ from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
 setupEgammaPostRecoSeq(process,
                        runVID=False, #saves CPU time by not needlessly re-running VID
                        #era='Run2017_17Nov2017_v1')  
-                       era='2017-Nov17ReReco')  
+                       era='2017-Nov17ReReco'
+
+#                       # ### Dec 3 processing, uses V1+V2 definitions
+#                       runVID=True, 
+#                       era='2017-Nov17ReReco',
+#                       applyEnergyCorrections=False,
+#                       applyVIDOnCorrectedEgamma=False
+)  
 #a sequence egammaPostRecoSeq has now been created and should be added to your path, eg process.p=cms.Path(process.egammaPostRecoSeq)
 
 
@@ -427,7 +441,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_11-12-18_v24_data.root')
+	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_01-12-19_v0_allUpdates_data.root')
 )
 
 
@@ -452,7 +466,7 @@ process.deterministicSeeds.METCollection      = METCollection
 
 #BBT, 10-12-18, add deterministic seeds
 # overwrite output collections (skip electrons as the EGamma tools handle the deterministic seed creation internally)
-muonCollection     = cms.InputTag("deterministicSeeds", "muonsWithSeed", process.name_())
+muoncollection     = cms.InputTag("deterministicSeeds", "muonsWithSeed", process.name_())
 tauCollection      = cms.InputTag("deterministicSeeds", "tausWithSeed", process.name_())
 photonCollection   = cms.InputTag("deterministicSeeds", "photonsWithSeed", process.name_())
 jetCollection      = cms.InputTag("deterministicSeeds", "jetsWithSeed", process.name_())
@@ -464,15 +478,17 @@ METCollection      = cms.InputTag("deterministicSeeds", "METsWithSeed", process.
 ## Example 1: If you only want to re-correct MET and get the proper uncertainties [e.g. when updating JEC]
 #runMetCorAndUncFromMiniAOD(process,
 #                           isData           = not isMC
-##            jecUncFile       = os.path.basename(options.JESUncFiles[0]),
-##            electronColl     = electronCollection.value(),
-##            muonColl         = muonCollection.value(),
-##            tauColl          = tauCollection.value(),
-##            photonColl       = photonCollection.value(),
-##            jetCollUnskimmed = jetCollection.value(),
-##            #pfCandColl=cms.InputTag("packedPFCandidates"),
-##            #recoMetFromPFCs  = True
+#            jecUncFile       = os.path.basename(options.JESUncFiles[0]),
+#            electronColl     = electronCollection.value(),
+#            muonColl         = muonCollection.value(),
+#            tauColl          = tauCollection.value(),
+#            photonColl       = photonCollection.value(),
+#            jetCollUnskimmed = jetCollection.value(),
+#            #pfCandColl=cms.InputTag("packedPFCandidates"),
+#            #recoMetFromPFCs  = True
 #                           )
+
+
 from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 
 runMetCorAndUncFromMiniAOD( process,

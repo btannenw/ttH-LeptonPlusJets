@@ -1,7 +1,7 @@
 from WMCore.Configuration import Configuration 
 config = Configuration() 
 config.section_("General") 
-config.General.requestName = '2017Analysis_newJECJER_v0_TTTo2L2Nu' ## change//Name of the directory that crab will create
+config.General.requestName = 'triggerSF_newJECJER_v0_TTTo2L2Nu' ## change//Name of the directory that crab will create
 
 config.section_("JobType") 
 config.JobType.pluginName = 'Analysis' 
@@ -38,7 +38,7 @@ config.Data.publishDBS = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter/' ###
 #Commented OUT Feb13
 	#config.Data.publishDataName = 'Validation_v1'
 ### change user Space 
-config.Data.outLFNDirBase = '/store/group/lpctthrun2/2017Analysis/triggerSF/MC/'
+config.Data.outLFNDirBase = '/store/group/lpctthrun2/analysis2017Data/triggerSF/MC/'
 #config.Data.outLFNDirBase = '/store/user/btannenw/'
 
 #'/store/group/lpcmj/data/UVa/2018Data'###Wherever we can find space and start after '/eos/uscms' in the directory path.

@@ -103,16 +103,17 @@ struct yggdrasilEventVars{
   int passHLT_PFHT430_SixJet40_BTagCSV_p080_v_                       ;  
   int passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v_                    ;  
 
-  /*// MET Filters, BBT 10-19-18
+  // MET Filters, BBT 02-20-19
   int passMETFilter_Flag_goodVertices_v_ ; 
   int passMETFilter_Flag_globalTightHalo2016Filter_v_ ; 
+  int passMETFilter_Flag_globalSuperTightHalo2016Filter_v_ ; 
   int passMETFilter_Flag_HBHENoiseFilter_v_ ;
   int passMETFilter_Flag_HBHENoiseIsoFilter_v_ ; 
   int passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v_ ;
   int passMETFilter_Flag_BadPFMuonFilter_v_ ; 
   int passMETFilter_Flag_BadChargedCandidateFilter_v_ ;  
   int passMETFilter_Flag_ecalBadCalibFilter_v_ ;
-  */
+  
 
   // 5-15-18: unprescaled known... just gonna keep them all for sanity's sake [BBT]
   // 2017 MET triggers
@@ -301,45 +302,28 @@ struct yggdrasilEventVars{
   vdouble fatgenjet_phi_;
   vdouble fatgenjet_m_  ;
 
-
-  vdouble puppijet_pt_  [rNumSys]                ;
-  vdouble puppijet_phi_ [rNumSys]                ;
-  vdouble puppijet_eta_ [rNumSys]                ;
-  vdouble puppijet_m_   [rNumSys]                ;
-  vint    puppijet_puid_[rNumSys]                ;
-  vdouble puppijet_precorr_pt_  [rNumSys]        ;
-  vdouble puppijet_precorr_phi_ [rNumSys]        ;
-  vdouble puppijet_AssociatedGenJet_pt_[rNumSys] ;
-  vdouble puppijet_AssociatedGenJet_eta_[rNumSys];
-  vdouble puppijet_AssociatedGenJet_phi_[rNumSys];
-  vdouble puppijet_AssociatedGenJet_m_[rNumSys]  ;
-  vint    puppijet_partonflavour_[rNumSys]       ;
-  vint    puppijet_flavour_[rNumSys]             ;
-  vdouble puppijet_DeepCSV_b_  [rNumSys]         ;
-  vdouble puppijet_DeepCSV_bb_ [rNumSys]         ;
-
-
-    std::vector<double>  fatjet_pt            [rNumSys];
-    std::vector<double>  fatjet_eta	      [rNumSys];
-    std::vector<double>  fatjet_phi	      [rNumSys];
-    std::vector<double>  fatjet_m  	      [rNumSys];
-    std::vector<double>  fatjet_doublebtagging[rNumSys];
-    std::vector<int>     fatjet_nSubjet 	      [rNumSys];
-    std::vector<double>  fatjet_sdmass_miniaod [rNumSys];
-    std::vector<double>  fatjet_sdmass_uncorr  [rNumSys];
-    std::vector<double>  fatjet_tau1	      [rNumSys];
-    std::vector<double>  fatjet_tau2	      [rNumSys];
-    std::vector<double>  fatjet_tau3	      [rNumSys];
-    std::vector<double>  fatjet_tau4	      [rNumSys];
-    std::vector<double>  fatjet_chstau1	      [rNumSys];
-    std::vector<double>  fatjet_chstau2	      [rNumSys];
-    std::vector<double>  fatjet_chstau3	      [rNumSys];
-    std::vector<double>  fatjet_nb1N2 	      [rNumSys];
-    std::vector<double>  fatjet_nb1N3 	      [rNumSys];
-    std::vector<double>  fatjet_nb2N2 	      [rNumSys];
-    std::vector<double>  fatjet_nb2N3 	      [rNumSys];
-    std::vector<double>  fatjet_chsprunedmass  [rNumSys];
-
+    /* 02-05-19
+  std::vector<double>  fatjet_pt            [rNumSys];
+  std::vector<double>  fatjet_eta	      [rNumSys];
+  std::vector<double>  fatjet_phi	      [rNumSys];
+  std::vector<double>  fatjet_m  	      [rNumSys];
+  std::vector<double>  fatjet_doublebtagging[rNumSys];
+  std::vector<int>     fatjet_nSubjet 	      [rNumSys];
+  std::vector<double>  fatjet_sdmass_miniaod [rNumSys];
+  std::vector<double>  fatjet_sdmass_uncorr  [rNumSys];
+  std::vector<double>  fatjet_tau1	      [rNumSys];
+  std::vector<double>  fatjet_tau2	      [rNumSys];
+  std::vector<double>  fatjet_tau3	      [rNumSys];
+  std::vector<double>  fatjet_tau4	      [rNumSys];
+  std::vector<double>  fatjet_chstau1	      [rNumSys];
+  std::vector<double>  fatjet_chstau2	      [rNumSys];
+  std::vector<double>  fatjet_chstau3	      [rNumSys];
+  std::vector<double>  fatjet_nb1N2 	      [rNumSys];
+  std::vector<double>  fatjet_nb1N3 	      [rNumSys];
+  std::vector<double>  fatjet_nb2N2 	      [rNumSys];
+  std::vector<double>  fatjet_nb2N3 	      [rNumSys];
+  std::vector<double>  fatjet_chsprunedmass  [rNumSys];
+    
   std::vector<std::vector<double>>  fatjet_subjet_pt  [rNumSys];
   std::vector<std::vector<double>>  fatjet_subjet_eta  [rNumSys];
   std::vector<std::vector<double>>  fatjet_subjet_phi  [rNumSys];
@@ -355,7 +339,7 @@ struct yggdrasilEventVars{
   std::vector<double>  re_fatjet_tau32          [rNumSys];
   std::vector<double>  re_fatjet_sdmass_miniaod [rNumSys];
   std::vector<double>  re_fatjet_sdmass_uncorr  [rNumSys];
-
+*/
   ///boosted jets
   vvdouble topfatJet_vect_TLV_;
   vvdouble nonW_vect_TLV_;
@@ -598,22 +582,7 @@ void yggdrasilEventVars::initialize(){
     jet_genParentId_[iSys].clear();
     jet_genGrandParentId_[iSys].clear();
 
-    puppijet_pt_  [iSys]                .clear();
-    puppijet_phi_ [iSys]                .clear();
-    puppijet_eta_ [iSys]                .clear();
-    puppijet_m_   [iSys]                .clear();
-    puppijet_puid_[iSys]                .clear();
-    puppijet_precorr_pt_  [iSys]        .clear();
-    puppijet_precorr_phi_ [iSys]        .clear();
-    puppijet_AssociatedGenJet_pt_[iSys] .clear();
-    puppijet_AssociatedGenJet_eta_[iSys].clear();
-    puppijet_AssociatedGenJet_phi_[iSys].clear();
-    puppijet_AssociatedGenJet_m_[iSys]  .clear();
-    puppijet_partonflavour_[iSys]       .clear();
-    puppijet_flavour_[iSys]             .clear();
-    puppijet_DeepCSV_b_  [iSys]         .clear();
-    puppijet_DeepCSV_bb_ [iSys]         .clear();
-
+    /* 02-05-19
     fatjet_pt            [iSys] .clear() ;
     fatjet_eta	      [iSys] .clear() ;
     fatjet_phi	      [iSys] .clear() ;
@@ -650,7 +619,7 @@ void yggdrasilEventVars::initialize(){
     re_fatjet_tau32           [iSys] .clear() ;
     re_fatjet_sdmass_miniaod  [iSys] .clear() ;
     re_fatjet_sdmass_uncorr   [iSys] .clear() ;
-
+    */
   }
 
   genjet_pt_ . clear();

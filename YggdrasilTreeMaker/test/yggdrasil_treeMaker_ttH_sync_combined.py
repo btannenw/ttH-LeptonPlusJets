@@ -5,8 +5,8 @@ isPUPPI=False
 #--> if isPUPPI=true, change the code too.
 
 
-#isMC=False
-isMC=True
+isMC=False
+#isMC=True
 
 # 
 isTTBARMC=False
@@ -26,7 +26,8 @@ enableJECFromLocalDB = True
 #  This is a flag used to apply dedicated JEC for each data set.
 #  The placeholder will be replaced by crab job make script.
 
-period="XXXPERIODXXX"
+#period="XXXPERIODXXX"
+period="2017B"
 # e.g "2017B"
 
 # - - - - - - - - - - - - - - - - - - - -
@@ -59,7 +60,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    #input = cms.untracked.int32( 1000 )
+    #input = cms.untracked.int32( 100 )
     input = cms.untracked.int32( -1 )
     )
 
@@ -184,7 +185,10 @@ process.source = cms.Source("PoolSource",
 # 2018 ttH sync exercise 
   #'root://cmsxrootd.fnal.gov//store/mc/RunIIFall17MiniAOD/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/CC0FCC49-B50A-E811-9694-02163E0144C8.root' # v10
   #'root://cmsxrootd.fnal.gov//store/mc/RunIIFall17MiniAODv2/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/60000/AC628CE7-0169-E811-9C5E-00010100096B.root' # v14
-  'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_9/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8__MINIAODSIM__PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1__00096B.root' # v-14 local
+  
+        #'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_9/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8__MINIAODSIM__PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1__00096B.root' # v-14 local
+  'file:///afs/cern.ch/work/b/btannenw/ttH/yggdrasil2018/triggerEff/localUpdates/CMSSW_9_4_9/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/inputFiles/Run2017B__MuonEG__MINIAOD__31Mar2018-v1__100000__703683C0-4437-E811-A955-0025904B871E.root'
+  #root://cms-xrd-global.cern.ch///store/data/Run2017B/MuonEG/MINIAOD/31Mar2018-v1/100000/703683C0-4437-E811-A955-0025904B871E.root'
         )
 )
 
@@ -425,8 +429,8 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('yggdrasil_treeMaker_ttH_sync_02-06-19_v2_allUpdates_cleanedCode.root')
-)
+                                   fileName = cms.string('yggdrasil_treeMaker_ttH_sync_02-20-19_v1_metFiltered_forSync_DATA.root')
+                                   )
 
 #BBT, 10-12-18, add deterministic seeds
 process.load("PhysicsTools.PatUtils.deterministicSeeds_cfi")
@@ -465,6 +469,9 @@ METCollection      = cms.InputTag("deterministicSeeds", "METsWithSeed", process.
 #            #pfCandColl=cms.InputTag("packedPFCandidates"),
 #            #recoMetFromPFCs  = True
 #                           )
+
+#process.load('PhysicsTools.PatAlgos.slimming.metFilterPaths_cff')
+#process.Flag_METFilters = cms.Path(process.metFilters)
 
 
 from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
@@ -506,7 +513,6 @@ if isMC :
         process.ak4PFPuppiL1FastL2L3CorrectorChain *
         process.ak8PFPuppiL1FastL2L3CorrectorChain *
         process.ak8ReclusteredGenJets *
-        #process.fullPatMetSequence *  # BBT, 10-04-18
         process.fullPatMetSequenceModifiedMET * # BBT, 11-06-18
         process.egmGsfElectronIDSequence * # BBT, 10-08-18
         process.egammaPostRecoSeq * # BBT, 10-11-18
@@ -518,6 +524,5 @@ else :
         process.ak4PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain *
         process.egammaPostRecoSeq * # BBT, 11-01-18
-        #process.PUPPIMuonRelIso * 
         process.fullPatMetSequenceModifiedMET * # BBT, 11-06-18
         process.ttHTreeMaker)

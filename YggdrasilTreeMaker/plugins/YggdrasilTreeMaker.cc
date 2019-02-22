@@ -296,7 +296,7 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
     hltTag    = "HLT";
     filterTag = "RECO"; // BBT 10-19-18
   }else{
-    filterTag = "HLT";
+    filterTag = "RECO"; // BBT 02-20-19
     hltTag = "HLT";
   }
   triggerResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), hltTag));
@@ -656,7 +656,17 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   bool passHLT_PFHT430_SixJet40_BTagCSV_p080_v  = false ; 
   bool passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v  = false ; 
 
-  // MET Filters, BBT 11-06-18
+  // MET Filters, BBT 02-20-19
+  bool passMETFilter_globalTightHalo2016Filter_v = false;
+  bool passMETFilter_globalSuperTightHalo2016Filter_v = false;    
+  bool passMETFilter_HBHENoiseFilter_v = false;                   
+  bool passMETFilter_HBHENoiseIsoFilter_v = false;                
+  bool passMETFilter_EcalDeadCellTriggerPrimitiveFilter_v = false;
+  bool passMETFilter_BadPFMuonFilter_v = false;                   
+  bool passMETFilter_BadChargedCandidateFilter_v = false;               
+  bool passMETFilter_ecalBadCalibFilter_v = false;                
+  bool passMETFilter_goodVertices_v = false;
+
   // 2017 MET triggers
   bool passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v = false ;
   bool passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v = false ;
@@ -710,13 +720,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     for( unsigned int iPath=0; iPath<triggerNames.size(); iPath++ ){
       std::string pathName = triggerNames[iPath];
       unsigned int hltIndex = hlt_config_.triggerIndex(pathName);
-
+      
       if( hltIndex >= triggerResults->size() ) continue;
-
       int accept = triggerResults->accept(hltIndex);
 
       if( accept ){
-      
 	const unsigned long MatchedAtTheBegining = 0 ; 
 
 	if( pathName.find( "HLT_IsoMu24_v"        ,0) == MatchedAtTheBegining ){ passHLT_IsoMu24_v = true;}
@@ -826,36 +834,35 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       }
     }
   }
-  /*
-  if( filterResults.isValid() ){
-    std::vector<std::string> filterNames = hlt_config_.triggerNames();
+  
+  // MET Filters, BBT 02-20-19
+  if ( filterResults.isValid() ){
+    const edm::TriggerNames& filterNames = iEvent.triggerNames(*filterResults);
+    unsigned int nFilters = filterNames.triggerNames().size();
 
-    for( unsigned int iPath=0; iPath<filterNames.size(); iPath++ ){
-      std::string pathName = filterNames[iPath];
-      std::cout << "FilterName[" << iPath << "] = " << pathName << std::endl;
-      unsigned int filterIndex = hlt_config_.triggerIndex(pathName);
+    unsigned int passMETFilter_globalTightHalo2016FilterIndex          = filterNames.triggerIndex("Flag_globalTightHalo2016Filter");
+    unsigned int passMETFilter_globalSuperTightHalo2016FilterIndex     = filterNames.triggerIndex("Flag_globalSuperTightHalo2016Filter");
+    unsigned int passMETFilter_HBHENoiseFilterIndex                    = filterNames.triggerIndex("Flag_HBHENoiseFilter");
+    unsigned int passMETFilter_HBHENoiseIsoFilterIndex                 = filterNames.triggerIndex("Flag_HBHENoiseIsoFilter");
+    unsigned int passMETFilter_EcalDeadCellTriggerPrimitiveFilterIndex = filterNames.triggerIndex("Flag_EcalDeadCellTriggerPrimitiveFilter");
+    unsigned int passMETFilter_BadPFMuonFilterIndex                    = filterNames.triggerIndex("Flag_BadPFMuonFilter"); 
+    unsigned int passMETFilter_BadChargedCandidateFilterIndex          = filterNames.triggerIndex("Flag_BadChargedCandidateFilter"); 
+    unsigned int passMETFilter_ecalBadCalibFilterIndex                 = filterNames.triggerIndex("Flag_ecalBadCalibFilter");
+    unsigned int passMETFilter_goodVerticesIndex                       = filterNames.triggerIndex("Flag_goodVertices");
 
-      if( filterIndex >= filterResults->size() ) continue;
 
-      int accept = filterResults->accept(filterIndex);
-
-      if( accept ){
-      
-	const unsigned long MatchedAtTheBegining = 0 ; 
-
-	// MET Filters, BBT 10-19-18
-	if( pathName.find( "Flag_goodVertices", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_goodVertices_v = true ;} 
-	if( pathName.find( "Flag_globalTightHalo2016Filter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_globalTightHalo2016Filter_v = true ;} 
-	if( pathName.find( "Flag_HBHENoiseFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_HBHENoiseFilter_v = true ;} 
-	if( pathName.find( "Flag_HBHENoiseIsoFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_HBHENoiseIsoFilter_v = true ;} 
-	if( pathName.find( "Flag_EcalDeadCellTriggerPrimitiveFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v = true ;} 
-	if( pathName.find( "Flag_BadPFMuonFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_BadPFMuonFilter_v = true ;} 
-	if( pathName.find( "Flag_BadChargedCandidateFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_BadChargedCandidateFilter_v = true ;} 
-	if( pathName.find( "Flag_ecalBadCalibFilter", 0 ) == MatchedAtTheBegining ){ passMETFilter_Flag_ecalBadCalibFilter_v = true ;} 
-      }
-    }
+    // MET Filters, BBT 02-20-19
+    passMETFilter_globalTightHalo2016Filter_v = passMETFilter_globalTightHalo2016FilterIndex < nFilters ? filterResults->accept(passMETFilter_globalTightHalo2016FilterIndex) : false;
+    passMETFilter_globalSuperTightHalo2016Filter_v = passMETFilter_globalSuperTightHalo2016FilterIndex < nFilters ? filterResults->accept(passMETFilter_globalSuperTightHalo2016FilterIndex) : false;
+    passMETFilter_HBHENoiseFilter_v = passMETFilter_HBHENoiseFilterIndex < nFilters ? filterResults->accept(passMETFilter_HBHENoiseFilterIndex) : false;     
+    passMETFilter_HBHENoiseIsoFilter_v = passMETFilter_HBHENoiseIsoFilterIndex < nFilters ? filterResults->accept(passMETFilter_HBHENoiseIsoFilterIndex) : false;
+    passMETFilter_EcalDeadCellTriggerPrimitiveFilter_v = passMETFilter_EcalDeadCellTriggerPrimitiveFilterIndex < nFilters ? filterResults->accept(passMETFilter_EcalDeadCellTriggerPrimitiveFilterIndex) : false;
+    passMETFilter_BadPFMuonFilter_v = passMETFilter_BadPFMuonFilterIndex < nFilters ? filterResults->accept(passMETFilter_BadPFMuonFilterIndex) : false;
+    passMETFilter_BadChargedCandidateFilter_v = passMETFilter_BadChargedCandidateFilterIndex < nFilters ? filterResults->accept(passMETFilter_BadChargedCandidateFilterIndex) : false;
+    passMETFilter_ecalBadCalibFilter_v = passMETFilter_ecalBadCalibFilterIndex < nFilters ? filterResults->accept(passMETFilter_ecalBadCalibFilterIndex) : false;
+    passMETFilter_goodVertices_v = passMETFilter_goodVerticesIndex < nFilters ? filterResults->accept(passMETFilter_goodVerticesIndex) : false;
   }
-  */
+
 
 
   ///-- Genjet Information 
@@ -1589,7 +1596,17 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->passHLT_PFHT430_SixJet40_BTagCSV_p080_v_ = passHLT_PFHT430_SixJet40_BTagCSV_p080_v ? 1 : 0 ; 
   eve->passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v_ = passHLT_PFHT430_SixPFJet40_PFBTagCSV_1p5_v ? 1 : 0 ; 
 
-  // MET Filters, BBT 11-06-18
+  // MET Filters, BBT 02-20-19
+  eve->passMETFilter_Flag_goodVertices_v_ = passMETFilter_goodVertices_v; 
+  eve->passMETFilter_Flag_globalTightHalo2016Filter_v_ = passMETFilter_globalTightHalo2016Filter_v; 
+  eve->passMETFilter_Flag_globalSuperTightHalo2016Filter_v_ = passMETFilter_globalSuperTightHalo2016Filter_v; 
+  eve->passMETFilter_Flag_HBHENoiseFilter_v_ = passMETFilter_HBHENoiseFilter_v;
+  eve->passMETFilter_Flag_HBHENoiseIsoFilter_v_ = passMETFilter_HBHENoiseIsoFilter_v; 
+  eve->passMETFilter_Flag_EcalDeadCellTriggerPrimitiveFilter_v_ = passMETFilter_EcalDeadCellTriggerPrimitiveFilter_v;
+  eve->passMETFilter_Flag_BadPFMuonFilter_v_ = passMETFilter_BadPFMuonFilter_v; 
+  eve->passMETFilter_Flag_BadChargedCandidateFilter_v_ = passMETFilter_BadChargedCandidateFilter_v;  
+  eve->passMETFilter_Flag_ecalBadCalibFilter_v_ = passMETFilter_ecalBadCalibFilter_v;
+
   // 2017 MET triggers
   eve->passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_ = passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v ? 1 : 0 ; 
   eve->passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v_ = passHLT_PFHT500_PFMET110_PFMHT110_IDTight_v ? 1 : 0 ; 
@@ -2378,22 +2395,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       JecUpdatePropagationToMET_y +=  pfjets->at(i).py() - correctedJets.at(i).py() ; 
     }
 
-    //std::cout << "START PUPPI jets" << std::endl;
-    std::vector<pat::Jet> puppirawJets = miniAODhelper_Puppi.GetUncorrectedJets( *pfpuppijets );
-    std::vector<pat::Jet> puppicorrectedJets =  miniAODhelper_Puppi.GetCorrectedJets(puppirawJets, iEvent, iSetup, genjetCollection , iSysType );
-    std::vector<pat::Jet> puppiselectedJets_unsorted =  miniAODhelper_Puppi.GetSelectedJets(puppicorrectedJets, 20., 5.0 ,
-											    ( jetID::jetTight )  // Same ID as CHS, but upto |eta|<2.7. //  // https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2017
-										      , '-' );
-
-    double PUPPIJecUpdatePropagationToMET_x = 0 ;
-    double PUPPIJecUpdatePropagationToMET_y = 0 ;
-    for( unsigned int i = 0 ; i < pfpuppijets -> size() ; i++ ){
-
-      PUPPIJecUpdatePropagationToMET_x +=  pfpuppijets->at(i).px() - puppicorrectedJets.at(i).px() ; 
-      PUPPIJecUpdatePropagationToMET_y +=  pfpuppijets->at(i).py() - puppicorrectedJets.at(i).py() ; 
-    }
-    //std::cout << "END PUPPI jets" << std::endl;
-
     ///// HEP top tagged jet
     int numTopTags = 0;
     int  n_fatjets=0;
@@ -2462,7 +2463,6 @@ n_fatjets++;
     }
          
     pat::MET correctedMET = pfmet->at(0); 
-    pat::MET correctedPUPPIMET = puppimet->at(0); 
 
     std::vector<double> csvV;
     std::vector<double> jet_combinedMVABJetTags;
@@ -2513,24 +2513,6 @@ n_fatjets++;
     vint jet_flavour_vect;
     vint jet_genParentId_vect;
     vint jet_genGrandParentId_vect;
-
-    vdouble puppijet_pt  ;
-    vdouble puppijet_phi ;
-    vdouble puppijet_eta ;
-    vdouble puppijet_m   ;
-    vint    puppijet_puid   ;
-    vdouble puppijet_precore_pt  ;
-    vdouble puppijet_precore_phi ;
-    vdouble puppijet_AssociatedGenJet_pt;
-    vdouble puppijet_AssociatedGenJet_eta;
-    vdouble puppijet_AssociatedGenJet_phi;
-    vdouble puppijet_AssociatedGenJet_m;
-    vint    puppijet_partonflavour_vect;
-    vint    puppijet_flavour_vect;
-    vdouble puppijet_DeepCSV_b;
-    vdouble puppijet_DeepCSV_bb;
-
-
 
 
     // Loop over selected jets
@@ -2612,47 +2594,9 @@ n_fatjets++;
     }// end loop over iJet
 
 
-
-
-
-    for( std::vector<pat::Jet>::const_iterator iJet = puppiselectedJets_unsorted.begin(); iJet != puppiselectedJets_unsorted.end(); iJet++ ){ 
-      puppijet_pt  .push_back( iJet -> pt()  );
-      puppijet_phi .push_back( iJet -> phi() );
-      puppijet_eta .push_back( iJet -> eta() );
-      puppijet_m   .push_back( iJet -> mass()   );
-
-      puppijet_puid . push_back( 15 ) ; // = 1111
-
-      puppijet_precore_pt . push_back( iJet->userFloat( "OrigPt"  ) );
-      puppijet_precore_phi. push_back( iJet->userFloat( "OrigPhi" ) );
-   
-      const reco::GenJet* ref = iJet -> genJet();
-      if (ref) {
-	puppijet_AssociatedGenJet_pt  .push_back( ref -> pt() );
-	puppijet_AssociatedGenJet_eta .push_back( ref -> eta() );
-	puppijet_AssociatedGenJet_phi .push_back( ref -> phi() );
-	puppijet_AssociatedGenJet_m   .push_back( ref -> mass() );
-      } else {
-	puppijet_AssociatedGenJet_pt  .push_back( -999 ) ;
-	puppijet_AssociatedGenJet_eta .push_back( -999 ) ;
-	puppijet_AssociatedGenJet_phi .push_back( -999 ) ;
-	puppijet_AssociatedGenJet_m   .push_back( -999 );
-      }
-
-      puppijet_partonflavour_vect.push_back(iJet->partonFlavour());
-      puppijet_flavour_vect.push_back(iJet->hadronFlavour());
-
-      puppijet_DeepCSV_b .push_back( iJet->bDiscriminator("pfDeepCSVJetTags:probb") );
-      puppijet_DeepCSV_bb.push_back( iJet->bDiscriminator("pfDeepCSVJetTags:probbb") );
-
-    }// end loop over PUPPI jet 
-
-
-
-
-    
     std::vector<pat::Jet> fatrawJets = miniAODhelper_fatjet.GetUncorrectedJets( *fatjets );
-    
+
+    /* 02-05-19
     std::vector<double>  fatjet_pt            ;
     std::vector<double>  fatjet_eta	      ;
     std::vector<double>  fatjet_phi	      ;
@@ -2753,7 +2697,7 @@ n_fatjets++;
       fatjet_chsprunedmass. push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass") );
 
     }
-
+    */
 
     /*
     { /// --------- Add information of reclusted (by myself) jets.
@@ -2837,23 +2781,6 @@ n_fatjets++;
     }
 
 
-    // - - - -PUPPI MET - - - - - 
-    {
-      double met_x = correctedPUPPIMET.corPx(pat::MET::Type1) + PUPPIJecUpdatePropagationToMET_x ; 
-      double met_y = correctedPUPPIMET.corPy(pat::MET::Type1) + PUPPIJecUpdatePropagationToMET_y ; 
-      
-      eve->PUPPIMET_[iSys]      = sqrt( met_x * met_x + met_y * met_y );
-      eve->PUPPIMET_phi_[iSys]  = atan2( met_y , met_x   );
-    }
-    {
-
-      double met_x = correctedPUPPIMET.corPx(pat::MET::Type1XY) + PUPPIJecUpdatePropagationToMET_x ; 
-      double met_y = correctedPUPPIMET.corPy(pat::MET::Type1XY) + PUPPIJecUpdatePropagationToMET_y ; 
-
-      eve->PUPPIMET_Type1xy_[iSys]      = sqrt( met_x * met_x + met_y * met_y );
-      eve->PUPPIMET_Type1xy_phi_[iSys]  = atan2( met_y , met_x   );		   
-    }
-
     if( false ){ // For test of met correction type : 
       //  std::cout <<"Test satoshi_et: " << correctedMET.pt() << " " << correctedMET.corPt() << " " << correctedMET.corPt(pat::MET::Type1) << " " << correctedMET.corPt(pat::MET::Type1XY) << std::endl ; 
       // std::cout <<"Test satoshi_phi : " << correctedMET.phi() << " " << correctedMET.corPhi() << " " << correctedMET.corPhi(pat::MET::Type1) << " " << correctedMET.corPhi(pat::MET::Type1XY) << std::endl ; 
@@ -2883,31 +2810,13 @@ n_fatjets++;
       jet_genParentId_vect. clear() ;
       jet_genGrandParentId_vect. clear() ;
     }
-    
-    if(puppijet_pt . size() < 4 ){
-      puppijet_pt  . clear() ;
-      puppijet_phi . clear() ;
-      puppijet_eta . clear() ;
-      puppijet_m   . clear() ;
-      puppijet_puid   . clear() ;
-      puppijet_precore_pt  . clear() ;
-      puppijet_precore_phi . clear() ;
-      puppijet_AssociatedGenJet_pt. clear() ;
-      puppijet_AssociatedGenJet_eta. clear() ;
-      puppijet_AssociatedGenJet_phi. clear() ;
-      puppijet_AssociatedGenJet_m. clear() ;
-      puppijet_partonflavour_vect. clear() ;
-      puppijet_flavour_vect. clear() ;
-      puppijet_DeepCSV_b. clear() ;
-      puppijet_DeepCSV_bb. clear() ;
-    }
- 
-    if( puppijet_pt . size() >= 4 || jet_pt . size() ){
+
+    if( jet_pt . size() ){
       b_TheEventHasFourJets_ForAtLeastOneSystematicVariation = true ; 
     }
-    
-    }
 
+    }
+    
     
     eve->jet_combinedMVABJetTags_[iSys] = jet_combinedMVABJetTags;
     eve->jet_combinedInclusiveSecondaryVertexV2BJetTags_[iSys] = jet_combinedInclusiveSecondaryVertexV2BJetTags;
@@ -2945,24 +2854,7 @@ n_fatjets++;
     eve->jet_AssociatedGenJet_phi_[iSys]= jet_AssociatedGenJet_phi;
     eve->jet_AssociatedGenJet_m_[iSys]  = jet_AssociatedGenJet_m;
 
-
-    // PUPPI jet
-    eve->puppijet_pt_  [iSys]                = puppijet_pt  ;
-    eve->puppijet_phi_ [iSys]                = puppijet_phi ;
-    eve->puppijet_eta_ [iSys]                = puppijet_eta ;
-    eve->puppijet_m_   [iSys]                = puppijet_m   ;
-    eve->puppijet_puid_[iSys]                = puppijet_puid   ;
-    eve->puppijet_precorr_pt_  [iSys]        = puppijet_precore_pt  ;
-    eve->puppijet_precorr_phi_ [iSys]        = puppijet_precore_phi ;
-    eve->puppijet_AssociatedGenJet_pt_[iSys] = puppijet_AssociatedGenJet_pt;
-    eve->puppijet_AssociatedGenJet_eta_[iSys]= puppijet_AssociatedGenJet_eta;
-    eve->puppijet_AssociatedGenJet_phi_[iSys]= puppijet_AssociatedGenJet_phi;
-    eve->puppijet_AssociatedGenJet_m_[iSys]  = puppijet_AssociatedGenJet_m;
-    eve->puppijet_partonflavour_[iSys]       = puppijet_partonflavour_vect;
-    eve->puppijet_flavour_[iSys]             = puppijet_flavour_vect;
-    eve->puppijet_DeepCSV_b_  [iSys]         = puppijet_DeepCSV_b;
-    eve->puppijet_DeepCSV_bb_ [iSys]         = puppijet_DeepCSV_bb;
-
+    /* 02-05-19
     eve ->  fatjet_pt         [iSys] =          fatjet_pt            ;     
     eve ->  fatjet_eta	      [iSys] = 	        fatjet_eta	      ;	       
     eve ->  fatjet_phi	      [iSys] = 	        fatjet_phi	      ;	       
@@ -2999,7 +2891,7 @@ n_fatjets++;
     eve ->  re_fatjet_tau32             [iSys] =  re_fatjet_tau32            ;     
     eve ->  re_fatjet_sdmass_miniaod [iSys] =  re_fatjet_sdmass_miniaod ;    
     eve ->  re_fatjet_sdmass_uncorr  [iSys] =  re_fatjet_sdmass_uncorr  ;    
-
+    */
   } // end loop over systematics
 
 

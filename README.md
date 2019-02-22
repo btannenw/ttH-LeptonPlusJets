@@ -19,10 +19,6 @@ git cms-init
 
 git clone https://github.com/btannenw/MiniAOD.git -b CMSSW_940 
 
-git clone https://github.com/hsatoshi/GenParticleTopOriginChargedleptonFilter.git ttHAnalysisSubprogram/GenParticleTopOriginChargedleptonFilter -b  master 
-
-git clone https://github.com/hsatoshi/PuppiLeptonIsolationhelper.git -b  master  
-
 git clone https://github.com/btannenw/ttH-LeptonPlusJets.git  -b 94x
 
 git cms-merge-topic cms-egamma:EgammaPostRecoTools_940

@@ -394,11 +394,13 @@ void ttHYggdrasilScaleFactors::init_btagSF(){
   std::cout << "===> Loading the input .csv SF file..." << std::endl;
   
   //std::string inputCSVfile = SFfileDir + "/" + "btag/DeepCSV_94XSF_V3_B_F.csv"; // Nov 6/7/8 submission [BBT]
-  std::string inputCSVfile = SFfileDir + "/" + "btag/deepCSV_sfs_Yannik.csv";   // updated from Yannik, Dec 4 [BBT]
+  //std::string inputCSVfile = SFfileDir + "/" + "btag/deepCSV_sfs_Yannik.csv";   // updated from Yannik, 12-04-18 [BBT]
+  std::string inputCSVfile = SFfileDir + "/" + "btag/deepCSV_sfs_newJEC.csv";   // updated from Yannik, 02-22-19 [BBT]
   std::string measType = "iterativefit"; // "comb" ?
   std::string sysType = "central";
   
-  calib_btag = new BTagCalibration("csvv3", inputCSVfile);
+  //calib_btag = new BTagCalibration("csvv3", inputCSVfile); // ygg core
+  calib_btag = new BTagCalibration("deepcsv", inputCSVfile); // BBT, 02-22-19
   //reader_btag = new BTagCalibrationReader(BTagEntry::OP_MEDIUM, sysType) ;
   reader_btag = new BTagCalibrationReader(BTagEntry::OP_RESHAPING, sysType) ;
   

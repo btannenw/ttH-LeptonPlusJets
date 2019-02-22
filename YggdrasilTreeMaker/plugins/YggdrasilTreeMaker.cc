@@ -360,9 +360,6 @@ YggdrasilTreeMaker::YggdrasilTreeMaker(const edm::ParameterSet& iConfig):
   puppijetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsPuppi")));
   fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJetsAK8")));
 
-  //  rerun_fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsAK8PFPuppi")));// Rerun of PUPPI ak8
-  //rerun_fatjetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedPatJetsCA15PFPuppi")));// Rerun of PUPPI ca15
-
   //(In moriond17 analysis, met needs to be recalculated.) 
   //   consumes <pat::METCollection> (edm::InputTag("slimmedMETs","","PAT") );
 
@@ -658,14 +655,16 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   // MET Filters, BBT 02-20-19
   bool passMETFilter_globalTightHalo2016Filter_v = false;
+  bool passMETFilter_goodVertices_v = false;
   bool passMETFilter_globalSuperTightHalo2016Filter_v = false;    
   bool passMETFilter_HBHENoiseFilter_v = false;                   
   bool passMETFilter_HBHENoiseIsoFilter_v = false;                
   bool passMETFilter_EcalDeadCellTriggerPrimitiveFilter_v = false;
   bool passMETFilter_BadPFMuonFilter_v = false;                   
   bool passMETFilter_BadChargedCandidateFilter_v = false;               
+  bool passMETFilter_eeBadScFilter_v = false;                
   bool passMETFilter_ecalBadCalibFilter_v = false;                
-  bool passMETFilter_goodVertices_v = false;
+
 
   // 2017 MET triggers
   bool passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v = false ;
@@ -848,6 +847,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     unsigned int passMETFilter_BadPFMuonFilterIndex                    = filterNames.triggerIndex("Flag_BadPFMuonFilter"); 
     unsigned int passMETFilter_BadChargedCandidateFilterIndex          = filterNames.triggerIndex("Flag_BadChargedCandidateFilter"); 
     unsigned int passMETFilter_ecalBadCalibFilterIndex                 = filterNames.triggerIndex("Flag_ecalBadCalibFilter");
+    unsigned int passMETFilter_eeBadScFilterIndex                      = filterNames.triggerIndex("Flag_eeBadScFilter");
     unsigned int passMETFilter_goodVerticesIndex                       = filterNames.triggerIndex("Flag_goodVertices");
 
 
@@ -860,6 +860,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     passMETFilter_BadPFMuonFilter_v = passMETFilter_BadPFMuonFilterIndex < nFilters ? filterResults->accept(passMETFilter_BadPFMuonFilterIndex) : false;
     passMETFilter_BadChargedCandidateFilter_v = passMETFilter_BadChargedCandidateFilterIndex < nFilters ? filterResults->accept(passMETFilter_BadChargedCandidateFilterIndex) : false;
     passMETFilter_ecalBadCalibFilter_v = passMETFilter_ecalBadCalibFilterIndex < nFilters ? filterResults->accept(passMETFilter_ecalBadCalibFilterIndex) : false;
+    passMETFilter_eeBadScFilter_v = passMETFilter_eeBadScFilterIndex < nFilters ? filterResults->accept(passMETFilter_eeBadScFilterIndex) : false;
     passMETFilter_goodVertices_v = passMETFilter_goodVerticesIndex < nFilters ? filterResults->accept(passMETFilter_goodVerticesIndex) : false;
   }
 
@@ -1606,6 +1607,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->passMETFilter_Flag_BadPFMuonFilter_v_ = passMETFilter_BadPFMuonFilter_v; 
   eve->passMETFilter_Flag_BadChargedCandidateFilter_v_ = passMETFilter_BadChargedCandidateFilter_v;  
   eve->passMETFilter_Flag_ecalBadCalibFilter_v_ = passMETFilter_ecalBadCalibFilter_v;
+  eve->passMETFilter_Flag_eeBadScFilter_v_ = passMETFilter_eeBadScFilter_v;
 
   // 2017 MET triggers
   eve->passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v_ = passHLT_PFHT500_PFMET100_PFMHT100_IDTight_v ? 1 : 0 ; 
@@ -2596,156 +2598,6 @@ n_fatjets++;
 
     std::vector<pat::Jet> fatrawJets = miniAODhelper_fatjet.GetUncorrectedJets( *fatjets );
 
-    /* 02-05-19
-    std::vector<double>  fatjet_pt            ;
-    std::vector<double>  fatjet_eta	      ;
-    std::vector<double>  fatjet_phi	      ;
-    std::vector<double>  fatjet_m  	      ;
-    std::vector<double>  fatjet_doublebtagging  	      ;
-    std::vector<int>     fatjet_nSubjet 	      ;
-    std::vector<double>  fatjet_sdmass_miniaod ;
-    std::vector<double>  fatjet_sdmass_uncorr  ;
-    std::vector<double>  fatjet_tau1	      ;
-    std::vector<double>  fatjet_tau2	      ;
-    std::vector<double>  fatjet_tau3	      ;
-    std::vector<double>  fatjet_tau4	      ;
-    std::vector<double>  fatjet_chstau1	      ;
-    std::vector<double>  fatjet_chstau2	      ;
-    std::vector<double>  fatjet_chstau3	      ;
-    std::vector<double>  fatjet_nb1N2 	      ;
-    std::vector<double>  fatjet_nb1N3 	      ;
-    std::vector<double>  fatjet_nb2N2 	      ;
-    std::vector<double>  fatjet_nb2N3 	      ;
-    std::vector<double>  fatjet_chsprunedmass  ;
-
-    std::vector<std::vector<double> >fatjet_subjet_pt ;
-    std::vector<std::vector<double> >fatjet_subjet_eta;
-    std::vector<std::vector<double> >fatjet_subjet_phi;
-    std::vector<std::vector<double> >fatjet_subjet_m  ;
-    std::vector<std::vector<double> >fatjet_subjet_beepcsv;
-    std::vector<std::vector<double> >fatjet_subjet_csvv2  ;
-
-    std::vector<double>  re_fatjet_pt            ;
-    std::vector<double>  re_fatjet_eta	      ;
-    std::vector<double>  re_fatjet_phi	      ;
-    std::vector<double>  re_fatjet_tau21      ;
-    std::vector<double>  re_fatjet_tau32      ;
-    std::vector<double>  re_fatjet_sdmass_miniaod ;
-    std::vector<double>  re_fatjet_sdmass_uncorr  ;
-
-    for( unsigned int i = 0 ; i < fatjets -> size() ; i++  ){
-      pat::Jet correctedJet =  miniAODhelper_fatjet.GetCorrectedAK8Jet( fatrawJets.at(i) , iEvent, iSetup, fatgenjetCollection , iSysType );
-      pat::Jet originalJet  = fatjets->at(i); 
-
-
-    std::vector<double> subjet_pt ;    
-    std::vector<double> subjet_eta;    
-    std::vector<double> subjet_phi;    
-    std::vector<double> subjet_m  ;    
-    std::vector<double> subjet_beepcsv;
-    std::vector<double> subjet_csvv2  ;
-
-
-      TLorentzVector puppi_softdrop, puppi_softdrop_subjet;
-      auto const & sdSubjetsPuppi = originalJet.subjets("SoftDropPuppi");
-      long n = 0 ;
-      for ( auto const & it : sdSubjetsPuppi ) {
-	n ++ ; 
-	puppi_softdrop_subjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
-	puppi_softdrop+=puppi_softdrop_subjet;
-
-	subjet_pt      . push_back( it -> pt()  );    
-	subjet_eta     . push_back( it -> eta() );    
-	subjet_phi     . push_back( it -> phi() );    
-	subjet_m       . push_back( it -> mass());    
-	subjet_beepcsv . push_back( it -> bDiscriminator("pfDeepCSVJetTags:probb")  +  it -> bDiscriminator("pfDeepCSVJetTags:probbb")  );
-	subjet_csvv2   . push_back( it -> bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")  );
-      }
-
-      fatjet_subjet_pt       .push_back( subjet_pt      );
-      fatjet_subjet_eta      .push_back( subjet_eta     );
-      fatjet_subjet_phi      .push_back( subjet_phi     );
-      fatjet_subjet_m        .push_back( subjet_m       );
-      fatjet_subjet_beepcsv  .push_back( subjet_beepcsv );
-      fatjet_subjet_csvv2    .push_back( subjet_csvv2   );
-
-      fatjet_pt . push_back( correctedJet .pt() ) ;  
-      fatjet_eta. push_back( correctedJet .eta() ) ;  
-      fatjet_phi. push_back( correctedJet .phi() ) ;  
-      fatjet_m  . push_back( correctedJet .mass() ) ;  
-      fatjet_doublebtagging . push_back( correctedJet . bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") ) ;  
-
-      fatjet_nSubjet  . push_back( n ) ;  
-
-      fatjet_sdmass_miniaod . push_back(  originalJet . userFloat("ak8PFJetsPuppiSoftDropMass") ) ;
-      fatjet_sdmass_uncorr  . push_back( puppi_softdrop . M()  ) ; 
-
-      fatjet_tau1 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau1") ) ; 
-      fatjet_tau2 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau2") ) ; 
-      fatjet_tau3 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau3") ) ; 
-      fatjet_tau4 . push_back( originalJet . userFloat("NjettinessAK8Puppi:tau4") ) ; 
-
-      fatjet_chstau1 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau1") );
-      fatjet_chstau2 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau2") );
-      fatjet_chstau3 . push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau3") );
-
-      fatjet_nb1N2 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2") );
-      fatjet_nb1N3 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3") );
-      fatjet_nb2N2 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2") );
-      fatjet_nb2N3 . push_back( originalJet . userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3") );
-
-      fatjet_chsprunedmass. push_back( originalJet . userFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass") );
-
-    }
-    */
-
-    /*
-    { /// --------- Add information of reclusted (by myself) jets.
-      std::vector<pat::Jet> rerun_fatrawJets = miniAODhelper_fatjet.GetUncorrectedJets( *rerun_fatjets );
-
-      for( unsigned int i = 0 ; i < rerun_fatrawJets . size() ; i++  ){
-	pat::Jet correctedJet =  miniAODhelper_fatjet.GetCorrectedAK8Jet( rerun_fatrawJets.at(i) , iEvent, iSetup, reclustered_fatgenjetCollection , iSysType ); //todo
-
-	if(        correctedJet .pt()   < 80 ) continue ; 
-	if( fabs( correctedJet .eta() ) > 2.4 ) continue ; 
-
-
-        re_fatjet_pt . push_back( correctedJet .pt() ) ;  
-	re_fatjet_eta. push_back( correctedJet .eta() ) ;  
-	re_fatjet_phi. push_back( correctedJet .phi() ) ;  
-
-	re_fatjet_tau21 . push_back( correctedJet.userFloat("NjettinessCA15Puppi:tau2")
-				     / 
-				     correctedJet.userFloat("NjettinessCA15Puppi:tau1") );
-
-	re_fatjet_tau32 . push_back( correctedJet.userFloat("NjettinessCA15Puppi:tau3")
-				     / 
-				     correctedJet.userFloat("NjettinessCA15Puppi:tau2") );
-
-        re_fatjet_sdmass_miniaod .push_back( rerun_fatjets -> at(i). userFloat("ca15PFJetsPuppiSoftDropMass")  );
-
-
-// Not Yet implemented 	pat::Jet originalJet = rerun_fatjets -> at(i) ; 
-// Not Yet implemented 	TLorentzVector puppi_softdrop, puppi_softdrop_subjet;
-// Not Yet implemented 	auto const & sdSubjetsPuppi = originalJet.subjets("SoftDrop");
-// Not Yet implemented 	long n = 0 ;
-// Not Yet implemented 	for ( auto const & it : sdSubjetsPuppi ) {
-// Not Yet implemented 	  n ++ ;
-// Not Yet implemented 	  puppi_softdrop_subjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
-// Not Yet implemented 	  puppi_softdrop+=puppi_softdrop_subjet;
-// Not Yet implemented 	}
-// Not Yet implemented 
-//
-// https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetToolbox#addSubjets_from_prunning_or_soft : 
-	// addSubjets (from prunning or softdrop)
-	// 
-	//        re_fatjet_sdmass_uncorr  .push_back( puppi_softdrop . M()   );
-
-        re_fatjet_sdmass_uncorr  .push_back( 0 ) ;
-
-      }
-    }
-    */
     // - - - - MET works - - - - - 
 
     {
@@ -2854,44 +2706,6 @@ n_fatjets++;
     eve->jet_AssociatedGenJet_phi_[iSys]= jet_AssociatedGenJet_phi;
     eve->jet_AssociatedGenJet_m_[iSys]  = jet_AssociatedGenJet_m;
 
-    /* 02-05-19
-    eve ->  fatjet_pt         [iSys] =          fatjet_pt            ;     
-    eve ->  fatjet_eta	      [iSys] = 	        fatjet_eta	      ;	       
-    eve ->  fatjet_phi	      [iSys] = 	        fatjet_phi	      ;	       
-    eve ->  fatjet_m  	      [iSys] = 	        fatjet_m  	      ;	       
-    eve ->  fatjet_doublebtagging  [iSys] = 	        fatjet_doublebtagging   ;	       
-    eve ->  fatjet_nSubjet    [iSys] =          fatjet_nSubjet 	      ;
-    eve ->  fatjet_sdmass_miniaod [iSys] =      fatjet_sdmass_miniaod ;    
-    eve ->  fatjet_sdmass_uncorr  [iSys] =      fatjet_sdmass_uncorr  ;    
-    eve ->  fatjet_tau1	      [iSys] = 	        fatjet_tau1	      ;	       
-    eve ->  fatjet_tau2	      [iSys] = 	        fatjet_tau2	      ;	       
-    eve ->  fatjet_tau3	      [iSys] = 	        fatjet_tau3	      ;	       
-    eve ->  fatjet_tau4	      [iSys] = 	        fatjet_tau4	      ;	       
-    eve ->  fatjet_chstau1	      [iSys] =  fatjet_chstau1	      ;
-    eve ->  fatjet_chstau2	      [iSys] =  fatjet_chstau2	      ;
-    eve ->  fatjet_chstau3	      [iSys] =  fatjet_chstau3	      ;
-    eve ->  fatjet_nb1N2 	      [iSys] =  fatjet_nb1N2 	      ;
-    eve ->  fatjet_nb1N3 	      [iSys] =  fatjet_nb1N3 	      ;
-    eve ->  fatjet_nb2N2 	      [iSys] =  fatjet_nb2N2 	      ;
-    eve ->  fatjet_nb2N3 	      [iSys] =  fatjet_nb2N3 	      ;
-    eve ->  fatjet_chsprunedmass  [iSys] =      fatjet_chsprunedmass  ;    
-
-    eve -> fatjet_subjet_pt      [iSys] = fatjet_subjet_pt       ;
-    eve -> fatjet_subjet_eta     [iSys] = fatjet_subjet_eta      ;
-    eve -> fatjet_subjet_phi     [iSys] = fatjet_subjet_phi      ;
-    eve -> fatjet_subjet_m       [iSys] = fatjet_subjet_m        ;
-    eve -> fatjet_subjet_beepcsv [iSys] = fatjet_subjet_beepcsv  ;
-    eve -> fatjet_subjet_csvv2   [iSys] = fatjet_subjet_csvv2    ;
-
-
-    eve ->  re_fatjet_pt             [iSys] =  re_fatjet_pt            ;     
-    eve ->  re_fatjet_eta	     [iSys] =  re_fatjet_eta	      ;	       
-    eve ->  re_fatjet_phi	     [iSys] =  re_fatjet_phi	      ;	       
-    eve ->  re_fatjet_tau21             [iSys] =  re_fatjet_tau21            ;     
-    eve ->  re_fatjet_tau32             [iSys] =  re_fatjet_tau32            ;     
-    eve ->  re_fatjet_sdmass_miniaod [iSys] =  re_fatjet_sdmass_miniaod ;    
-    eve ->  re_fatjet_sdmass_uncorr  [iSys] =  re_fatjet_sdmass_uncorr  ;    
-    */
   } // end loop over systematics
 
 

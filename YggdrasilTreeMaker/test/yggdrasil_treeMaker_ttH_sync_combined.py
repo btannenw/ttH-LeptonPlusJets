@@ -208,13 +208,12 @@ if not isMC :
 
 
 if not isMC :
-    if ForDebugAndEventSync_EnableLumiMaskByHand :
-        import sys
-        import os.path
-        import FWCore.PythonUtilities.LumiList as Lumilist
-        process.source.lumisToProcess = LumiList.LumiList(filename =
-                                                          os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
-                                                          ).getVLuminosityBlockRange()
+    import sys
+    import os.path
+    import FWCore.PythonUtilities.LumiList as Lumilist
+    process.source.lumisToProcess = LumiList.LumiList(filename =
+                                                      os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
+                                                      ).getVLuminosityBlockRange()
 
 
 

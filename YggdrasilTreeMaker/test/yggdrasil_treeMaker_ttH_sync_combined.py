@@ -26,8 +26,8 @@ enableJECFromLocalDB = True
 #  This is a flag used to apply dedicated JEC for each data set.
 #  The placeholder will be replaced by crab job make script.
 
-#period="XXXPERIODXXX"
-period="2017B"
+period="XXXPERIODXXX"
+#period="2017B"
 # e.g "2017B"
 
 # - - - - - - - - - - - - - - - - - - - -
@@ -210,7 +210,7 @@ if not isMC :
 if not isMC :
     import sys
     import os.path
-    import FWCore.PythonUtilities.LumiList as Lumilist
+    import FWCore.PythonUtilities.LumiList as LumiList
     process.source.lumisToProcess = LumiList.LumiList(filename =
                                                       os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
                                                       ).getVLuminosityBlockRange()

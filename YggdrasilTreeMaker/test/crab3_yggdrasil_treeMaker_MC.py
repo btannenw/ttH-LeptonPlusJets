@@ -1,11 +1,11 @@
 from WMCore.Configuration import Configuration 
 config = Configuration() 
 config.section_("General") 
-config.General.requestName = 'triggerSF_newJECJER_v0_TTTo2L2Nu' ## change//Name of the directory that crab will create
+config.General.requestName = 'preApproval2017_v2_TTTo2L2Nu' ## change//Name of the directory that crab will create
 
 config.section_("JobType") 
 config.JobType.pluginName = 'Analysis' 
-config.JobType.psetName = 'yggdrasil_treeMaker_ttH_sync.py' ###Config file that crab will use for the job
+config.JobType.psetName = 'yggdrasil_treeMaker_ttH_sync_combined.py' ###Config file that crab will use for the job
 #config.JobType.psetName = 'yggdrasil_treeMaker_cfg_addLeptonSFs_ttbarMC.py' ###Config file that crab will use for the job
 
 config.JobType.allowUndistributedCMSSW = False
@@ -38,7 +38,7 @@ config.Data.publishDBS = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter/' ###
 #Commented OUT Feb13
 	#config.Data.publishDataName = 'Validation_v1'
 ### change user Space 
-config.Data.outLFNDirBase = '/store/group/lpctthrun2/analysis2017Data/triggerSF/MC/'
+config.Data.outLFNDirBase = '/store/group/lpctthrun2/preApproval2017/MC/'
 #config.Data.outLFNDirBase = '/store/user/btannenw/'
 
 #'/store/group/lpcmj/data/UVa/2018Data'###Wherever we can find space and start after '/eos/uscms' in the directory path.

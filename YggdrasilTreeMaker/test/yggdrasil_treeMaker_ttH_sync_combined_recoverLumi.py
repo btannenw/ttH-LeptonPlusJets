@@ -1,5 +1,7 @@
-import FWCore.ParameterSet.Config as cms
+#sys.argv: [DoubleEG/DoubleMuon] [B/C/D/E/F/G] [startFile] [endFile]
 
+import FWCore.ParameterSet.Config as cms
+import sys
 
 isPUPPI=False
 #--> if isPUPPI=true, change the code too.
@@ -26,7 +28,8 @@ enableJECFromLocalDB = True
 #  The placeholder will be replaced by crab job make script.
 
 #period="XXXPERIODXXX"
-period="2017B"
+period="2017"+sys.argv[3]
+#period="2017B"
 #period="2017C"
 #period="2017D"
 #period="2017E"
@@ -173,7 +176,7 @@ process.ak8PFPuppiL1FastL2L3ResidualCorrectorChain = cms.Sequence( process.ak8PF
 
 
 import FWCore.Utilities.FileUtils as FileUtils
-inputDatafileList = FileUtils.loadListFromFile ('dataset_fileLists/DoubleEG_Run2017B-31Mar2018-v1__1-100.txt') 
+inputDatafileList = FileUtils.loadListFromFile ('dataset_fileLists/'+sys.argv[2]+'_Run2017'+sys.argv[3]+'-31Mar2018-v1__'+sys.argv[4]+'-'+sys.argv[5]+'.txt') 
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
@@ -221,7 +224,7 @@ if not isMC :
     import FWCore.PythonUtilities.LumiList as LumiList
     process.source.lumisToProcess = LumiList.LumiList(filename =
                                                       # unfinished lumis
-                                                      os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/crab_preApproval2017_v2_DoubleEG-Run2017B-31Mar2018-v1/results/notFinishedLumis.json'
+                                                      os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/test/crab_preApproval2017_v2_'+sys.argv[2]+'-Run2017'+sys.argv[3]+'-31Mar2018-v1/results/notFinishedLumis.json'
                                                       # golden JSON
                                                       #os.environ.get('CMSSW_BASE')+'/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
                                                       ).getVLuminosityBlockRange()
@@ -439,7 +442,7 @@ else :
         
     
 process.TFileService = cms.Service("TFileService",
-                                   fileName = cms.string('local_preApproval2017_v2_DoubleEG-Run2017B-31Mar2018-v1_missingLumis/yggdrasil_treeMaker_ttH_sync_04-11-19_v1_metFiltered_forSync_DATA_failedCRAB__1-100.root')
+                                   fileName = cms.string('local_preApproval2017_v2_'+sys.argv[2]+'-Run2017'+sys.argv[3]+'-31Mar2018-v1_missingLumis/yggdrasil_treeMaker_ttH_sync_04-11-19_v1_metFiltered_forSync_DATA_failedCRAB__'+sys.argv[4]+'-'+sys.argv[5]+'.root')
                                    )
 
 #BBT, 10-12-18, add deterministic seeds

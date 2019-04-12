@@ -112,7 +112,7 @@ class YggdrasilTreeMaker : public edm::EDAnalyzer {
       //virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
       //virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
       //virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
-      //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
+      //virtual void std::endluminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
 
       // ----------member data ---------------------------
 
@@ -484,9 +484,8 @@ void
 YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
-   
-   eve->initialize();
 
+   eve->initialize();
 
   edm::Handle<reco::VertexCollection> vtxHandle;
   iEvent.getByToken(vertexToken,vtxHandle);
@@ -1106,14 +1105,13 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		      (fabs(vtx->z()) <= 24.0) &&
 		      (fabs(vtx->position().Rho()) <= 2.0) 
 		      );
-		      
+
       if( !isGood ) continue;
 
       if( iPV==1 ){
 	firstGoodPV = true;
 	vertex = (*vtx);
       }
-
       numpv++;
     }
   }
@@ -1125,7 +1123,10 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     miniAODhelper_Puppi.SetVertex(vertex);
     miniAODhelper_fatjet.SetVertex(vertex);
   }
-
+  else {
+    // skip to next event if no primary vertices found
+    return;
+  }
   double numTruePV = -1;
   double numGenPV = -1;
   if( (PupInfo.isValid()) ){
@@ -1137,7 +1138,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       }
     }
   }
-
 
   double wgt_lumi = 1.;
   if( insample_>=0 ) wgt_lumi = mySample_xSec_ * intLumi_ *1./ mySample_nGen_;
@@ -1515,8 +1515,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   } // end of "isMC".
 
 
-
-
   /////////
   ///
   /// Electrons
@@ -1531,13 +1529,11 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   ///
   ////////
   //std::vector<pat::Muon> selectedMuons_tight = miniAODhelper.GetSelectedMuons( *muons, 25, muonID::muonTight, coneSize::R04, corrType::deltaBeta, 2.1 );
+
   std::vector<pat::Muon> selectedMuons_tight = miniAODhelper.GetSelectedMuons( *muons, 15, muonID::muonTight, coneSize::R04, corrType::deltaBeta, 2.4);
   std::vector<pat::Muon> selectedMuons_loose = miniAODhelper.GetSelectedMuons( *muons, 15, muonID::muonTightDL, coneSize::R04, corrType::deltaBeta,2.4 );
 
   
-
-
-
   eve->passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1_ = ( passHLT_Ele27_eta2p1_WP85_Gsf_HT200_v1 ) ? 1 : 0;
   
   eve->passHLT_IsoMu24_v_ =  ( passHLT_IsoMu24_v) ? 1 : 0;
@@ -1655,7 +1651,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   eve->passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v_ = passHLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60_v ? 1 : 0 ; 
   eve->passHLT_PFHT250_v_ = passHLT_PFHT250_v ? 1 : 0 ; 
   
-
   std::vector< std::pair<float , float> > SingleMuonTriggerDirection;
   std::vector< std::pair<float , float> > SingleElTriggerDirection;
 
@@ -1706,7 +1701,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   } // end of trigger-bit loop (look into all HLT path)
 
 
-
   for (unsigned int i = 0; i < triggerResults->size(); ++i) {
        
     unsigned long loc1 = names.triggerName(i).find( "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v" ,0);
@@ -1746,8 +1740,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       } // end of trigger object loop
     } // end of if the trigger fired.
   } // end of trigger-bit loop (look into all HLT path)
-
-
 
 
   eve->run_ = run;
@@ -1845,6 +1837,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
     double d0 = -999;
     double dZ = -999;
+
     if( iMu->muonBestTrack().isAvailable() ){
       d0 = iMu->muonBestTrack()->dxy(vertex.position());
       dZ = iMu->muonBestTrack()->dz(vertex.position());
@@ -2078,7 +2071,6 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       double SCet = SCenergy * sin (2*atan(exp(-SCeta))); 
 
       numMissingHits = iEle->gsfTrack()->hitPattern().numberOfLostHits(reco::HitPattern::MISSING_INNER_HITS);
-
       d0 = fabs(iEle->gsfTrack()->dxy(vertex.position()));
       dZ = fabs(iEle->gsfTrack()->dz(vertex.position()));
 
@@ -2210,6 +2202,7 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       lepton_dRDiLepTrig.push_back( 10 ); // <- not prepared for di-electron yet.
     }
   }
+
 
   eve->wgt_lumi_  = intLumi_;
   eve->wgt_xs_    = mySample_xSec_;//mySample.xSec;
@@ -2373,12 +2366,12 @@ YggdrasilTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     //std::cout << "START AK4 jets" << std::endl;
 
     std::vector<pat::Jet> rawJets = miniAODhelper.GetUncorrectedJets( *pfjets );
-    //cout << "!!! before ak4pfchs correction" << endl;
+    //cout << "!!! before ak4pfchs correction" << std::endl;
     //std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType ); // ygg core
     //std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType, true, true, true ); // BBT, 10-29-18
     //                                                                                                                         doJES, doJER, isAK4
     std::vector<pat::Jet> correctedJets =  miniAODhelper.GetCorrectedJets(rawJets, iEvent, iSetup, genjetCollection , iSysType, true,  true, true ); // BBT, 10-29-18
-    //cout << "!!! after ak4pfchs correction" << endl;
+    //cout << "!!! after ak4pfchs correction" << std::endl;
     std::vector<pat::Jet> selectedJets_unsorted =  miniAODhelper.GetSelectedJets(correctedJets, 20., 5.0 ,
 										 ( jetID::jetTight ) // <- For 2017, no LooseID, only tight.
 										 , '-' );
@@ -3124,6 +3117,7 @@ YggdrasilTreeMaker::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup
   std::cout <<"[debug message] YggdrasilTreeMaker::beginRun() has finished JER SF work for PUPPI jets" << std::endl ; 
   miniAODhelper_fatjet.SetJER_SF_Tool( iSetup );
   std::cout <<"[debug message] YggdrasilTreeMaker::beginRun() has finished JER SF work for all jets" << std::endl ; 
+  
 }
 
 
